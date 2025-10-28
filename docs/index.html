@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visualizing Conflict and Human Suffering through Data</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;600;700&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- CSS personalizzato -->
+  <link rel="stylesheet" href="main_styles.css" />
+</head>
+<body>
+
+  <!-- NAVBAR (logo a sinistra, link a destra) -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
+        <span class="brand-text">BUGBusters</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+              aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
+          <li class="nav-item"><a class="nav-link" href="#footer">Footer</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER (titolo + sottotitolo centrati) -->
+  <header class="py-5 bg-body-tertiary border-bottom">
+    <div class="container text-center">
+      <h1 id="main-title" class="display-5 mb-3">
+        Visualizing Conflict and Human Suffering through Data
+      </h1>
+      <p class="subtitle lead mb-0">
+        <strong>BUGBusters</strong> — Isabella Tagliafico, Luca Ninivaggi, Flavio Barrara Stefani
+      </p>
+    </div>
+  </header>
+
+  <!-- SEZIONE 1 (box con titolo, descrizione + immagine laterale) -->
+  <section id="project-description" class="py-5">
+    <div class="container">
+      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
+        <!-- Titolo della sezione -->
+        <div class="mb-4">
+          <h2 class="section-heading h3 text-center text-body-emphasis mb-0">Project Description and Data at hand</h2>
+        </div>
+
+        <div class="row g-4">
+          <!-- Descrizione (ampia) -->
+          <div class="col-12 col-lg-8">
+            <div class="p-4 border rounded-3 h-100">
+              <h3 class="h5 mb-3">What are we talking about?</h3>
+              <p class="mb-0">
+                Description
+              </p>
+            </div>
+          </div>
+
+          <!-- Immagine (stretta, a destra) -->
+          <div class="col-12 col-lg-4">
+            <img src="assets/hands.jpg" class="img-fluid object-fit-cover" alt="IMG" />
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer" class="py-4 border-top">
+    <div class="container">
+      <p class="mb-2 small">
+        Submission details: GitHub repo submitted on AulaWeb.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
