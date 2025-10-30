@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUGBusters Private CSV Viewer</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    pre { background: #f0f0f0; padding: 1em; border-radius: 5px; }
+    a { color: #0366d6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>BUGBusters Private CSV Viewer</h2>
+  <div id="status">Initializing...</div>
+  <pre id="csv"></pre>
+
+  <script>
+    // -----------------------------
+    // CONFIGURATION
+    // -----------------------------
+    const CLIENT_ID = "Ov23liwlXk0RB8VMHLgz"; // Replace with your OAuth App Client ID
+    const PRIVATE_REPO_API = "https://api.github.com/repos/supernino02/BugBuster-project/example.csv";
+
+    const statusEl = document.getElementById("status");
+    const csvEl = document.getElementById("csv");
+
+    // -----------------------------
+    // FETCH PRIVATE CSV
+    // -----------------------------
+    async function fetchCSV(token) {
+      try {
+        const res = await fetch(PRIVATE_REPO_API, {
+          headers: { Authorization: `token ${token}` }
+        });
+
+        if (res.status === 404 || res.status === 403) {
+          statusEl.textContent = "Access denied. You must be a collaborator.";
+          return;
+        }
+
+        if (!res.ok) {
+          statusEl.textContent = `Error fetching CSV: ${res.status} ${res.statusText}`;
+          return;
+        }
+
+        const data = await res.json();
+        const csvText = atob(data.content);
+        statusEl.textContent = "CSV Loaded:";
+        csvEl.textContent = csvText;
+
+      } catch (err) {
+        statusEl.textContent = "Network or API error: " + err.message;
+      }
+    }
+
+    // -----------------------------
+    // START DEVICE FLOW
+    // -----------------------------
+    async function startDeviceFlow() {
+      try {
+        // 1️⃣ Request device code
+        const resp = await fetch("https://github.com/login/device/code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ client_id: CLIENT_ID, scope: "repo" })
+        });
+        const data = await resp.json();
+
+        // 2️⃣ Show user code and instructions
+        statusEl.innerHTML = `
+          <p>Go to <a href="https://github.com/login/device" target="_blank">github.com/login/device</a> and enter code: <b>${data.user_code}</b></p>
+          <p>Waiting for authorization...</p>
+        `;
+
+        // 3️⃣ Poll GitHub for token
+        let token = null;
+        while (!token) {
+          await new Promise(r => setTimeout(r, data.interval * 1000));
+
+          const poll = await fetch("https://github.com/login/oauth/access_token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              client_id: CLIENT_ID,
+              device_code: data.device_code,
+              grant_type: "urn:ietf:params:oauth:grant-type:device_code"
+            })
+          });
+
+          const pollData = await poll.json();
+
+          if (pollData.access_token) {
+            token = pollData.access_token;
+            localStorage.setItem("github_token", token);
+          } else if (pollData.error && pollData.error !== "authorization_pending") {
+            statusEl.textContent = `Error: ${pollData.error}`;
+            return;
+          }
+        }
+
+        statusEl.textContent = "Authorization successful! Fetching CSV...";
+        fetchCSV(token);
+
+      } catch (err) {
+        statusEl.textContent = "Error initiating device flow: " + err.message;
+      }
+    }
+
+    // -----------------------------
+    // MAIN
+    // -----------------------------
+    const savedToken = localStorage.getItem("github_token");
+    if (savedToken) {
+      fetchCSV(savedToken);
+    } else {
+      startDeviceFlow();
+    }
+  </script>
+</body>
+</html>
