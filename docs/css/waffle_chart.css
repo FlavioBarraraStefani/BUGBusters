@@ -1,50 +1,72 @@
 /* Scoped CSS for waffle_chart_container */
-    #waffle_chart_container { overflow-x: hidden; }
+#waffle_chart_container {
+  overflow-x: hidden;
+}
 
-    #waffle_chart_container #waffle_chart_svg svg { width: 100%; height: auto; display: block; }
+/* Waffle chart SVG */
+#waffle_chart_container #waffle_chart_svg svg,
+#waffle_chart_container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.2s ease;
+}
 
-    #waffle_chart_container .waffle-icon {
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      text-anchor: middle;
-      alignment-baseline: middle;
-      cursor: pointer;
-      transition: opacity 0.25s;
-    }
+/* Waffle icons */
+#waffle_chart_container .waffle-icon,
+#waffle_chart_container .waffle-fa-icon {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
 
-    #waffle_chart_container .dimmed { opacity: 0.1; }
+/* Dimmed effect */
+#waffle_chart_container .dimmed {
+  opacity: 0.2 !important;
+}
 
-    #waffle_chart_container .tooltip {
-      position: absolute;
-      background: rgba(0,0,0,0.85);
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      pointer-events: none;
-      font-size: 13px;
-      z-index: 1000;
-    }
+/* Tooltip */
+#waffle_chart_container .tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  pointer-events: none;
+  font-size: 13px;
+  z-index: 1000;
+}
 
-    #waffle_chart_container .legend {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
+/* Legend */
+#waffle_chart_container .legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
 
-    #waffle_chart_container .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
+#waffle_chart_container .legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  margin-bottom: 6px;
+  gap: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
-    #waffle_chart_container .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-    }
+#waffle_chart_container .legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+#waffle_chart_container .legend-icon {
+  font-size: 1rem;
+}

@@ -62,21 +62,6 @@ function hideAuthSection() {
 }
 
 // -------------------------------
-// Function to load all charts after authentication
-// -------------------------------
-async function initChartsAfterAuth() {
-  // Example: Waffle chart
-  await loadChart(
-    "comparing_categories/waffle_chart.json", // full path in repo
-    drawWaffleChart,                      // your original chart function
-    "waffle_chart_container"              // container div ID
-  );
-
-  // You can add more charts here:
-  // await loadChart("other_section/other_chart", drawOtherChart, "other_container");
-}
-
-// -------------------------------
 // Initial check for cached token
 // -------------------------------
 (async function() {
@@ -121,3 +106,13 @@ const loadChart = (function() {
         }
       };
     })();
+
+
+// -------------------------------
+// Function to load all charts after authentication
+// -------------------------------
+async function initChartsAfterAuth() {
+  await loadChart("comparing_categories/waffle_chart.json", drawWaffleChart, "waffle_chart_container" );
+  //...
+}
+
