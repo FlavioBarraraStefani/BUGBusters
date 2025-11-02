@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visualizing Conflict and Human Suffering through Data</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;600;700&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <!-- Authentication Script -->
+  <script src="JS/auth.js" defer></script>
+  <link rel="stylesheet" href="CSS/main_style.css" />
+
+
+  <!--comparing_categories -->
+  
+    <!--WAFFLE CHART -->
+  <link rel="stylesheet" href="css/waffle_chart.css" />
+  <script src="js/waffle_chart.js" defer></script>
+
+
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
+        <span class="brand-text">BUGBusters</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+              aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
+          <li class="nav-item private-section"><a class="nav-link" href="#data-analysis">Data Analysis</a></li>
+          <li class="nav-item private-section"><a class="nav-link" href="#visualizations">Visualizations</a></li>
+          <li class="nav-item private-section"><a class="nav-link" href="#findings">Key Findings</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- HEADER -->
+  <header class="py-5 bg-body-tertiary border-bottom">
+    <div class="container text-center">
+      <h1 id="main-title" class="display-5 mb-3">
+        Visualizing Conflict and Human Suffering through Data
+      </h1>
+      <p class="subtitle lead mb-0">
+        <strong>BUGBusters</strong><span class="d-none d-sm-inline">&nbsp;—&nbsp;</span>
+        <span>
+          <span class="d-block d-sm-inline mb-1 mb-sm-0">Isabella Tagliafico</span><span class="d-none d-sm-inline">, </span>
+          <span class="d-block d-sm-inline mb-1 mb-sm-0">Luca Ninivaggi</span><span class="d-none d-sm-inline">, </span>
+          <span class="d-block d-sm-inline mb-1 mb-sm-0">Flavio Barrara Stefani</span>
+        </span>
+      </p>
+    </div>
+  </header>
+
+
+
+  <!-- Authentication Section -->
+  <section id="api-auth" class="py-5 auth-status">
+    <div class="container">
+      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
+        <div class="mb-4">
+          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Access Private Content</h2>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-8 col-lg-6">
+            <div class="p-4 border rounded-3">
+              <div id="auth-status" class="alert alert-info mb-3">Enter your GitHub Personal Access Token to view additional content</div>
+              <div class="mb-3">
+                <input type="password" id="github-token" class="form-control" 
+                       placeholder="Enter your GitHub Personal Access Token">
+              </div>
+              <div class="text-center">
+                <button onclick="validateToken()" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparing_categories" class="py-5 private-section">
+    <div class="container">
+      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
+        <div class="mb-4">
+          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Comparison charts</h2>
+        </div>
+        <!--
+        <div class="p-4 border rounded-3 " id="bar_chart_container">
+          <div class="chart-wrapper text-center" id="bar_chart">
+            <div class="mb-4">
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Bar chart</h3>
+            </div>
+            <div id="bar_chart_svg" class="mx-auto"></div>
+            <div id="bar_chart_legend" class="legend mt-3"></div>
+          </div>
+          <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
+      -->
+
+        <div class="p-4 border rounded-3 " id="waffle_chart_container">
+          <div class="chart-wrapper text-center" id="waffle_chart">
+            <div class="mb-4">
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Waffle chart - Weapon Usage</h3>
+            </div>
+            <div id="waffle_chart_svg" class="mx-auto"></div>
+            <div id="waffle_chart_legend" class="legend mt-3"></div>
+          </div>
+          <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
