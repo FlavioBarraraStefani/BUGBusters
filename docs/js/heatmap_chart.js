@@ -9,11 +9,23 @@ function drawHeatmapChart(rawData) {
         // --- Legend selectors ---
         const legendDiv = d3.select("#heatmap_chart_legend");
         legendDiv.selectAll("*").remove();
-        legendDiv.append("div").html(`<label>Row order: <select id="row-order">
-      <option value="name">Name</option><option value="total">Total</option></select></label>`);
-        legendDiv.append("div").html(`<label>Column order: <select id="col-order">
-      <option value="name">Name</option><option value="total">Total</option></select></label>`);
 
+        legendDiv.html(`
+  <div class="legend-select">
+    <label for="row-order" class="legend-label">Perpetrators order:</label>
+    <select id="row-order" class="legend-dropdown">
+      <option value="name">Name</option>
+      <option value="total">Total</option>
+    </select>
+  </div>
+  <div class="legend-select">
+    <label for="col-order" class="legend-label">Victims order:</label>
+    <select id="col-order" class="legend-dropdown">
+      <option value="name">Name</option>
+      <option value="total">Total</option>
+    </select>
+  </div>
+`);
         const tooltip = d3.select("#heatmap_chart_tooltip");
 
         // --- Original row & column names ---
@@ -113,44 +125,62 @@ function drawHeatmapChart(rawData) {
 
             // --- Column labels ---
             const colLabels = mainMerge.selectAll("text.col-label").data(colNames, d => d);
+
             colLabels.enter()
                 .append("text")
                 .attr("class", "col-label")
-                .attr("x", 0).attr("y", 0)
-                .attr("text-anchor", "end")
-                .attr("dominant-baseline", "middle")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("text-anchor", "middle")        // center horizontally
+                .attr("dominant-baseline", "hanging") // position below
                 .text(d => d)
                 .merge(colLabels)
                 .transition().duration(800)
-                .attr("transform", (_, i) => `translate(${i * cellWidth + cellWidth / 2}, ${cellHeight * numRows + 18}) rotate(-45)`);
+                .attr("x", (_, i) => i * cellWidth + cellWidth / 2)
+                .attr("y", cellHeight * numRows + 6); // 6px below heatmap
+
             colLabels.exit().remove();
+
 
             // --- Tooltip & dimming ---
             function clearHighlight() {
                 mainMerge.selectAll("rect.cell").attr("opacity", 1);
                 mainMerge.selectAll("text").attr("opacity", 1);
+                mainMerge.selectAll("text").attr("font-weight", "normal");
                 tooltip.style("opacity", 0);
             }
 
             function highlightCell(d, event) {
-                const r = d.rName, c = d.cName;
-                const rIndex = rowNames.indexOf(r);
-                const cIndex = colNames.indexOf(c);
                 const val = d.value;
-                const rTotal = d3.sum(matrix[rIndex]);
-                const cTotal = d3.sum(matrix.map(row => row[cIndex]));
 
+                // row/col totals
+                const rTotal = d3.sum(matrix[rowNames.indexOf(d.rName)]);
+                const cTotal = d3.sum(matrix.map(row => row[colNames.indexOf(d.cName)]));
+
+                // dim all
                 mainMerge.selectAll("rect.cell").attr("opacity", 0.12);
                 mainMerge.selectAll("text").attr("opacity", 0.12);
 
-                mainMerge.selectAll("rect.cell").filter(cd => cd.rName === r || cd.cName === c).attr("opacity", 1);
-                mainMerge.selectAll("text.row-label").filter((_, i) => i === rIndex).attr("opacity", 1);
-                mainMerge.selectAll("text.col-label").filter((_, i) => i === cIndex).attr("opacity", 1);
+                // highlight cells of same row/col
+                mainMerge.selectAll("rect.cell")
+                    .filter(cd => cd.rName === d.rName || cd.cName === d.cName)
+                    .attr("opacity", 1);
+
+                // highlight labels by **data name**, not index
+                mainMerge.selectAll("text.row-label")
+                    .filter(label => label === d.rName)
+                    .attr("opacity", 1)
+                    .attr("font-weight", "bold");
+
+                mainMerge.selectAll("text.col-label")
+                    .filter(label => label === d.cName)
+                    .attr("opacity", 1)
+                    .attr("font-weight", "bold");
 
                 tooltip.style("opacity", 1)
-                    .html(`<strong>Value:</strong> ${val}<br>
-                 <strong>Row total:</strong> ${rTotal}<br>
-                 <strong>Col total:</strong> ${cTotal}`)
+                    .html(`<strong>Count:</strong> ${val}<br>
+                        <strong>Total by perpetrators:</strong> ${rTotal}<br>
+                        <strong>Total by victims:</strong> ${cTotal}`)
                     .style("left", (event.pageX + 12) + "px")
                     .style("top", (event.pageY + 12) + "px");
             }
