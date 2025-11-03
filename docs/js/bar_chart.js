@@ -185,7 +185,7 @@ function drawBarChart(rawData) {
     bars
       .on("mouseenter", function (event, d) {
         // Tooltip con mini-legend colorata
-        tooltip.transition().duration(150).style("opacity", 0.9);
+        tooltip.transition().duration(transitionDuration).style("opacity", 0.9);
         tooltip.html(`
           <div style="font-weight:600;margin-bottom:6px;">${d.country}</div>
           <div style="display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;">
