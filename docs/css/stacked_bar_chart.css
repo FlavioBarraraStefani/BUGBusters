@@ -1,1 +1,55 @@
+/* STACKED BAR CHART GLOBAL SCOPE */
+#stacked_bar_chart_container svg text {
+  font-size: 12px;
+  fill: #222;
+}
+
+/* legend */
+#stacked_bar_chart_container .legend span {
+  font-size: 13px;
+  vertical-align: middle;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease-in-out;
+}
+
+#stacked_bar_chart_container .legend span.active {
+  font-weight: 700;
+  background: rgba(0,0,0,0.08);
+  text-decoration: underline;
+}
+
+/* tooltip */
+#stacked_bar_chart_container .tooltip {
+  position: absolute;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #333;
+  border-radius: 6px;
+  pointer-events: none;
+  font-size: 12px;
+  color: #222;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  z-index: 99999;
+  transition: opacity 0.1s ease-in-out;
+}
+
+/* interactive highlight */
+#stacked_bar_chart_container rect {
+  cursor: pointer;
+  transition: opacity 0.15s ease-in-out;
+}
+
+#stacked_bar_chart_container g.layer {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* better center wrapper consistent with bootstrap spacing */
+#stacked_bar_chart_container .chart-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 
