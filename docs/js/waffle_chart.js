@@ -19,7 +19,7 @@ function drawWaffleChart(rawData) {
     // --- Adjust grid ---
     const cols = 20, rows = 5, totalCells = cols * rows;
     const containerWidth = chartContainer.node().getBoundingClientRect().width;
-    const cellSize = containerWidth / cols * 0.95;
+    const cellSize = containerWidth / cols ;
     const height = rows * cellSize * 1.1;
 
     const svg = chartContainer.append("svg")
@@ -164,3 +164,4 @@ cells
       });
   })();
 }
+
