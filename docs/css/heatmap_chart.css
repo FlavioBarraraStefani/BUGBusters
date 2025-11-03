@@ -1,0 +1,105 @@
+/* Scoped styles - very specific to the container ID */
+#heatmap_chart_container {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+#heatmap_chart_container .chart-wrapper {
+    position: relative;
+}
+
+#heatmap_chart_container #heatmap_chart_svg {
+    width: 100%;
+}
+
+/* tooltip */
+#heatmap_chart_container #heatmap_chart_tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-size: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    line-height: 1.2;
+    transform: translate(8px, 8px);
+    z-index: 50;
+}
+
+/* labels */
+#heatmap_chart_container .row-label,
+#heatmap_chart_container .col-label {
+    font-size: 12px;
+    fill: #222;
+    cursor: default;
+}
+
+/* dimmed state helper */
+#heatmap_chart_container .dimmed {
+    opacity: 0.12;
+}
+
+#heatmap_chart_container .highlight {
+    opacity: 1;
+}
+
+/* cell style */
+#heatmap_chart_container .cell {
+    stroke: #fff;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+
+/* marginal bars */
+#heatmap_chart_container .marginal-bar {
+    fill: steelblue;
+    opacity: 0.85;
+}
+
+/* axis label small */
+#heatmap_chart_container .axis-label {
+    font-size: 11px;
+    fill: #333;
+}
+
+/* legend */
+/* Legend fixed to the right, vertically centered */
+/* Legend fixed to the right, vertically centered */
+#heatmap_chart_container .legend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    color: #212529;
+    min-width: 180px;
+}
+
+#heatmap_chart_container .legend-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 6px 0;
+}
+
+#heatmap_chart_container .legend-label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+#heatmap_chart_container .legend-dropdown {
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    min-width: 120px;
+    text-align: center;
+}

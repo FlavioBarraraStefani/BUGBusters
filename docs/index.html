@@ -62,7 +62,7 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
-          <li class="nav-item private-section"><a class="nav-link" href="#comparing_categories">Data Analysis</a></li>
+          <li class="nav-item private-section"><a class="nav-link" href="#comparing_categories">Comparison charts</a></li>
         </ul>
       </div>
     </div>
@@ -204,7 +204,7 @@
         <div class="p-4 border rounded-3" id="stacked_bar_chart_container">
           <div class="chart-wrapper text-center" id="stacked_bar_chart">
             <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Bar chart</h3>
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Stacked Bar chart</h3>
             </div>
             <div id="stacked_bar_chart_svg" class="mx-auto"></div>
             <div id="stacked_bar_chart_legend" class="legend mt-3"></div>
@@ -224,13 +224,15 @@
           <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
 
-        <div class="p-4 border rounded-3 " id="heatmap_chart_container">
-          <div class="chart-wrapper text-center" id="heatmap_chart">
-            <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Heatmap chart</h3>
+        <div class="p-4 border rounded-3" id="heatmap_chart_container">
+          <div class="d-flex flex-column" id="heatmap_chart">
+            <div class="mb-4 text-center">
+              <h3 class="section-heading h3 text-body-emphasis mb-0">Heatmap chart</h3>
             </div>
-            <div id="heatmap_chart_svg" class="mx-auto"></div>
-            <div id="heatmap_chart_legend" class="legend mt-3"></div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div id="heatmap_chart_svg" class="flex-grow-1"></div>
+              <div id="heatmap_chart_legend" class="legend ms-3"></div>
+            </div>
           </div>
           <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
@@ -298,5 +300,8 @@
   </footer>
 </body>
 </html>
+
+
+
 
 
