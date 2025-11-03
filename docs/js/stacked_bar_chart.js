@@ -9,9 +9,9 @@ function drawStackedBarChart(rawData) {
     svgContainer.selectAll("*").remove();
     legendContainer.selectAll("*").remove();
 
-    const margin = { top:50, right:150, bottom:50, left:200 };
-    const width  = 1000 - margin.left - margin.right;
-    const height = 650 - margin.top - margin.bottom;
+    const margin = { top: 10, right: 24, bottom: 42, left: 170 };
+    const width  = svgContainer.node().getBoundingClientRect().width - margin.left - margin.right;
+    const height = 450 - margin.top - margin.bottom;
 
     const svg = svgContainer.append("svg")
       .attr("width", width + margin.left + margin.right)
