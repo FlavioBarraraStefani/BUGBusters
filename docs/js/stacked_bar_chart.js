@@ -9,9 +9,9 @@ function drawStackedBarChart(rawData) {
     svgContainer.selectAll("*").remove();
     legendContainer.selectAll("*").remove();
 
-    const margin = { top:40, right:140, bottom:40, left:180 };
-    const width  = 800 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const margin = { top:50, right:150, bottom:50, left:200 };
+    const width  = 1000 - margin.left - margin.right;
+    const height = 650 - margin.top - margin.bottom;
 
     const svg = svgContainer.append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -35,10 +35,18 @@ function drawStackedBarChart(rawData) {
       .range([0,width]);
 
     // Axes
-    svg.append("g").call(d3.axisLeft(y));
+    svg.append("g")
+      .call(d3.axisLeft(y))
+      .selectAll("text")
+      .style("font-size", "16px")
+      .style("font-weight", "700");
+    
     svg.append("g")
       .attr("transform",`translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d=>d+"%"));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d=>d+"%"))
+      .selectAll("text")
+      .style("font-size", "15px")
+      .style("font-weight", "600");
 
     const LITERAL_GREY = "#bfbfbf";
 
@@ -76,67 +84,97 @@ function drawStackedBarChart(rawData) {
           .attr("width", d => x(d.x1 - d.x0))
           .attr("height", y.bandwidth())
           .on("mouseover", function(event,d){
+            // Rendere tutti gli altri grigi
+            svg.selectAll("rect")
+              .style("fill", function(r) {
+                return (r === d) ? color(key) : LITERAL_GREY;
+              });
+
             tooltip
               .style("opacity",1)
-              .html(`${d.region_txt}<br>${key}: ${(d.x1-d.x0).toFixed(1)}%`)
+              .html(`
+                <div style="background:#fff; padding:16px 20px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e8e8e8;">
+                  <div style="color:#666; font-size:12px; font-weight:500; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">${d.region_txt}</div>
+                  <div style="display:flex; align-items:center; margin-bottom:6px;">
+                    <span style="background:${color(key)}; width:12px; height:12px; border-radius:2px; display:inline-block; margin-right:10px;"></span>
+                    <span style="color:#333; font-size:15px; font-weight:600;">${key}</span>
+                  </div>
+                  <div style="color:#000; font-size:28px; font-weight:700; letter-spacing:-0.5px;">${(d.x1-d.x0).toFixed(1)}%</div>
+                </div>
+              `)
               .style("left",(event.pageX+10)+"px")
               .style("top",(event.pageY-20)+"px");
           })
-          .on("mouseout", () => tooltip.style("opacity",0));
+          .on("mouseout", function() {
+            // Ripristina colori originali
+            allKeys.forEach(k => {
+              svg.select(`g[data-key='${k}']`).selectAll("rect")
+                .style("fill", color(k));
+            });
+            tooltip.style("opacity",0);
+          });
       });
     }
 
     drawBars(currentData);
 
-    // Legend
-    // Legend
-legendContainer.selectAll("span")
-  .data(allKeys)
-  .enter()
-  .append("span")
-  .style("display","inline-block")
-  .style("margin-right","12px")
-  .style("cursor","pointer")
-  .html(d=>`<span style="background:${color(d)};width:14px;height:14px;display:inline-block;margin-right:4px;"></span>${d}`)
-  .on("click", function(event, key){
-    const isActive = d3.select(this).classed("active");
-    legendContainer.selectAll("span").classed("active", false);
+    // Legend with tooltip
+    legendContainer.selectAll("span")
+      .data(allKeys)
+      .enter()
+      .append("span")
+      .style("display","inline-block")
+      .style("margin-right","16px")
+      .style("cursor","pointer")
+      .style("font-size","14px")
+      .html(d=>`<span style="background:${color(d)};width:16px;height:16px;display:inline-block;margin-right:6px;border-radius:2px;vertical-align:middle;"></span>${d}`)
+      .on("mouseover", function(event, key){
+        const totalPercent = rawData.reduce((sum, row) => sum + (row[key] || 0), 0) / rawData.length;
+        tooltip
+          .style("opacity",1)
+          .html(`
+            <div style="background:#fff; padding:14px 18px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e8e8e8;">
+              <div style="display:flex; align-items:center; margin-bottom:6px;">
+                <span style="background:${color(key)}; width:12px; height:12px; border-radius:2px; display:inline-block; margin-right:10px;"></span>
+                <span style="color:#333; font-size:15px; font-weight:600;">${key}</span>
+              </div>
+              <div style="color:#000; font-size:24px; font-weight:700;">Media: ${totalPercent.toFixed(1)}%</div>
+            </div>
+          `)
+          .style("left",(event.pageX+10)+"px")
+          .style("top",(event.pageY-20)+"px");
+      })
+      .on("mouseout", () => tooltip.style("opacity",0))
+      .on("click", function(event, key){
+        const isActive = d3.select(this).classed("active");
+        legendContainer.selectAll("span").classed("active", false);
 
-    if(isActive){
-      // deselect: restore original
-      currentData = computeStackedPositions(rawData, allKeys);
-
-      // restore colors
-      allKeys.forEach(k => {
-        svg.select(`g[data-key='${k}']`).selectAll("rect")
-          .transition().duration(500)
-          .attr("x", d => x(d.x0))
-          .attr("width", d => x(d.x1 - d.x0))
-          .style("fill", color(k));
+        if(isActive){
+          currentData = computeStackedPositions(rawData, allKeys);
+          allKeys.forEach(k => {
+            svg.select(`g[data-key='${k}']`).selectAll("rect")
+              .transition().duration(500)
+              .attr("x", d => x(d.x0))
+              .attr("width", d => x(d.x1 - d.x0))
+              .style("fill", color(k));
+          });
+        } else {
+          d3.select(this).classed("active", true);
+          currentData = rawData.map(row => {
+            const idx = allKeys.indexOf(key);
+            const order = allKeys.slice(idx).concat(allKeys.slice(0, idx));
+            return computeStackedPositions([row], order)[0];
+          });
+          allKeys.forEach(k => {
+            svg.select(`g[data-key='${k}']`).selectAll("rect")
+              .data(currentData.map(d => ({ region_txt: d.region_txt, ...d[k] })))
+              .transition().duration(500)
+              .attr("x", d => x(d.x0))
+              .attr("width", d => x(d.x1 - d.x0))
+              .style("fill", k === key ? color(k) : LITERAL_GREY);
+          });
+        }
       });
-
-    } else {
-      d3.select(this).classed("active", true);
-
-      // roll selected key to the left
-      currentData = rawData.map(row => {
-        const idx = allKeys.indexOf(key);
-        const order = allKeys.slice(idx).concat(allKeys.slice(0, idx));
-        return computeStackedPositions([row], order)[0];
-      });
-
-      // Animate bars and set colors: selected keeps color, others gray
-      allKeys.forEach(k => {
-        svg.select(`g[data-key='${k}']`).selectAll("rect")
-          .data(currentData.map(d => ({ region_txt: d.region_txt, ...d[k] })))
-          .transition().duration(500)
-          .attr("x", d => x(d.x0))
-          .attr("width", d => x(d.x1 - d.x0))
-          .style("fill", k === key ? color(k) : "#bfbfbf"); // gray out others
-      });
-    }
-  });
-
 
   })();
 }
