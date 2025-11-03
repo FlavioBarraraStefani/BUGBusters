@@ -1,1 +1,104 @@
+#multiple_bar_chart_container .tooltip {
+  position: absolute;     /* overlay */
+  pointer-events: none;
+  opacity: 0;             /* parte nascosto */
+  z-index: 1000;          /* sopra a tutto */
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
 
+#multiple_bar_chart_legend .legend-item {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:0.95rem; cursor:pointer; user-select:none;
+}
+#multiple_bar_chart_legend .legend-swatch {
+  width:14px; height:14px; border-radius:3px; display:inline-block;
+}
+
+/* Scoped CSS per multiple bar chart */
+#multiple_bar_chart_container {
+  --axis-color: #111827; /* colore testo assi */
+  --grid-color: #e5e7eb; /* linee griglia */
+}
+
+/* SVG responsive */
+#multiple_bar_chart_container #multiple_bar_chart_svg svg,
+#multiple_bar_chart_container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+}
+
+/* Assi */
+#multiple_bar_chart_container .x-axis text,
+#multiple_bar_chart_container .y-axis text {
+  font-size: 1rem;       /* aumentato */
+  font-weight: 500;      /* più leggibile */
+  fill: var(--axis-color);
+}
+
+#multiple_bar_chart_container .x-axis path,
+#multiple_bar_chart_container .y-axis path,
+#multiple_bar_chart_container .x-axis line,
+#multiple_bar_chart_container .y-axis line {
+  stroke: var(--grid-color);
+  stroke-width: 1;
+}
+
+/* Griglia orizzontale */
+#multiple_bar_chart_container .grid line {
+  stroke: var(--grid-color);
+  opacity: 0.6;
+}
+
+/* Barre */
+#multiple_bar_chart_container .bar {
+  cursor: pointer;
+  transition: fill 0.3s ease, opacity 0.3s ease;
+}
+
+/* Tooltip "volante" */
+#multiple_bar_chart_container .tooltip {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  line-height: 1.4;
+}
+
+/* Legenda sotto */
+#multiple_bar_chart_legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#multiple_bar_chart_legend .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+#multiple_bar_chart_legend .legend-item span:first-child {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
