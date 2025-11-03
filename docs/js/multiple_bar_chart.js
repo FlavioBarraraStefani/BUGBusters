@@ -245,27 +245,35 @@ function drawMultipleBarChart(rawData) {
         svg.select(".y-axis").transition().duration(450)
           .call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
 
-        // Larghezza banda del gruppo e larghezza barra singola
+        // centratura nella banda del gruppo (x0)
         const bw = x0.bandwidth();
         const singleW = bw * 0.6;
-        const centerX = (bw - singleW) / 2; // <— centratura corretta dentro la banda del gruppo
+        const centerX = (bw - singleW) / 2;
 
-        bars.transition().duration(450)
-          // In single view NON usiamo più x1(d.key): centriamo sempre nella banda del gruppo
-          .attr("x", () => centerX)
+        // 1) rimuovi eventuali vecchi handler di hover e disabilita tutto
+        bars.on(".single", null)
+          .style("pointer-events", "none");
+
+        // 2) transizione verso single view (solo la serie attiva visibile)
+        const t = bars.transition().duration(450)
+          .attr("x", () => centerX)             // NB: ignoriamo x1, centriamo nella banda
           .attr("width", () => singleW)
           .attr("y", d => y(d.value))
           .attr("height", d => (height - margin.bottom) - y(d.value))
           .attr("fill", sColor)
-          .style("opacity", d => (d.key === sKey ? 1 : 0))
-          .on("end", function(_, d) {
-            // solo la serie attiva è interattiva
-            d3.select(this).style("pointer-events", d.key === sKey ? "auto" : "none");
-          });
+          .style("opacity", d => (d.key === sKey ? 1 : 0));
+
+        // 3) al termine: attiva hover SOLO sulla serie attiva e ripristina tooltip volante
+        t.end().then(() => {
+          // abilita eventi solo sulla serie attiva
+          bars.style("pointer-events", d => d.key === sKey ? "auto" : "none");
+          // riattacca gli handler (usa le tue showTooltip/moveTooltip/hideTooltip)
+          enableSingleHover(sKey, sColor);
+        });
 
         // Evidenziazione legenda
         legendItems.style("opacity", d => (d.key === sKey ? 1 : 0.4))
-                  .style("font-weight", d => (d.key === sKey ? "700" : "500"));
+          .style("font-weight", d => (d.key === sKey ? "700" : "500"));
       }
     }
   })();
