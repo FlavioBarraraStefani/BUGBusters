@@ -1,0 +1,112 @@
+#bar_chart_container .tooltip {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  background: rgba(20,22,28,0.95); 
+  color: #e6e6e6;
+  border: 1px solid #2a2d34;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+/* Scoped CSS for bar_chart_container */
+#bar_chart_container {
+  overflow-x: hidden;
+  --axis-color: #111827; /* testo assi */
+  --grid-color: #e5e7eb; /* linee griglia */
+  --bar-gray: #c7c7c7;
+}
+
+/* SVG responsive */
+#bar_chart_container #bar_chart_svg svg,
+#bar_chart_container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+}
+
+/* Assi */
+#bar_chart_container .x-axis text,
+#bar_chart_container .y-axis text {
+  font-size: 1rem;
+  fill: var(--axis-color);
+  font-weight: 500;
+}
+
+#bar_chart_container .x-axis path,
+#bar_chart_container .y-axis path,
+#bar_chart_container .x-axis line,
+#bar_chart_container .y-axis line {
+  stroke: var(--grid-color);
+}
+
+#bar_chart_container .grid line {
+  stroke: var(--grid-color);
+  opacity: 0.6;
+}
+
+/* Barre */
+#bar_chart_container .bar {
+  cursor: pointer;
+  transition: fill 0.3s ease, opacity 0.3s ease;
+}
+
+#bar_chart_container .bar:hover {
+  opacity: 0.95;
+  filter: brightness(1.05);
+}
+
+/* Dimmed effect (per le barre non attive) */
+#bar_chart_container .dimmed {
+  opacity: 0.25 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* Tooltip */
+#bar_chart_container .tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  pointer-events: none;
+  font-size: 0.9rem;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  line-height: 1.4;
+  max-width: 260px;
+}
+
+/* Legend (se in futuro verrà aggiunta) */
+#bar_chart_container .legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+#bar_chart_container .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  cursor: default;
+  white-space: nowrap;
+}
+
+#bar_chart_container .legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+#bar_chart_container .stacked-segment {
+  pointer-events: none;   /* ulteriore garanzia */
+  transition: fill 0.3s ease, opacity 0.3s ease;
+}
