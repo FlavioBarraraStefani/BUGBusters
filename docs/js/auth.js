@@ -112,7 +112,8 @@ const loadChart = (function() {
 // Function to load all charts after authentication
 // -------------------------------
 async function initChartsAfterAuth() {
+  await loadChart("comparing_categories/heatmap_chart.json", drawBarChart, "bar_chart_container");
   await loadChart("comparing_categories/waffle_chart.json", drawWaffleChart, "waffle_chart_container" );
-  //...
+  await loadChart("comparing_categories/heatmap_chart.json", drawHeatmapChart, "heatmap_chart_container" );
 }
 

@@ -24,10 +24,18 @@
 
  
   <!--comparing_categories -->
-  
+
+    <!--BAR CHART -->
+    <link rel="stylesheet" href="css/bar_chart.css" />
+    <script src="js/bar_chart.js" defer></script>
+
     <!--WAFFLE CHART -->
-  <link rel="stylesheet" href="css/waffle_chart.css" />
-  <script src="js/waffle_chart.js" defer></script>
+    <link rel="stylesheet" href="css/waffle_chart.css" />
+    <script src="js/waffle_chart.js" defer></script>
+
+    <!--HEATMAP CHART -->
+    <link rel="stylesheet" href="css/heatmap_chart.css" />
+    <script src="js/heatmap_chart.js" defer></script>
 
 
 </head>
@@ -50,9 +58,7 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
-          <li class="nav-item private-section"><a class="nav-link" href="#data-analysis">Data Analysis</a></li>
-          <li class="nav-item private-section"><a class="nav-link" href="#visualizations">Visualizations</a></li>
-          <li class="nav-item private-section"><a class="nav-link" href="#findings">Key Findings</a></li>
+          <li class="nav-item private-section"><a class="nav-link" href="#comparing_categories">Data Analysis</a></li>
         </ul>
       </div>
     </div>
@@ -179,8 +185,8 @@
         <div class="mb-4">
           <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Comparison charts</h2>
         </div>
-        <!--
-        <div class="p-4 border rounded-3 " id="bar_chart_container">
+
+        <div class="p-4 border rounded-3" id="bar_chart_container">
           <div class="chart-wrapper text-center" id="bar_chart">
             <div class="mb-4">
               <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Bar chart</h3>
@@ -190,9 +196,9 @@
           </div>
           <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
-      -->
 
-        <div class="p-4 border rounded-3 " id="waffle_chart_container">
+
+        <div class="p-4 border rounded-3" id="waffle_chart_container">
           <div class="chart-wrapper text-center" id="waffle_chart">
             <div class="mb-4">
               <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Waffle chart - Weapon Usage</h3>
@@ -202,6 +208,18 @@
           </div>
           <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
+
+        <div class="p-4 border rounded-3 " id="heatmap_chart_container">
+          <div class="chart-wrapper text-center" id="heatmap_chart">
+            <div class="mb-4">
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Heatmap chart</h3>
+            </div>
+            <div id="heatmap_chart_svg" class="mx-auto"></div>
+            <div id="heatmap_chart_legend" class="legend mt-3"></div>
+          </div>
+          <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
+
       </div>
     </div>
   </section>

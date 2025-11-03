@@ -8,8 +8,8 @@ function drawWaffleChart(rawData) {
 
     const data = major;
     const total = d3.sum(data, d => d.value);
-    console.log("Waffle Chart Data:", data);
-
+    
+    //start plot
     const tooltip = d3.select("#waffle_chart_tooltip");
     const chartContainer = d3.select("#waffle_chart_svg");
     const legendContainer = d3.select("#waffle_chart_legend");
