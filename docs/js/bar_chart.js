@@ -174,7 +174,7 @@ function drawBarChart(rawData) {
     // === Interazioni (attivate SOLO ora) ===
     const fmt = d3.format(",");
     const gray = "#c7c7c7";
-    const transitionDuration = 300;
+    const transitionDuration = 100;
 
     const sw = (c) =>
       `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${c};margin-right:6px;vertical-align:middle;"></span>`;
@@ -220,4 +220,5 @@ function drawBarChart(rawData) {
       });
 
   })();
+
 }
