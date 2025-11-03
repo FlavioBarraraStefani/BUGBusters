@@ -224,13 +224,15 @@
           <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
 
-        <div class="p-4 border rounded-3 " id="heatmap_chart_container">
-          <div class="chart-wrapper text-center" id="heatmap_chart">
-            <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Heatmap chart</h3>
+        <div class="p-4 border rounded-3" id="heatmap_chart_container">
+          <div class="d-flex flex-column" id="heatmap_chart">
+            <div class="mb-4 text-center">
+              <h3 class="section-heading h3 text-body-emphasis mb-0">Heatmap chart</h3>
             </div>
-            <div id="heatmap_chart_svg" class="mx-auto"></div>
-            <div id="heatmap_chart_legend" class="legend mt-3"></div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div id="heatmap_chart_svg" class="flex-grow-1"></div>
+              <div id="heatmap_chart_legend" class="legend ms-3"></div>
+            </div>
           </div>
           <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
@@ -298,6 +300,7 @@
   </footer>
 </body>
 </html>
+
 
 
 
