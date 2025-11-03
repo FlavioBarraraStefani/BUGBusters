@@ -116,6 +116,8 @@ async function initChartsAfterAuth() {
   await loadChart("comparing_categories/full_stacked_chart.json", drawStackedBarChart, "stacked_bar_chart_container" );
   await loadChart("comparing_categories/waffle_chart.json", drawWaffleChart, "waffle_chart_container" );
   await loadChart("comparing_categories/heatmap_chart.json", drawHeatmapChart, "heatmap_chart_container" );
+  await loadChart("comparing_categories/multiple_bar_chart.json", drawMultipleBarChart, "multiple_bar_chart_container" );
 }
+
 
 
