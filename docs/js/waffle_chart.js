@@ -122,7 +122,7 @@ cells
       .enter()
       .append("div")
       .attr("class", "legend-item")
-      .each(function(d) {
+      .each(function (d) {
         const item = d3.select(this);
         item.html(getSVG(d.icon));
         const svgEl = this.querySelector("svg");
@@ -140,6 +140,27 @@ cells
           svgEl.style.verticalAlign = "middle";
         }
         item.append("span").text(d.name);
+
+        // --- Tooltip on legend items ---
+        item
+          .on("mouseover", (event) => {
+            const percent = ((d.value / total) * 100).toFixed(1);
+            tooltip.transition().duration(150).style("opacity", 0.9);
+            tooltip.html(`<b>${d.name}</b><br>${percent}% of total<br>${d.value.toLocaleString()} incidents`)
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 20) + "px");
+
+            // Dim cells not belonging to this category
+            cells.classed("dimmed", x => x.name !== d.name);
+          })
+          .on("mousemove", (event) => {
+            tooltip.style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 20) + "px");
+          })
+          .on("mouseout", () => {
+            tooltip.transition().duration(300).style("opacity", 0);
+            cells.classed("dimmed", false);
+          });
       });
   })();
 }

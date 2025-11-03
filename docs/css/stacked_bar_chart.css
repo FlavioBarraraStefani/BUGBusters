@@ -1,46 +1,32 @@
-/* ==============================
-   STACKED BAR CHART GLOBAL SCOPE
-   ============================== */
-#stacked_bar_chart_container {
-  width: 100%;
-  max-width: 1000px; /* puoi adattare al layout */
-  margin: 0 auto;
+/* wrapper flessibile */
+#stacked_bar_chart_container .chart-wrapper {
   position: relative;
-  font-family: sans-serif;
-}
-
-#stacked_bar_chart_container svg {
-  width: 100%;
-  height: auto; /* mantiene proporzioni */
-  display: block;
-}
-
-#stacked_bar_chart_container svg text {
-  font-size: 1rem; /* scala meglio con font-base */
-  fill: #222;
-  transition: font-size 0.2s ease-in-out;
-}
-
-/* ==============================
-   LEGEND
-   ============================== */
-#stacked_bar_chart_container .legend {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 10px;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;         
+  max-width: 100%;      
 }
 
+/* svg responsive */
+#stacked_bar_chart_container svg {
+  width: 100%;           
+  height: auto;          
+}
+
+/* stacked bar chart global scope */
+#stacked_bar_chart_container svg text {
+  font-size: 12px;
+  fill: #222;
+}
+
+/* legend */
 #stacked_bar_chart_container .legend span {
-  font-size: 0.85rem;
+  font-size: 13px;
   vertical-align: middle;
-  padding: 4px 6px;
+  padding: 2px 4px;
   border-radius: 4px;
   transition: all 0.15s ease-in-out;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
 }
 
 #stacked_bar_chart_container .legend span.active {
@@ -49,87 +35,27 @@
   text-decoration: underline;
 }
 
-/* ==============================
-   TOOLTIP
-   ============================== */
+/* tooltip */
 #stacked_bar_chart_container .tooltip {
   position: absolute;
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: #ffffff;
   border: 1px solid #333;
   border-radius: 6px;
   pointer-events: none;
-  font-size: 0.85rem;
+  font-size: 12px;
   color: #222;
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   z-index: 99999;
   transition: opacity 0.1s ease-in-out;
 }
 
-/* ==============================
-   INTERACTIVE HIGHLIGHT
-   ============================== */
+/* interactive highlight */
 #stacked_bar_chart_container rect {
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
 }
 
 #stacked_bar_chart_container g.layer {
-  transition: all 0.15s ease-in-out;
-}
-
-/* ==============================
-   CHART WRAPPER
-   ============================== */
-#stacked_bar_chart_container .chart-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* ==============================
-   MEDIA QUERIES PER RESPONSIVE
-   ============================== */
-@media (max-width: 1200px) {
-  #stacked_bar_chart_container svg text {
-    font-size: 0.9rem;
-  }
-  #stacked_bar_chart_container .tooltip {
-    font-size: 0.8rem;
-    padding: 5px 8px;
-  }
-  #stacked_bar_chart_container .legend span {
-    font-size: 0.8rem;
-    padding: 3px 5px;
-  }
-}
-
-@media (max-width: 768px) {
-  #stacked_bar_chart_container svg text {
-    font-size: 0.75rem;
-  }
-  #stacked_bar_chart_container .tooltip {
-    font-size: 0.7rem;
-    padding: 4px 6px;
-  }
-  #stacked_bar_chart_container .legend span {
-    font-size: 0.7rem;
-    padding: 2px 4px;
-  }
-}
-
-@media (max-width: 480px) {
-  #stacked_bar_chart_container svg text {
-    font-size: 0.65rem;
-  }
-  #stacked_bar_chart_container .tooltip {
-    font-size: 0.6rem;
-    padding: 3px 5px;
-  }
-  #stacked_bar_chart_container .legend span {
-    font-size: 0.6rem;
-    padding: 2px 3px;
-  }
+  transition: opacity 0.15s ease-in-out;
 }
