@@ -63,18 +63,43 @@
 }
 
 /* legend */
+/* Legend fixed to the right, vertically centered */
+/* Legend fixed to the right, vertically centered */
 #heatmap_chart_container .legend {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     gap: 8px;
-    color: #333;
-    font-size: 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    color: #212529;
+    min-width: 180px;
 }
 
-#heatmap_chart_container .legend .swatch {
-    width: 120px;
-    height: 10px;
-    border-radius: 2px;
-    background: linear-gradient(to right, #ffffcc, #ffeda0, #feb24c, #f03b20);
+#heatmap_chart_container .legend-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 6px 0;
+}
+
+#heatmap_chart_container .legend-label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+#heatmap_chart_container .legend-dropdown {
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    min-width: 120px;
+    text-align: center;
 }
