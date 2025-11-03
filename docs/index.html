@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="css/bar_chart.css" />
     <script src="js/bar_chart.js" defer></script>
 
-    <!--BAR CHART -->
+    <!--STACKED BAR CHART -->
     <link rel="stylesheet" href="css/stacked_bar_chart.css" />
     <script src="js/stacked_bar_chart.js" defer></script>
 
@@ -41,6 +41,9 @@
     <link rel="stylesheet" href="css/heatmap_chart.css" />
     <script src="js/heatmap_chart.js" defer></script>
 
+    <!--MULTIPLE BAR CHART -->
+    <link rel="stylesheet" href="css/multiple_bar_chart.css" />
+    <script src="js/multiple_barheatmap_chart.js" defer></script>
 
 </head>
 <body>
@@ -217,7 +220,7 @@
         <div class="p-4 border rounded-3" id="waffle_chart_container">
           <div class="chart-wrapper text-center" id="waffle_chart">
             <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Waffle chart - Weapon Usage</h3>
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Waffle chart</h3>
             </div>
             <div id="waffle_chart_svg" class="mx-auto"></div>
             <div id="waffle_chart_legend" class="legend mt-3"></div>
@@ -236,6 +239,19 @@
             </div>
           </div>
           <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
+
+        <div class="p-4 border rounded-3" id="multiple_bar_chart_container">
+          <div class="d-flex flex-column" id="multiple_bar_chart">
+            <div class="mb-4 text-center">
+              <h3 class="section-heading h3 text-body-emphasis mb-0">Multiple Bar chart</h3>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div id="multiple_bar_chart_svg" class="flex-grow-1"></div>
+              <div id="multiple_bar_chart_legend" class="legend ms-3"></div>
+            </div>
+          </div>
+          <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
 
       </div>
@@ -301,6 +317,7 @@
   </footer>
 </body>
 </html>
+
 
 
 
