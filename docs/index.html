@@ -29,6 +29,10 @@
     <link rel="stylesheet" href="css/bar_chart.css" />
     <script src="js/bar_chart.js" defer></script>
 
+    <!--BAR CHART -->
+    <link rel="stylesheet" href="css/stacked_bar_chart.css" />
+    <script src="js/stacked_bar_chart.js" defer></script>
+
     <!--WAFFLE CHART -->
     <link rel="stylesheet" href="css/waffle_chart.css" />
     <script src="js/waffle_chart.js" defer></script>
@@ -195,6 +199,17 @@
             <div id="bar_chart_legend" class="legend mt-3"></div>
           </div>
           <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
+
+        <div class="p-4 border rounded-3" id="stacked_bar_chart_container">
+          <div class="chart-wrapper text-center" id="stacked_bar_chart">
+            <div class="mb-4">
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Bar chart</h3>
+            </div>
+            <div id="stacked_bar_chart_svg" class="mx-auto"></div>
+            <div id="stacked_bar_chart_legend" class="legend mt-3"></div>
+          </div>
+          <div id="stacked_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
         </div>
 
 
