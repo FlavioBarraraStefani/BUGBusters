@@ -180,8 +180,6 @@
     </div>
   </section>
 
-
-
   <!-- Authentication Section -->
   <section id="api-auth" class="py-5 auth-status">
     <div class="container">
@@ -208,78 +206,149 @@
     </div>
   </section>
 
+  <!-- PLOTS (1): Comparing Categories -->
   <section id="comparing_categories" class="py-5 private-section">
-    <div class="container">
-      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
-        <div class="mb-4">
-          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Comparison charts</h2>
-        </div>
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 comparison-wrapper">
+      <!-- Header with toggle -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Comparison charts</h2>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
+          data-bs-toggle="collapse" data-bs-target="#comparing_categories_collapse" aria-expanded="true"
+          aria-controls="comparing_categories_collapse" id="comparing_categories_toggle">
+          <span class="label-when-open">Hide</span>
+          <span class="label-when-closed d-none">Show</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
 
-        <div class="p-4 border rounded-3 mb-4" id="bar_chart_container">
-          <div class="chart-wrapper text-center" id="bar_chart">
-            <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Bar chart</h3>
-            </div>
-            <div id="bar_chart_svg" class="mx-auto"></div>
-            <div id="bar_chart_legend" class="legend mt-3"></div>
-          </div>
-          <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
+      <!-- Collapsible content -->
+      <div id="comparing_categories_collapse" class="collapse show">
+        <div class="rounded-3 border shadow-sm p-4 p-lg-5 comparing_categories_collapse-wrapper">
 
-        <div class="p-4 border rounded-3 mb-4" id="stacked_bar_chart_container">
-          <div class="chart-wrapper text-center" id="stacked_bar_chart">
-            <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Stacked Bar chart</h3>
-            </div>
-            <div id="stacked_bar_chart_svg" class="mx-auto"></div>
-            <div id="stacked_bar_chart_legend" class="legend mt-3"></div>
-          </div>
-          <div id="stacked_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
+          <!-- Intro paragraph -->
+          <div class="mb-4">
+            <p class="mb-0">
+              This section compares key facets of terrorist activity across countries, regions, attack types, targets,
+              and groups.
 
-
-        <div class="p-4 border rounded-3 mb-4" id="waffle_chart_container">
-          <div class="chart-wrapper text-center" id="waffle_chart">
-            <div class="mb-4">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-0">Waffle chart</h3>
-            </div>
-            <div id="waffle_chart_svg" class="mx-auto"></div>
-            <div id="waffle_chart_legend" class="legend mt-3"></div>
-          </div>
-          <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
-
-        <div class="p-4 border rounded-3 mb-4" id="heatmap_chart_container">
-          <div class="d-flex flex-column" id="heatmap_chart">
-            <div class="mb-4 text-center">
-              <h3 class="section-heading h3 text-body-emphasis mb-0">Heatmap chart</h3>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <div id="heatmap_chart_svg" class="flex-grow-1"></div>
-              <div id="heatmap_chart_legend" class="legend ms-3"></div>
-            </div>
-          </div>
-          <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
-
-        <div class="p-4 border rounded-3 mb-4" id="multiple_bar_chart_container">
-          <div class="d-flex flex-column" id="multiple_bar_chart">
-            <div class="mb-4 text-center">
-              <h3 class="section-heading h3 text-body-emphasis mb-0">Multiple Bar chart</h3>
-            </div>
-
-            <!-- wrapper verticale -->
-            <div class="d-flex flex-column align-items-stretch">
-              <div id="multiple_bar_chart_svg" class="flex-grow-1"></div>
-
-              <!-- legenda sotto e centrata -->
-              <div id="multiple_bar_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
-            </div>
+              Each chart provides a different analytical lens (from geographic concentration to tactical composition and
+              casualty severity) to help identify patterns worth deeper investigation.
+            </p>
           </div>
 
-          <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
+          <!-- Bar chart -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="bar_chart_container">
+            <div class="chart-wrapper text-center" id="bar_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Global Distribution of Terrorist Attacks — Top 10 Most Affected Countries
+                </h3>
+                <p class="text-secondary mb-0">
+                  This <b>Bar chart</b> highlights the ten countries with the highest number of recorded terrorist attacks.
+                  Hover a bar to see the three most affected cities within that country (local concentration vs
+                  national spread).
+                </p>
+              </div>
+              <div id="bar_chart_svg" class="mx-auto"></div>
+              <div id="bar_chart_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
 
+          <!-- Stacked Bar chart -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="stacked_bar_chart_container">
+            <div class="chart-wrapper text-center" id="stacked_bar_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Attack Type Distribution by Region
+                </h3>
+                <p class="text-secondary mb-0">
+                  The following <b>Stacked Bar chart</b> compares the percentage composition of attack types across regions.
+                  Regional differences suggest distinct operational contexts and strategic goals.
+                </p>
+              </div>
+              <div id="stacked_bar_chart_svg" class="mx-auto"></div>
+              <div id="stacked_bar_chart_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="stacked_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Waffle -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="waffle_chart_container">
+            <div class="chart-wrapper text-center" id="waffle_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Overall Attack Type Composition
+                </h3>
+                <p class="text-secondary mb-0">
+                  <b>Waffle chart</b> (Icon-based) proportional view of global attack types; each cell represents a share of total incidents.
+                  Helps quickly grasp the mix of tactics at a glance.
+                </p>
+              </div>
+              <div id="waffle_chart_svg" class="mx-auto"></div>
+              <div id="waffle_chart_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Heatmap -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="heatmap_chart_container">
+            <div class="d-flex flex-column" id="heatmap_chart">
+              <div class="mb-2 text-center">
+                <h3 class="section-heading h3 text-body-emphasis mb-1">
+                  Terrorist Groups vs Target Categories
+                </h3>
+                <p class="text-secondary mb-0">
+                  This <b>Heatmap</b> uses color intensity to indicate incident counts by perpetrator group and victim type (military, police,
+                  civilians, businesses…).
+                  Useful to identify groups’ preferred targets and potential escalation patterns.
+                </p>
+              </div>
+              <div class="d-flex flex-column align-items-stretch">
+                <div id="heatmap_chart_svg" class="flex-grow-1"></div>
+                <div id="heatmap_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
+              </div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Multiple Bar chart -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="multiple_bar_chart_container">
+            <div class="d-flex flex-column" id="multiple_bar_chart">
+              <div class="mb-2 text-center">
+                <h3 class="section-heading h3 text-body-emphasis mb-1">
+                  Casualty Severity by Terrorist Group
+                </h3>
+                <p class="text-secondary mb-0">
+                  For the ten most active groups, the <b>Multiple Bar chart</b> compares attacks with zero victims, one victim, and multiple (>1)
+                  victims.
+                  Click the legend to isolate a category for focused analysis.
+                </p>
+              </div>
+              <div class="d-flex flex-column align-items-stretch">
+                <div id="multiple_bar_chart_svg" class="flex-grow-1"></div>
+                <div id="multiple_bar_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
+              </div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>

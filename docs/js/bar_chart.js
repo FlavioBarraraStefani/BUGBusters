@@ -101,7 +101,7 @@ function drawBarChart(rawData) {
       .style("pointer-events", "none"); // WAIT: disattiva hover finché anima
 
     // Animazione iniziale + WAIT fino a fine anim
-    await bars.transition().duration(700)
+    await bars.transition().duration(400)
       .attr("width", d => x(d.total) - x(0))
       .end(); // WAIT: blocca finché tutte le barre hanno finito
 
@@ -211,9 +211,9 @@ function drawBarChart(rawData) {
           .style("top", (event.pageY - 20) + "px");
       })
       .on("mouseleave", function () {
-        tooltip.transition().duration(200).style("opacity", 0);
+        tooltip.transition().duration(transitionDuration).style("opacity", 0);
 
-        bars.transition().duration(transitionDuration)
+        bars.transition()
           .attr("fill", d => d._color);
 
         stackedGroups.style("visibility", "hidden");

@@ -1,7 +1,7 @@
 /* wrapper flessibile */
 #stacked_bar_chart_container .chart-wrapper {
   position: relative;
-  display: flex;
+  display: block;
   flex-direction: column;
   align-items: center;
   width: 100%;         
@@ -10,14 +10,11 @@
 
 /* svg responsive */
 #stacked_bar_chart_container svg {
-  width: 100%;           
-  height: auto;          
-}
-
-/* stacked bar chart global scope */
-#stacked_bar_chart_container svg text {
   font-size: 12px;
   fill: #222;
+  display: block;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* legend */
@@ -58,4 +55,12 @@
 
 #stacked_bar_chart_container g.layer {
   transition: opacity 0.15s ease-in-out;
+}
+
+
+/* Il div che ospita l'SVG deve poter allargarsi */
+#stacked_bar_chart_svg {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
 }
