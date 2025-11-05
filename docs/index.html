@@ -21,8 +21,7 @@
   <!-- D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 
-  <!-- Authentication Script -->
-  <script src="js/auth.js" defer></script>
+  <!-- Main styles -->
   <link rel="stylesheet" href="css/main_style.css" />
 
 
@@ -230,7 +229,7 @@
   </section>
 
   <!-- PLOTS (1): Comparing Categories -->
-  <section id="comparing_categories" class="py-5 private-section">
+  <section id="comparing_categories" class="py-5 private-section               col-lg-10 mx-auto">
     <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
       <!-- Header with toggle -->
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -243,21 +242,22 @@
           <span class="chevron" aria-hidden="true">▾</span>
         </button>
       </div>
+      <hr class="my-3">
+      <!-- Intro paragraph -->
+      <div class="mb-4">
+        <p class="mb-0 text-center">
+          This section compares key facets of terrorist activity across countries, regions, attack types, targets,
+          and groups.
+          <br>
+          Each chart provides a different analytical lens (from geographic concentration to tactical composition and
+          casualty severity) to help identify patterns worth deeper investigation.
+        </p>
+      </div>
 
       <!-- Collapsible content -->
       <div id="comparing_categories_collapse" class="collapse show">
         <div class="rounded-3 border shadow-sm p-4 p-lg-5 comparing_categories_collapse-wrapper">
 
-          <!-- Intro paragraph -->
-          <div class="mb-4">
-            <p class="mb-0">
-              This section compares key facets of terrorist activity across countries, regions, attack types, targets,
-              and groups.
-
-              Each chart provides a different analytical lens (from geographic concentration to tactical composition and
-              casualty severity) to help identify patterns worth deeper investigation.
-            </p>
-          </div>
 
           <!-- Bar chart -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="bar_chart_container">
@@ -266,9 +266,9 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Global Distribution of Terrorist Attacks — Top 10 Most Affected Countries
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   This <b>Bar chart</b> highlights the ten countries with the highest number of recorded terrorist
-                  attacks.
+                  attacks.<br>
                   Hover a bar to see the three most affected cities within that country (local concentration vs
                   national spread).
                 </p>
@@ -289,9 +289,9 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Attack Type Distribution by Region
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   The following <b>Stacked Bar chart</b> compares the percentage composition of attack types across
-                  regions.
+                  regions.<br>
                   Regional differences suggest distinct operational contexts and strategic goals.
                 </p>
               </div>
@@ -311,9 +311,9 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Overall Attack Type Composition
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   <b>Waffle chart</b> (Icon-based) proportional view of global attack types; each cell represents a
-                  share of total incidents.
+                  share of total incidents.<br>
                   Helps quickly grasp the mix of tactics at a glance.
                 </p>
               </div>
@@ -333,10 +333,9 @@
                 <h3 class="section-heading h3 text-body-emphasis mb-1">
                   Terrorist Groups vs Target Categories
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   This <b>Heatmap</b> uses color intensity to indicate incident counts by perpetrator group and victim
-                  type (military, police,
-                  civilians, businesses…).
+                  type (military, police, civilians, businesses…).<br>
                   Useful to identify groups’ preferred targets and potential escalation patterns.
                 </p>
               </div>
@@ -344,6 +343,7 @@
                 <div id="heatmap_chart_svg" class="flex-grow-1"></div>
                 <div id="heatmap_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
               </div>
+
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -358,10 +358,9 @@
                 <h3 class="section-heading h3 text-body-emphasis mb-1">
                   Casualty Severity by Terrorist Group
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   For the ten most active groups, the <b>Multiple Bar chart</b> compares attacks with zero victims, one
-                  victim, and multiple (>1)
-                  victims.
+                  victim, and multiple (>1) victims. <br>
                   Click the legend to isolate a category for focused analysis.
                 </p>
               </div>
@@ -376,13 +375,11 @@
             <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- PLOTS (2): Visualizing Distributions -->
-  <section id="visualizing_distributions" class="py-5 private-section">
+  <section id="visualizing_distributions" class="py-5 private-section          col-lg-10 mx-auto">
     <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
       <!-- Header with toggle -->
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -414,7 +411,7 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   <b>Histogram</b> descrizione
                 </p>
               </div>
@@ -434,7 +431,7 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   <b>Ridgeline</b> descrizione
                 </p>
               </div>
@@ -454,7 +451,7 @@
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
                   <b>Box Plot</b> descrizione
                 </p>
               </div>
@@ -531,6 +528,8 @@
       </div>
     </div>
   </footer>
+    <!-- Authentication Script -->
+  <script src="js/auth.js" defer></script>
 </body>
 
 </html>

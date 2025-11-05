@@ -11,21 +11,21 @@ function drawHeatmapChart(rawData) {
         legendDiv.selectAll("*").remove();
 
         legendDiv.html(`
-  <div class="legend-select">
-    <label for="row-order" class="legend-label">Perpetrators order:</label>
-    <select id="row-order" class="legend-dropdown">
-      <option value="name">Name</option>
-      <option value="total">Total</option>
-    </select>
-  </div>
-  <div class="legend-select">
-    <label for="col-order" class="legend-label">Victims order:</label>
-    <select id="col-order" class="legend-dropdown">
-      <option value="name">Name</option>
-      <option value="total">Total</option>
-    </select>
-  </div>
-`);
+            <div class="legend-select">
+                <label for="row-order" class="legend-label">Perpetrators order:</label>
+                <select id="row-order" class="legend-dropdown">
+                <option value="name">Name</option>
+                <option value="total">Total</option>
+                </select>
+            </div>
+            <div class="legend-select">
+                <label for="col-order" class="legend-label">Victims order:</label>
+                <select id="col-order" class="legend-dropdown">
+                <option value="name">Name</option>
+                <option value="total">Total</option>
+                </select>
+            </div>
+            `);
         const tooltip = d3.select("#heatmap_chart_tooltip");
 
         // --- Original row & column names ---
@@ -126,21 +126,29 @@ function drawHeatmapChart(rawData) {
             // --- Column labels ---
             const colLabels = mainMerge.selectAll("text.col-label").data(colNames, d => d);
 
+            const isSmallScreen = window.innerWidth < 1400; // Bootstrap 'lg' breakpoint
+
             colLabels.enter()
                 .append("text")
                 .attr("class", "col-label")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("text-anchor", "middle")        // center horizontally
-                .attr("dominant-baseline", "hanging") // position below
                 .text(d => d)
                 .merge(colLabels)
                 .transition().duration(800)
                 .attr("x", (_, i) => i * cellWidth + cellWidth / 2)
-                .attr("y", cellHeight * numRows + 6); // 6px below heatmap
+                .attr("y", cellHeight * numRows + 6)
+                .attr("text-anchor", isSmallScreen ? "end" : "middle")
+                .attr("dominant-baseline", isSmallScreen ? "middle" : "hanging")
+                .attr("transform", (_, i) => {
+                    if (isSmallScreen) {
+                    // rotate 90° (or -90°, depending on direction)
+                    const cx = i * cellWidth + cellWidth / 2;
+                    const cy = cellHeight * numRows + 6;
+                    return `rotate(-45, ${cx}, ${cy})`;
+                    }
+                    return null; // no rotation
+                });
 
-            colLabels.exit().remove();
-
+                colLabels.exit().remove();
 
             // --- Tooltip & dimming ---
             function clearHighlight() {

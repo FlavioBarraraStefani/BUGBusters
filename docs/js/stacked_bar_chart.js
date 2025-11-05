@@ -83,6 +83,7 @@ function drawStackedBarChart(rawData) {
     }
 
     let activeKey = null;
+    let currentOrder = [...allKeys];
     let currentStacked = computeStackedPositions(rawData, allKeys);
 
     // SVG scaffolding (responsive)
@@ -102,15 +103,17 @@ function drawStackedBarChart(rawData) {
       .on("mouseover", function(event, key){
         const avg = rawData.reduce((s, r) => s + (+r[key]||0), 0) / rawData.length;
         tooltip.style("opacity",1)
-          .html(`
-            <div style="background:#fff; padding:14px 18px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e8e8e8;">
-              <div style="display:flex; align-items:center; margin-bottom:6px;">
-                <span style="background:${color(key)}; width:12px; height:12px; border-radius:2px; display:inline-block; margin-right:10px;"></span>
-                <span style="color:#333; font-size:15px; font-weight:600;">${key}</span>
+            .attr("class", "stacked-tooltip legend-tooltip")
+            .style("opacity", 1)
+            .html(`
+              <div class="tooltip-content">
+                <div class="tooltip-header">
+                  <span class="tooltip-color-box" style="background:${color(key)};"></span>
+                  <span class="tooltip-title">${key}</span>
+                </div>
+                <div class="tooltip-value">Average: ${avg.toFixed(1)}%</div>
               </div>
-              <div style="color:#000; font-size:24px; font-weight:700;">Media: ${avg.toFixed(1)}%</div>
-            </div>
-          `)
+            `)
           .style("left",(event.pageX+10)+"px")
           .style("top",(event.pageY-20)+"px");
       })
@@ -119,23 +122,17 @@ function drawStackedBarChart(rawData) {
       })
       .on("mouseout", () => tooltip.style("opacity",0))
       .on("click", function(_, key){
-        const self = d3.select(this);
-        const wasActive = self.classed("active");
-        legendContainer.selectAll("span").classed("active", false);
-
-        if (wasActive) {
-          activeKey = null;
-          currentStacked = computeStackedPositions(rawData, allKeys);
-        } else {
-          self.classed("active", true);
-          activeKey = key;
-          currentStacked = rawData.map(row => {
-            const idx = allKeys.indexOf(key);
-            const order = allKeys.slice(idx).concat(allKeys.slice(0, idx));
-            return computeStackedPositions([row], order)[0];
-          });
+        // Barrel-roll reorder: move clicked key to front, keep others after
+        const idx = currentOrder.indexOf(key);
+        if (idx > -1) {
+          currentOrder = currentOrder.slice(idx).concat(currentOrder.slice(0, idx));
         }
-        render();
+
+        // recompute stacked positions using new order
+        currentStacked = computeStackedPositions(rawData, currentOrder);
+
+        // animate bars to new positions
+        animateReorder();
       });
 
     function render() {
@@ -215,19 +212,24 @@ function drawStackedBarChart(rawData) {
           .attr("x", d => x(d.x0))
           .attr("width", d => x(d.x1) - x(d.x0))
           .attr("height", y.bandwidth())
-          .on("mouseover", function(event,d){
-            gRoot.selectAll("rect")
-              .style("fill", r => (r === d) ? color(key) : LITERAL_GREY);
+          .on("mouseover", function(event, d) {
+            // Grey out all bars first
+            gRoot.selectAll("rect").style("fill", LITERAL_GREY);
+            // Then color all bars from the same key (category)
+            gRoot.selectAll(`g[data-key='${key}']`).selectAll("rect")
+              .style("fill", color(key));
 
             tooltip.style("opacity",1)
+              .attr("class", "stacked-tooltip bar-tooltip")
+              .style("opacity", 1)
               .html(`
-                <div style="background:#fff; padding:16px 20px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e8e8e8;">
-                  <div style="color:#666; font-size:12px; font-weight:500; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">${d.region_txt}</div>
-                  <div style="display:flex; align-items:center; margin-bottom:6px;">
-                    <span style="background:${color(key)}; width:12px; height:12px; border-radius:2px; display:inline-block; margin-right:10px;"></span>
-                    <span style="color:#333; font-size:15px; font-weight:600;">${key}</span>
+                <div class="tooltip-content">
+                  <div class="tooltip-region">${d.region_txt}</div>
+                  <div class="tooltip-header">
+                    <span class="tooltip-color-box" style="background:${color(key)};"></span>
+                    <span class="tooltip-title">${key}</span>
                   </div>
-                  <div style="color:#000; font-size:${cw<576?22:28}px; font-weight:700; letter-spacing:-0.5px;">${(d.x1-d.x0).toFixed(1)}%</div>
+                  <div class="tooltip-value">Percentage: ${(d.x1 - d.x0).toFixed(1)}%</div>
                 </div>
               `)
               .style("left",(event.pageX+10)+"px")
@@ -255,6 +257,36 @@ function drawStackedBarChart(rawData) {
       } else {
         legendSpans.classed("active", false);
       }
+    }
+
+    function animateReorder() {
+      const cw = container.node().getBoundingClientRect().width;
+      const leftMargin = 200;
+      const margin = { top: 10, right: 16, bottom: 40, left: leftMargin };
+      const innerW = Math.max(240, cw - margin.left - margin.right);
+      const x = d3.scaleLinear().domain([0, 100]).range([0, innerW]);
+      const y = d3.scaleBand()
+                  .domain(rawData.map(d => d.region_txt))
+                  .range([0, rawData.length * 34])
+                  .padding(0.3);
+
+      // --- reorder groups by current order (so z-index is correct) ---
+      [...currentOrder].reverse().forEach(k => {
+        gRoot.select(`g[data-key='${k}']`).raise();
+      });
+
+
+      // Animate bars to new stacked positions
+      allKeys.forEach(k => {
+        gRoot.select(`g[data-key='${k}']`)
+          .selectAll("rect")
+          .data(currentStacked.map(d => ({ region_txt: d.region_txt, ...d[k] })))
+          .transition()
+          .duration(900)
+          .ease(d3.easeCubicInOut)
+          .attr("x", d => x(d.x0))
+          .attr("width", d => x(d.x1) - x(d.x0));
+      });
     }
 
     // primo render

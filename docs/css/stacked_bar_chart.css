@@ -58,6 +58,90 @@
 }
 
 
+/* =======================================
+   Common Tooltip Base
+   ======================================= */
+.stacked-tooltip {
+  position: absolute;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out;
+  z-index: 1000;
+  opacity: 0;
+}
+
+.stacked-tooltip .tooltip-content {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 14px 18px;
+  max-width: 260px;
+}
+
+/* Header Row */
+.stacked-tooltip .tooltip-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.stacked-tooltip .tooltip-color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.stacked-tooltip .tooltip-title {
+  color: #333;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stacked-tooltip .tooltip-value {
+  color: #000;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+/* =======================================
+   Legend Tooltip (light, compact)
+   ======================================= */
+.legend-tooltip .tooltip-content {
+  padding: 14px 18px;
+}
+
+.legend-tooltip .tooltip-value {
+  font-size: 22px;
+}
+
+/* =======================================
+   Bar Tooltip (richer layout)
+   ======================================= */
+.bar-tooltip .tooltip-content {
+  padding: 16px 20px;
+}
+
+.bar-tooltip .tooltip-region {
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bar-tooltip .tooltip-value {
+  font-size: 26px;
+}
+
+/* Prevent overlapping: ensures topmost tooltip is above */
+.stacked-tooltip {
+  z-index: 2000;
+}
+
+
 /* Il div che ospita l'SVG deve poter allargarsi */
 #stacked_bar_chart_svg {
   width: 100% !important;
