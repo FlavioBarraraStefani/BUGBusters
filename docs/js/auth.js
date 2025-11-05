@@ -112,11 +112,17 @@ const loadChart = (function() {
 // Function to load all charts after authentication
 // -------------------------------
 async function initChartsAfterAuth() {
+  // Section 1: Comparing Categories
   await loadChart("comparing_categories/bar_chart.json", drawBarChart, "bar_chart_container");
   await loadChart("comparing_categories/full_stacked_chart.json", drawStackedBarChart, "stacked_bar_chart_container" );
   await loadChart("comparing_categories/waffle_chart.json", drawWaffleChart, "waffle_chart_container" );
   await loadChart("comparing_categories/heatmap_chart.json", drawHeatmapChart, "heatmap_chart_container" );
   await loadChart("comparing_categories/multiple_bar_chart.json", drawMultipleBarChart, "multiple_bar_chart_container" );
+
+  // Section 2: Visualizing Distributions
+  await loadChart("visualizing_distributions/histogram_chart.json", drawHistogramChart, "histogram_chart_container" );
+  await loadChart("visualizing_distributions/box_plot_chart.json", drawBoxPlotChart, "box_plot_chart_container" );
+  await loadChart("visualizing_distributions/ridgeline_plot_chart.json", drawRidgePlotChart, "ridgeline_plot_chart_container" );
 }
 
 
