@@ -69,7 +69,15 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
-          <li class="nav-item private-section"><a class="nav-link" href="#comparing_categories">Comparison charts</a>
+            <li class="nav-item dropdown private-section">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Charts
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#comparing_categories">Comparing Categories</a></li>
+              <li><a class="dropdown-item" href="#visualizing_distributions">Visualizing Distributions</a></li>
+            </ul>
+            </li>
           </li>
         </ul>
       </div>
@@ -208,10 +216,10 @@
 
   <!-- PLOTS (1): Comparing Categories -->
   <section id="comparing_categories" class="py-5 private-section">
-    <div class="rounded-3 border shadow-sm p-4 p-lg-5 comparison-wrapper">
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
       <!-- Header with toggle -->
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="section-heading h2 text-body-emphasis mb-0">Comparison charts</h2>
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Comparing Categories</h2>
         <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
           data-bs-toggle="collapse" data-bs-target="#comparing_categories_collapse" aria-expanded="true"
           aria-controls="comparing_categories_collapse" id="comparing_categories_toggle">
@@ -244,7 +252,8 @@
                   Global Distribution of Terrorist Attacks — Top 10 Most Affected Countries
                 </h3>
                 <p class="text-secondary mb-0">
-                  This <b>Bar chart</b> highlights the ten countries with the highest number of recorded terrorist attacks.
+                  This <b>Bar chart</b> highlights the ten countries with the highest number of recorded terrorist
+                  attacks.
                   Hover a bar to see the three most affected cities within that country (local concentration vs
                   national spread).
                 </p>
@@ -266,7 +275,8 @@
                   Attack Type Distribution by Region
                 </h3>
                 <p class="text-secondary mb-0">
-                  The following <b>Stacked Bar chart</b> compares the percentage composition of attack types across regions.
+                  The following <b>Stacked Bar chart</b> compares the percentage composition of attack types across
+                  regions.
                   Regional differences suggest distinct operational contexts and strategic goals.
                 </p>
               </div>
@@ -287,7 +297,8 @@
                   Overall Attack Type Composition
                 </h3>
                 <p class="text-secondary mb-0">
-                  <b>Waffle chart</b> (Icon-based) proportional view of global attack types; each cell represents a share of total incidents.
+                  <b>Waffle chart</b> (Icon-based) proportional view of global attack types; each cell represents a
+                  share of total incidents.
                   Helps quickly grasp the mix of tactics at a glance.
                 </p>
               </div>
@@ -308,7 +319,8 @@
                   Terrorist Groups vs Target Categories
                 </h3>
                 <p class="text-secondary mb-0">
-                  This <b>Heatmap</b> uses color intensity to indicate incident counts by perpetrator group and victim type (military, police,
+                  This <b>Heatmap</b> uses color intensity to indicate incident counts by perpetrator group and victim
+                  type (military, police,
                   civilians, businesses…).
                   Useful to identify groups’ preferred targets and potential escalation patterns.
                 </p>
@@ -332,7 +344,8 @@
                   Casualty Severity by Terrorist Group
                 </h3>
                 <p class="text-secondary mb-0">
-                  For the ten most active groups, the <b>Multiple Bar chart</b> compares attacks with zero victims, one victim, and multiple (>1)
+                  For the ten most active groups, the <b>Multiple Bar chart</b> compares attacks with zero victims, one
+                  victim, and multiple (>1)
                   victims.
                   Click the legend to isolate a category for focused analysis.
                 </p>
@@ -346,6 +359,97 @@
               </p>
             </div>
             <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLOTS (2): Visualizing Distributions -->
+  <section id="visualizing_distributions" class="py-5 private-section">
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
+      <!-- Header with toggle -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Visualizing Distributions</h2>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
+          data-bs-toggle="collapse" data-bs-target="#visualizing_distributions_collapse" aria-expanded="true"
+          aria-controls="visualizing_distributions_collapse" id="visualizing_distributions_toggle">
+          <span class="label-when-open">Hide</span>
+          <span class="label-when-closed d-none">Show</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+
+      <!-- Collapsible content -->
+      <div id="visualizing_distributions_collapse" class="collapse show">
+        <div class="rounded-3 border shadow-sm p-4 p-lg-5 visualizing_distributions_collapse-wrapper">
+
+          <!-- Intro paragraph -->
+          <div class="mb-4">
+            <p class="mb-0">
+              Scrivere descrizione...
+            </p>
+          </div>
+
+          <!-- Histogram -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="dist_histogram_container">
+            <div class="chart-wrapper text-center" id="dist_histogram_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Titolo
+                </h3>
+                <p class="text-secondary mb-0">
+                  <b>Histogram</b> descrizione
+                </p>
+              </div>
+              <div id="dist_histogram_svg" class="mx-auto"></div>
+              <div id="dist_histogram_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="dist_histogram_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Ridgeline (Joyplot) -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="dist_ridgeline_container">
+            <div class="chart-wrapper text-center" id="dist_ridgeline_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Titolo
+                </h3>
+                <p class="text-secondary mb-0">
+                  <b>Ridgeline</b> descrizione
+                </p>
+              </div>
+              <div id="dist_ridgeline_svg" class="mx-auto"></div>
+              <div id="dist_ridgeline_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="dist_ridgeline_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Box Plot -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="dist_boxplot_container">
+            <div class="chart-wrapper text-center" id="dist_boxplot_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Titolo
+                </h3>
+                <p class="text-secondary mb-0">
+                  <b>Box Plot</b> descrizione
+                </p>
+              </div>
+              <div id="dist_boxplot_svg" class="mx-auto"></div>
+              <div id="dist_boxplot_legend" class="legend mt-3"></div>
+              <p class="text-secondary mb-0">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+            <div id="dist_boxplot_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
         </div>
