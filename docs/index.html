@@ -83,7 +83,7 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
-            <li class="nav-item dropdown private-section">
+          <li class="nav-item dropdown private-section">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Charts
             </a>
@@ -91,7 +91,7 @@
               <li><a class="dropdown-item" href="#comparing_categories">Comparing Categories</a></li>
               <li><a class="dropdown-item" href="#visualizing_distributions">Visualizing Distributions</a></li>
             </ul>
-            </li>
+          </li>
           </li>
         </ul>
       </div>
@@ -120,35 +120,45 @@
   <!-- INTRO -->
   <section id="about-us" class="py-5">
     <div class="container">
-      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
-        <div class="mb-4">
-          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">About Us</h2>
+      <div class="bg-white shadow-sm p-4 p-lg-5 rounded-3">
+        <div class="mb-4 text-center">
+          <h2 class="section-heading h2 text-body-emphasis mb-0">About Us</h2>
         </div>
 
-        <div class="row g-4">
-          <div class="col-6 col-lg-4 col-sm-4 order-first order-lg-first mx-auto mx-lg-0">
-            <img src="assets/logoUnige.png" class="img-fluid object-fit-cover section-image" alt="IMG" />
+        <div class="row g-4 align-items-center justify-content-center text-center text-lg-start">
+          <!-- Logo UniGe -->
+          <div class="col-4 col-md-3 col-lg-2 text-center">
+            <img src="assets/logoUnige.png" class="img-fluid section-image" alt="University of Genoa Logo"
+              style="max-width: 130px; height: auto;" />
           </div>
 
-          <div class="col-12 col-lg-8">
-            <div class="p-4 border rounded-3 h-100">
-              <p class="mb-0">
-                The BUGBusters study group is composed of three students enrolled in the <a
-                  href="https://corsi.unige.it/en/corsi/10852" target="_blank">Master’s Degree program in Artificial
+          <!-- Text -->
+          <div class="col-12 col-md-6 col-lg-8 d-flex justify-content-center">
+            <div class="p-4 border rounded-3 text-justify" style="max-width: 65ch;">
+              <p class="mb-3">
+                The <strong>BUGBusters</strong> study group is composed of three students enrolled in the
+                <a href="https://corsi.unige.it/en/corsi/10852" target="_blank">Master’s Degree in Artificial
                   Intelligence</a>
-                at the <a href="https://unige.it/en" target="_blank">University of Genoa</a>, within the <a
-                  href="https://corsi.unige.it/off.f/2022/ins/53404" target="_blank">Data Visualization course</a>
+                at the
+                <a href="https://unige.it/en" target="_blank">University of Genoa</a>, within the
+                <a href="https://corsi.unige.it/off.f/2022/ins/53404" target="_blank">Data Visualization course</a>
                 taught by
-                <a href="https://rubrica.unige.it/personale/UkNHU15t" target="_blank">Professor Annalisa Barla</a>.<br>
+                <a href="https://rubrica.unige.it/personale/UkNHU15t" target="_blank">Professor Annalisa Barla</a>.
               </p>
-              <br>
+
               <p class="mb-0">
-                The goal of the project is to provide an intuitive and informative representation of
-                a dataset related to global terrorism, highlighting significant trends, patterns, and relationships. The
-                work seeks to transform complex data into
-                clear and meaningful visual information, supporting a deeper understanding of the analyzed phenomena.
+                The goal of the project is to provide an intuitive and informative visualization
+                of a dataset on global terrorism, revealing significant trends, patterns, and correlations.
+                The work aims to turn complex data into clear, meaningful insights that promote
+                a deeper understanding of global security phenomena.
               </p>
             </div>
+          </div>
+
+          <!-- Logo DIBRIS -->
+          <div class="col-4 col-md-3 col-lg-2 text-center">
+            <img src="assets/logoDibris.png" class="img-fluid section-image" alt="DIBRIS Logo"
+              style="max-width: 130px; height: auto;" />
           </div>
         </div>
       </div>
@@ -158,44 +168,53 @@
   <section id="project-description" class="py-5">
     <div class="container">
       <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
-        <div class="mb-4">
-          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Project Description and Data at hand</h2>
+        <div class="mb-4 text-center">
+          <h2 class="section-heading h2 text-body-emphasis mb-0">
+            Project Description and Data at Hand
+          </h2>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 align-items-center">
+          <!-- Text -->
           <div class="col-12 col-lg-8">
-            <div class="p-4 border rounded-3 h-100">
+            <div class="p-4 border rounded-3 h-100" style="max-width: 65ch;">
+
               <h3 class="h5 mb-3">What are we talking about?</h3>
-              <p class="mb-0">
+              <p class="mb-4">
                 The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database
-                  (GTD)</a> is an event-level dataset, maintained by the <a href="https://umd.edu/"
-                  target="_blank">University of Maryland</a>,
-                containing more than 200,000 records of terrorist attacks worldwide spanning between 1970 and 2020.
-                <br>
-                Data are compiled from a wide range of open sources: nonetheless, the GTD team integrates and
-                standardizes these data to ensure consistency across the entire time span, conducting
-                extensive quality control, retrospective coding of key variables, and cross-referencing with other
-                terrorism databases
-                to identify and include missing events.
+                  (GTD)</a>
+                is an event-level dataset maintained by the
+                <a href="https://umd.edu/" target="_blank">University of Maryland</a>.
+                It contains over 200,000 records of terrorist attacks worldwide, spanning from 1970 to 2020.
               </p>
-              <br>
-              <p class="mb-0">
+
+              <p class="mb-4">
+                Data are collected from multiple open sources. The GTD research team integrates and standardizes them to
+                ensure consistency over time, performing rigorous quality control, retrospective coding, and
+                cross-referencing with other terrorism databases to identify and include missing events.
+              </p>
+
               <h3 class="h5 mb-3">What are we dealing with?</h3>
-              Each record in the GTD represents a single terrorist incident and includes detailed information such as
-              the date and location
-              of the attack, type of attack and weapon used, targets and victims, perpetrators and claims of
-              responsibility, as well
-              as casualties, consequences, and data sources.
-              <br>
-              A detailed description of the dataset can be found <a
-                href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">in the GTD
-                website</a>.
+              <p class="mb-4">
+                Each record in the GTD represents a single terrorist incident and includes detailed information such as
+                the date and location of the attack, type of weapon used, targets and victims, perpetrators, and any
+                claims of responsibility.
               </p>
+
+              <p class="mb-0">
+                Additional variables describe casualties, outcomes, and data sources.
+                A full codebook and documentation can be found on the
+                <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">GTD
+                  website</a>.
+              </p>
+
             </div>
           </div>
 
-          <div class="col-6 col-lg-4 col-sm-4 order-first order-lg-last mx-auto mx-lg-0">
-            <img src="assets/gtd.jpg" class="img-fluid object-fit-cover section-image " alt="IMG" />
+          <!-- Image -->
+          <div class="col-6 col-lg-4 col-sm-4 order-first order-lg-last mx-auto mx-lg-0 text-center">
+            <img src="assets/gtd.jpg" class="img-fluid object-fit-cover section-image" alt="GTD Cover Image"
+              style="max-width: 260px; border-radius: 8px;" />
           </div>
         </div>
       </div>
@@ -233,7 +252,7 @@
     <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
       <!-- Header with toggle -->
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="section-heading h2 text-body-emphasis mb-0">Comparing Categories</h2>
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Global Patterns of Terrorist Activity</h2>
         <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
           data-bs-toggle="collapse" data-bs-target="#comparing_categories_collapse" aria-expanded="true"
           aria-controls="comparing_categories_collapse" id="comparing_categories_toggle">
@@ -245,7 +264,7 @@
       <hr class="my-3">
       <!-- Intro paragraph -->
       <div class="mb-4">
-        <p class="mb-0 text-center">
+        <p class="mb-0">
           This section compares key facets of terrorist activity across countries, regions, attack types, targets,
           and groups.
           <br>
@@ -261,12 +280,15 @@
 
           <!-- Bar chart -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="bar_chart_container">
-            <div class="chart-wrapper text-center" id="bar_chart">
+            <div class="chart-wrapper" id="bar_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Global Distribution of Terrorist Attacks — Top 10 Most Affected Countries
+                  Global Distribution of Terrorist Attacks
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <h4 class="text-secondary text-center mb-0">
+                  <i>Top 10 Most Affected Countries</i>
+                </h4>
+                <p class="text-secondary mb-0 py-2 mt-3">
                   This <b>Bar chart</b> highlights the ten countries with the highest number of recorded terrorist
                   attacks.<br>
                   Hover a bar to see the three most affected cities within that country (local concentration vs
@@ -284,19 +306,20 @@
 
           <!-- Stacked Bar chart -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="stacked_bar_chart_container">
-            <div class="chart-wrapper text-center" id="stacked_bar_chart">
+            <div class="chart-wrapper" id="stacked_bar_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Attack Type Distribution by Region
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   The following <b>Stacked Bar chart</b> compares the percentage composition of attack types across
                   regions.<br>
                   Regional differences suggest distinct operational contexts and strategic goals.
                 </p>
               </div>
               <div id="stacked_bar_chart_svg" class="mx-auto"></div>
-              <div id="stacked_bar_chart_legend" class="legend mt-3"></div>
+              <div id="stacked_bar_chart_legend" class="legend text-center mt-3"></div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -306,19 +329,19 @@
 
           <!-- Waffle -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="waffle_chart_container">
-            <div class="chart-wrapper text-center" id="waffle_chart">
+            <div class="chart-wrapper" id="waffle_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Overall Attack Type Composition
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-2">
                   <b>Waffle chart</b> (Icon-based) proportional view of global attack types; each cell represents a
-                  share of total incidents.<br>
-                  Helps quickly grasp the mix of tactics at a glance.
+                  share of total incidents. Helps quickly grasp the mix of tactics at a glance.
                 </p>
               </div>
               <div id="waffle_chart_svg" class="mx-auto"></div>
-              <div id="waffle_chart_legend" class="legend mt-3"></div>
+              <div id="waffle_chart_legend" class="legend text-center mt-3"></div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -329,13 +352,13 @@
           <!-- Heatmap -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="heatmap_chart_container">
             <div class="d-flex flex-column" id="heatmap_chart">
-              <div class="mb-2 text-center">
-                <h3 class="section-heading h3 text-body-emphasis mb-1">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Terrorist Groups vs Target Categories
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   This <b>Heatmap</b> uses color intensity to indicate incident counts by perpetrator group and victim
-                  type (military, police, civilians, businesses…).<br>
+                  type (military, police, civilians, businesses…).
                   Useful to identify groups’ preferred targets and potential escalation patterns.
                 </p>
               </div>
@@ -344,6 +367,7 @@
                 <div id="heatmap_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
               </div>
 
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -354,11 +378,11 @@
           <!-- Multiple Bar chart -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="multiple_bar_chart_container">
             <div class="d-flex flex-column" id="multiple_bar_chart">
-              <div class="mb-2 text-center">
-                <h3 class="section-heading h3 text-body-emphasis mb-1">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Casualty Severity by Terrorist Group
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   For the ten most active groups, the <b>Multiple Bar chart</b> compares attacks with zero victims, one
                   victim, and multiple (>1) victims. <br>
                   Click the legend to isolate a category for focused analysis.
@@ -368,6 +392,7 @@
                 <div id="multiple_bar_chart_svg" class="flex-grow-1"></div>
                 <div id="multiple_bar_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
               </div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -375,7 +400,7 @@
             <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
-    </div>
+        </div>
   </section>
 
   <!-- PLOTS (2): Visualizing Distributions -->
@@ -383,7 +408,7 @@
     <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
       <!-- Header with toggle -->
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="section-heading h2 text-body-emphasis mb-0">Visualizing Distributions</h2>
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Temporal and Quantitative Dynamics of Terrorism</h2>
         <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
           data-bs-toggle="collapse" data-bs-target="#visualizing_distributions_collapse" aria-expanded="true"
           aria-controls="visualizing_distributions_collapse" id="visualizing_distributions_toggle">
@@ -392,31 +417,33 @@
           <span class="chevron" aria-hidden="true">▾</span>
         </button>
       </div>
+      <hr class="my-3">
+      <!-- Intro paragraph -->
+      <div class="mb-4">
+        <p class="mb-0">
+          Scrivere descrizione...
+        </p>
+      </div>
 
       <!-- Collapsible content -->
       <div id="visualizing_distributions_collapse" class="collapse show">
         <div class="rounded-3 border shadow-sm p-4 p-lg-5 visualizing_distributions_collapse-wrapper">
 
-          <!-- Intro paragraph -->
-          <div class="mb-4">
-            <p class="mb-0">
-              Scrivere descrizione...
-            </p>
-          </div>
 
           <!-- Histogram -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="dist_histogram_container">
-            <div class="chart-wrapper text-center" id="dist_histogram_chart">
+            <div class="chart-wrapper" id="dist_histogram_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   <b>Histogram</b> descrizione
                 </p>
               </div>
               <div id="dist_histogram_svg" class="mx-auto"></div>
               <div id="dist_histogram_legend" class="legend mt-3"></div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -426,17 +453,18 @@
 
           <!-- Ridgeline (Joyplot) -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="dist_ridgeline_container">
-            <div class="chart-wrapper text-center" id="dist_ridgeline_chart">
+            <div class="chart-wrapper" id="dist_ridgeline_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   <b>Ridgeline</b> descrizione
                 </p>
               </div>
               <div id="dist_ridgeline_svg" class="mx-auto"></div>
               <div id="dist_ridgeline_legend" class="legend mt-3"></div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -446,17 +474,18 @@
 
           <!-- Box Plot -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="dist_boxplot_container">
-            <div class="chart-wrapper text-center" id="dist_boxplot_chart">
+            <div class="chart-wrapper" id="dist_boxplot_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
                   Titolo
                 </h3>
-                <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <p class="text-secondary mb-0 py-2 mt-3">
                   <b>Box Plot</b> descrizione
                 </p>
               </div>
               <div id="dist_boxplot_svg" class="mx-auto"></div>
               <div id="dist_boxplot_legend" class="legend mt-3"></div>
+              <br>
               <p class="text-secondary mb-0">
                 <i>[Observation: ?]</i>
               </p>
@@ -528,7 +557,7 @@
       </div>
     </div>
   </footer>
-    <!-- Authentication Script -->
+  <!-- Authentication Script -->
   <script src="js/auth.js" defer></script>
 </body>
 

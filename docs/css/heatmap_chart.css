@@ -1,7 +1,5 @@
 /* Scoped styles - very specific to the container ID */
-#heatmap_chart_container {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
+
 
 #heatmap_chart_container .chart-wrapper {
     position: relative;

@@ -35,8 +35,11 @@ function drawBarChart(rawData) {
       // inverti
       t = 1 - t;
       const stops = [
+        /*
         "#0c0c0e", "#2a1739", "#5a1f64", "#8f2469",
         "#bf3358", "#e2553e", "#f7892e", "#f8c64f", "#f6f7a2"
+        */
+        "#f12b2bff"
       ];
       const scale = d3.scaleLinear()
         .domain(d3.range(0, 1 + 1e-9, 1 / (stops.length - 1)))
