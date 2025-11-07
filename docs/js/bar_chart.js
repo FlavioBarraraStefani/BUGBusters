@@ -34,12 +34,16 @@ function drawBarChart(rawData) {
     function interpolateRocket(t) {
       // inverti
       t = 1 - t;
+      /*
       const stops = [
-        /*
+        
         "#0c0c0e", "#2a1739", "#5a1f64", "#8f2469",
         "#bf3358", "#e2553e", "#f7892e", "#f8c64f", "#f6f7a2"
-        */
-        "#f12b2bff"
+
+      ];
+      */
+      const stops = [
+        "#e2553e","#e2553e"
       ];
       const scale = d3.scaleLinear()
         .domain(d3.range(0, 1 + 1e-9, 1 / (stops.length - 1)))
@@ -57,7 +61,7 @@ function drawBarChart(rawData) {
 
     // --- Dimensions ---
     const containerWidth = chartContainer.node().getBoundingClientRect().width;
-    const margin = { top: 10, right: 24, bottom: 42, left: 170 };
+    const margin = { top: 15, right: 24, bottom: 42, left: 170 };
     const rowH = 40;
     const height = margin.top + margin.bottom + rowH * data.length;
 
@@ -119,6 +123,28 @@ function drawBarChart(rawData) {
       .attr("class", "y-axis")
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(d3.axisLeft(y).tickSizeOuter(0));
+
+    // --- "less" and "more" labels centered above the x-axis ---
+    svg.append("text")
+      .attr("x", margin.left)                    // left end of axis
+      .attr("y", margin.top - 8)                 // slightly above the chart area
+      .attr("text-anchor", "middle")             // center horizontally
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", 14)
+      .attr("font-weight", "bold")
+      .attr("fill", "#000000")
+      .text("Less");
+
+    svg.append("text")
+      .attr("x", containerWidth - margin.right)  // right end of axis
+      .attr("y", margin.top - 8)
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", 14)
+      .attr("font-weight", "bold")
+      .attr("fill", "#000000")
+      .text("More");
+
 
     svg.select(".y-axis").raise();
 

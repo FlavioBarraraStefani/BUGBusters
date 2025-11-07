@@ -77,8 +77,9 @@ function drawMultipleBarChart(rawData) {
       .range([0, x0.bandwidth()])
       .padding(0.15);
 
+    const yMax = d3.max(data, d => d3.max(series, s => d[s.key]));
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d3.max(series, s => d[s.key]))]).nice()
+      .domain([0, yMax]).nice()
       .range([height - margin.bottom, margin.top]);
 
     // === Axes ===
@@ -219,7 +220,6 @@ function drawMultipleBarChart(rawData) {
         // GROUPED VIEW
         disableHover();
 
-        y.domain([0, d3.max(data, d => d3.max(series, s => d[s.key]))]).nice();
         svg.select(".y-axis").transition().duration(450)
           .call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
 
@@ -241,7 +241,6 @@ function drawMultipleBarChart(rawData) {
         const sColor = series.find(s => s.key === sKey).color;
 
         // y basata solo sulla categoria attiva
-        y.domain([0, d3.max(data, d => d[sKey])]).nice();
         svg.select(".y-axis").transition().duration(450)
           .call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
 

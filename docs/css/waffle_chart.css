@@ -4,6 +4,7 @@
 }
 
 /* Waffle chart SVG */
+
 #waffle_chart_container #waffle_chart_svg svg,
 #waffle_chart_container svg {
   width: 100%;
