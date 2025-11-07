@@ -273,5 +273,9 @@ function drawHeatmapChart(rawData) {
             draw();
         });
 
+        d3.select("#row-order").property("value", "total").dispatch("change");
+        d3.select("#col-order").property("value", "total").dispatch("change");
+
     })();
 }
+
