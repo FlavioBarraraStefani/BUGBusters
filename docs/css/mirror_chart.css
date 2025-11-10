@@ -1,0 +1,157 @@
+/* MIRROR CHART COMPONENT --------------------------------------------------*/
+
+#mirror_chart_container {
+  width: 100%;
+  display: block;
+  position: relative;
+  overflow-x: auto;
+}
+
+/* svg wrapper */
+#mirror_chart_svg {
+  overflow: hidden;
+}
+
+#mirror_chart_svg svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: hidden;
+}
+
+/* Legend --------------------------------------------------*/
+#mirror_chart_legend span {
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.3;
+  display: inline-block;
+  margin-right: 18px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* New class for the color box inside the legend span */
+#mirror_chart_container .legend-color-box {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* Tooltip --------------------------------------------------*/
+#mirror_chart_tooltip {
+  position: fixed; /* FIXED per seguire il cursore senza problemi di scroll */
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  border-radius: 6px;
+  pointer-events: none;
+  font-size: 14px;
+  line-height: 1.5;
+  z-index: 9999; /* Molto alto per essere sempre visibile */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  max-width: 250px;
+}
+
+/* Quando il tooltip è visibile (gestito da JS) */
+#mirror_chart_tooltip[style*="opacity: 1"] {
+  opacity: 1 !important;
+}
+
+/* D3 Chart Elements --------------------------------------------------*/
+
+/* Axis Styles */
+#mirror_chart_container .x-axis text,
+#mirror_chart_container .y-axis text {
+  font-size: 16px;
+  font-family: sans-serif;
+  fill: #333;
+}
+
+#mirror_chart_container .x-axis path,
+#mirror_chart_container .y-axis path,
+#mirror_chart_container .x-axis .tick line,
+#mirror_chart_container .y-axis .tick line {
+  stroke: #ccc;
+  shape-rendering: crispEdges;
+}
+
+/* Hide the main y-axis line */
+#mirror_chart_container .y-axis .domain {
+  display: none;
+}
+
+/* Bar Styles */
+#mirror_chart_container .kill-bars rect,
+#mirror_chart_container .wound-bars rect {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+#mirror_chart_container .kill-bars rect:hover,
+#mirror_chart_container .wound-bars rect:hover {
+  opacity: 0.85;
+}
+
+/* Cursor/Tooltip Elements */
+#mirror_chart_container .cursor-line {
+  stroke: #666;
+  stroke-width: 1px;
+  stroke-dasharray: 4, 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#mirror_chart_container .cursor-bg {
+  fill: #000;
+  rx: 2;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#mirror_chart_container .cursor-text {
+  font-size: 13px;
+  font-weight: 600;
+  fill: #fff;
+  text-anchor: middle;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Responsive --------------------------------------------------*/
+@media (max-width: 600px) {
+  #mirror_chart_legend span {
+    font-size: 14px;
+  }
+
+ #mirror_chart_container  .legend-color-box {
+    width: 14px;
+    height: 14px;
+  }
+
+  #mirror_chart_tooltip {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+ #mirror_chart_container .x-axis text,
+ #mirror_chart_container .y-axis text {
+    font-size: 14px;
+  }
+}
+
+/* Utilities --------------------------------------------------*/
+#mirror_chart_container svg text {
+  cursor: default !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
