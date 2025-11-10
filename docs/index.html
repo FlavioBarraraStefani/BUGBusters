@@ -50,9 +50,9 @@
 
   <!--visualizing distributions -->
 
-  <!--HISTOGRAM CHART -->
-  <link rel="stylesheet" href="css/histogram_chart.css" />
-  <script src="js/histogram_chart.js" defer></script>
+  <!--MIRROR CHART -->
+  <link rel="stylesheet" href="css/mirror_chart.css" />
+  <script src="js/mirror_chart.js" defer></script>
 
   <!--BOX PLOT CHART -->
   <link rel="stylesheet" href="css/box_plot_chart.css" />
@@ -438,26 +438,26 @@
         <div class="rounded-3 border shadow-sm p-4 p-lg-5 visualizing_distributions_collapse-wrapper">
 
 
-          <!-- Histogram -->
-          <div class="p-4 border bg-white rounded-3 mb-4" id="dist_histogram_container">
-            <div class="chart-wrapper" id="dist_histogram_chart">
-              <div class="mb-2">
-                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Titolo
-                </h3>
-                <p class="text-secondary mb-0 py-2 mt-3">
-                  <b>Histogram</b> descrizione
-                </p>
-              </div>
-              <div id="dist_histogram_svg" class="mx-auto"></div>
-              <div id="dist_histogram_legend" class="legend mt-3"></div>
-              <br>
-              <p class="text-secondary mb-0">
-                <i>[Observation: ?]</i>
+          <!-- Mirror Chart -->
+        <div class="p-4 border bg-white rounded-3 mb-4" id="mirror_chart_container">
+          <div class="chart-wrapper text-center" id="mirror_chart_chart">
+            <div class="mb-2">
+              <h3 class="section-heading h3 text-center text-body-emphasis mb-1">Titolo</h3>
+              <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
+                <b>Mirror Plot</b> Fatalities vs Injuries
               </p>
             </div>
-            <div id="dist_histogram_tooltip" class="tooltip" style="opacity:0"></div>
+
+            <div id="mirror_chart_svg" class="mx-auto"></div>
+            <div id="mirror_chart_legend" class="legend mt-3"></div>
+
+            <p class="text-secondary mb-0">
+              <i>Data missing in the year 1993</i>
+            </p>
           </div>
+
+          <div id="mirror_chart_tooltip" class="tooltip" style="opacity:0"></div>
+        </div>
 
           <!-- Ridgeline (Joyplot) -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="dist_ridgeline_container">
