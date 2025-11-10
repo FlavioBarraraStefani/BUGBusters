@@ -1,0 +1,22 @@
+#dist_ridgeline_container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#dist_ridgeline_container .tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  pointer-events: none;
+  font-size: 13px;
+  z-index: 1000;
+  transition: opacity 0.2s ease-in-out;
+}
+
+#dist_ridgeline_container .ridge {
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
