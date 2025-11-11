@@ -1,0 +1,37 @@
+/* Box plot basic styles */
+#dist_boxplot_svg svg {
+    width: 100%;
+    height: 500px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+}
+
+#dist_boxplot_svg rect.bp-box {
+    fill: #69b3a2;
+    stroke: #333;
+    stroke-width: 1px;
+    transition: fill 0.3s, opacity 0.3s;
+}
+
+#dist_boxplot_svg line.bp-whisker, line.bp-whisker-cap {
+    stroke: #555;
+    stroke-width: 1px;
+    transition: opacity 0.3s;
+}
+
+#dist_boxplot_svg line.bp-median {
+    stroke: #000;
+    stroke-width: 2px;
+    transition: opacity 0.3s;
+}
+
+#dist_boxplot_svg text.bp-label {
+    font-size: 12px;
+    fill: #111;
+    text-anchor: end;
+    transition: opacity 0.3s, font-weight 0.3s;
+}
+
+#dist_boxplot_svg .dimmed {
+    opacity: 0.2 !important;
+    fill: #999 !important;
+}
