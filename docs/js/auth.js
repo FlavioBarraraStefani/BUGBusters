@@ -121,9 +121,10 @@ async function initChartsAfterAuth() {
 
   // Section 2: Visualizing Distributions
   await loadChart("visualizing_distributions/mirror_chart.json", drawMirrorChart, "mirror_chart_container" );
-  await loadChart("visualizing_distributions/box_plot_chart.json", drawBoxPlotChart, "box_plot_chart_container" );
+  await loadChart("visualizing_distributions/box_plot_chart.json", drawBoxPlotChart, "dist_boxplot_container" );
   await loadChart("visualizing_distributions/ridgeline_plot_chart.json", drawRidgePlotChart, "dist_ridgeline_container" );
 }
+
 
 
 
