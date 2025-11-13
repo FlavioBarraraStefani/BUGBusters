@@ -342,7 +342,9 @@
               <div class="row align-items-center">
                 <div class="d-none d-md-block col-md-1 d-lg-block col-lg-2"></div>
                 <div id="waffle_chart_svg" class="col-12 col-md-8 col-lg-7 mx-auto"></div>
-                <div id="waffle_chart_legend" class="col-12 col-md-3 col-lg-3 d-flex flex-wrap flex-md-column justify-content-center justify-md-start align-items-center align-items-md-start"></div>              
+                <div id="waffle_chart_legend"
+                  class="col-12 col-md-3 col-lg-3 d-flex flex-wrap flex-md-column justify-content-center justify-md-start align-items-center align-items-md-start">
+                </div>
                 <div class="d-none d-lg-block col-lg-1"></div>
               </div>
               <br>
@@ -429,7 +431,10 @@
       <!-- Intro paragraph -->
       <div class="mb-4">
         <p class="mb-0">
-          Scrivere descrizione...
+          Temporal and Quantitative Dynamics of Terrorism explores how terrorist activity evolves across time, regions,
+          and groups.
+          While the previous section focuses on categorical comparisons, this section shifts the perspective toward
+          distributions, trends, and variability.
         </p>
       </div>
 
@@ -439,35 +444,43 @@
 
 
           <!-- Mirror Chart -->
-        <div class="p-4 border bg-white rounded-3 mb-4" id="mirror_chart_container">
-          <div class="chart-wrapper text-center" id="mirror_chart_chart">
-            <div class="mb-2">
-              <h3 class="section-heading h3 text-center text-body-emphasis mb-1">Titolo</h3>
-              <p class="text-secondary mb-0 border-top border-bottom py-2 mt-3">
-                <b>Mirror Plot</b> Fatalities vs Injuries
+          <div class="p-4 border bg-white rounded-3 mb-4" id="mirror_chart_container">
+            <div class="chart-wrapper" id="mirror_chart_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">Comparing Annual Fatalities and
+                  Injuries Over Time</h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  The <b>Mirror Plot</b> contrasts the yearly number of fatalities (above the axis) and injuries (below
+                  the axis).
+                  This mirrored perspective should emphasise asymmetry between deadly and non-deadly consequences of
+                  attacks,
+                  helping reveal years where harm increased despite fewer deaths, or vice versa; in our case data seems
+                  to be symmetric instead.
+                </p>
+              </div>
+
+              <div id="mirror_chart_svg" class="mx-auto"></div>
+              <div id="mirror_chart_legend" class="legend mt-3"></div>
+
+              <p class="text-secondary mb-0">
+                <i>Data missing in the year 1993</i>
               </p>
             </div>
 
-            <div id="mirror_chart_svg" class="mx-auto"></div>
-            <div id="mirror_chart_legend" class="legend mt-3"></div>
-
-            <p class="text-secondary mb-0">
-              <i>Data missing in the year 1993</i>
-            </p>
+            <div id="mirror_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
-
-          <div id="mirror_chart_tooltip" class="tooltip" style="opacity:0"></div>
-        </div>
 
           <!-- Ridgeline (Joyplot) -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="dist_ridgeline_container">
             <div class="chart-wrapper" id="dist_ridgeline_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Titolo
+                  Regional Evolution of Terrorist Activity
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  <b>Ridgeline</b> descrizione
+                  The <b>Ridgeline Plot</b> visualizes how attack intensity varies across regions over time.
+                  Each ridge represents one region, displaying its annual attack distribution as a continuous or
+                  discrete curve.
                 </p>
               </div>
               <div id="dist_ridgeline_svg" class="mx-auto"></div>
@@ -485,10 +498,15 @@
             <div class="chart-wrapper" id="dist_boxplot_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Titolo
+                  Victim Severity Distribution Across Terrorist Groups
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  <b>Box Plot</b> descrizione
+                  The <b>Box Plot</b> compares the distribution of victims per attack for the most active terrorist
+                  groups.
+                  It highlights differences in lethality patterns among groups, in order to distinguish those with
+                  frequent low-impact attacks (giving a look to the median) from those
+                  associated with highly variable or exceptionally severe events.
+                  The interactive zoom allows for closer inspection of the statistical profile of each group.
                 </p>
               </div>
               <div id="dist_boxplot_svg" class="mx-auto"></div>
