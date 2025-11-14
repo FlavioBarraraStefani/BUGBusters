@@ -1,0 +1,85 @@
+/* Container & SVG */
+#nyt_scatter_container .chart-wrapper {
+  position: relative;
+}
+
+#nyt_scatter_container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+}
+
+/* Axes */
+#nyt_scatter_container .x-axis text,
+#nyt_scatter_container .y-axis text {
+  font-size: 0.9rem;
+  fill: #111827;
+}
+
+#nyt_scatter_container .x-axis path,
+#nyt_scatter_container .y-axis path,
+#nyt_scatter_container .x-axis line,
+#nyt_scatter_container .y-axis line {
+  stroke: #9ca3af;
+}
+
+#nyt_scatter_container .grid line {
+  stroke: #e5e7eb;
+  opacity: 0.7;
+}
+
+/* Line & points */
+#nyt_scatter_container .main-line {
+  fill: none;
+  stroke: #b45309; /* warm brown/orange */
+  stroke-width: 2.2;
+}
+
+#nyt_scatter_container .year-node {
+  fill: #f97316;
+  stroke: #7c2d12;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: r 0.15s ease, opacity 0.15s ease;
+}
+
+#nyt_scatter_container .year-node.dimmed {
+  opacity: 0.2;
+}
+
+/* Labels and annotations */
+#nyt_scatter_container .year-label {
+  font-size: 0.8rem;
+  fill: #111827;
+}
+
+#nyt_scatter_container .annotation-text {
+  font-size: 0.8rem;
+  fill: #374151;
+}
+
+#nyt_scatter_container .annotation-line {
+  stroke: #9ca3af;
+  stroke-width: 1;
+}
+
+/* Tooltip */
+#nyt_scatter_container .tooltip {
+  position: absolute;
+  background: rgba(20, 22, 28, 0.96);
+  color: #f9fafb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  line-height: 1.4;
+}
+
+/* Little axis hints (like NYT “More →”) */
+#nyt_scatter_container .axis-hint {
+  font-size: 0.8rem;
+  fill: #4b5563;
+}

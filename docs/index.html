@@ -62,6 +62,10 @@
   <link rel="stylesheet" href="css/ridgeline_plot_chart.css" />
   <script src="js/ridgeline_plot_chart.js" defer></script>
 
+  <!--TIMELINE STORYLINE CHART -->
+  <link rel="stylesheet" href="css/connected_scatter_plot.css" />
+  <script src="js/connected_scatter_plot.js" defer></script>
+
 </head>
 
 <body>
@@ -503,7 +507,8 @@
                 <p class="text-secondary mb-0 py-2 mt-3">
                   The <b>Box Plot</b> visualizes how long attacks last for the most active terrorist groups, showing the
                   distribution of event duration in days.
-                  It highlights which groups tend to conduct short, contained incidents versus those associated with prolonged or multi-day operations.
+                  It highlights which groups tend to conduct short, contained incidents versus those associated with
+                  prolonged or multi-day operations.
                   The interactive zoom allows a closer inspection of each group’s temporal footprint.
                 </p>
               </div>
@@ -517,6 +522,30 @@
               </p>
             </div>
             <div id="dist_boxplot_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- Connected Scatterplot: Attacks vs Victims -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="nyt_scatter_container">
+            <div class="chart-wrapper" id="nyt_scatter_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Attacks and Victims Over Time — A Connected Scatterplot
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  Each point represents a year, positioned by <b>number of victims</b> (x-axis)
+                  and <b>number of attacks</b> (y-axis). The line connects years in time, revealing
+                  how severity and frequency move together in fits and starts.
+                </p>
+              </div>
+
+              <div id="nyt_scatter_svg" class="mx-auto"></div>
+
+              <p class="text-secondary mb-0 mt-2">
+                <i>[Observation: ?]</i>
+              </p>
+            </div>
+
+            <div id="nyt_scatter_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
         </div>

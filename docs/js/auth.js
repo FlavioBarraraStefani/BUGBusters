@@ -89,6 +89,7 @@ const loadChart = (function() {
 
         try {
           if (!cache.has(filePath)) {
+            console.log(`Fetching chart data from ${filePath}...`);
             const url = `${BASE_URL}/${filePath}`;
             const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
             if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
@@ -123,9 +124,7 @@ async function initChartsAfterAuth() {
   await loadChart("visualizing_distributions/mirror_chart.json", drawMirrorChart, "mirror_chart_container" );
   await loadChart("visualizing_distributions/box_plot_chart.json", drawBoxPlotChart, "dist_boxplot_container" );
   await loadChart("visualizing_distributions/ridgeline_plot_chart.json", drawRidgePlotChart, "dist_ridgeline_container" );
+
+  // Section 3: Visualizing Distributions
+  await loadChart("timeline_visualization/connected_scatter_plot.json", drawConnectedScatter, "nyt_scatter_container" );
 }
-
-
-
-
-
