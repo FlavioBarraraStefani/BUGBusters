@@ -82,7 +82,6 @@
 }
 
 #nyt_scatter_container .annotation-text {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   fill: #4b5563;
 }
 
@@ -94,3 +93,4 @@
   font-weight: 400;
   font-size: 14px;
 }
+
