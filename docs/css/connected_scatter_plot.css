@@ -81,18 +81,16 @@
   fill: #4b5563;
 }
 
-/* Responsive adjustments */
-/* Key note divs */
-#nyt_scatter_container .key-notes-container .note-div {
-  position: absolute;
-  background: #f9f9f9;
-  border: 1px solid #ccc;
-  padding: 4px 6px;
-  font-size: 12px;
-  border-radius: 4px;
-  pointer-events: none;
-  /* so they don’t block hover */
-  z-index: 10;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  line-height: 1.3;
+#nyt_scatter_container .annotation-text {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  fill: #4b5563;
+}
+
+#nyt_scatter_container .annotation-title {
+  font-weight: 600;
+}
+
+#nyt_scatter_container .annotation-note {
+  font-weight: 400;
+  font-size: 14px;
 }
