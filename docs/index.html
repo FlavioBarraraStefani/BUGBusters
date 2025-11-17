@@ -524,17 +524,53 @@
             <div id="dist_boxplot_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLOTS (3): Timeline Visualization -->
+  <section id="timeline_visualization" class="py-5 private-section          col-lg-10 mx-auto">
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
+      <!-- Header with toggle -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Chronology of Terrorist Activity</h2>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
+          data-bs-toggle="collapse" data-bs-target="#timeline_visualization_collapse" aria-expanded="true"
+          aria-controls="timeline_visualization_collapse" id="timeline_visualization_toggle">
+          <span class="label-when-open">Hide</span>
+          <span class="label-when-closed d-none">Show</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+      <hr class="my-3">
+      <!-- Intro paragraph -->
+      <div class="mb-4">
+        <p class="mb-0">
+          This section presents a time-based narrative of global terrorist activity.
+          Through a timeline, you can visually explore when key incidents occurred.
+        </p>
+      </div>
+
+      <!-- Collapsible content -->
+      <div id="timeline_visualization_collapse" class="collapse show">
+        <div class="rounded-3 border shadow-sm p-4 p-lg-5 timeline_visualization_collapse-wrapper">
+
           <!-- Connected Scatterplot: Attacks vs Victims -->
           <div class="p-4 border bg-white rounded-3 mb-4" id="nyt_scatter_container">
             <div class="chart-wrapper" id="nyt_scatter_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Attacks and Victims Over Time — A Connected Scatterplot
+                  Attacks and Casualties Over Time
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  Each point represents a year, positioned by <b>number of victims</b> (x-axis)
-                  and <b>number of attacks</b> (y-axis). The line connects years in time, revealing
-                  how severity and frequency move together in fits and starts.
+                  This <b>Connected Scatter plot</b> visualizes the evolving relationship between the number of
+                  terrorist attacks and the total number of victims across years.
+                  Each point corresponds to a year, linked chronologically to show the trajectory of global terrorism.
+                  Key years are annotated to highlight historically significant shifts—such as sudden increases in
+                  attack frequency or dramatic surges in lethality.
+                  The visualization helps reveal whether terrorism has become more frequent, more deadly, or both, and
+                  how these patterns changed in response to major geopolitical or organizational events.
                 </p>
               </div>
 
@@ -552,6 +588,9 @@
       </div>
     </div>
   </section>
+
+
+
 
   <!-- FOOTER -->
   <footer id="footer" class="py-3 border-top">
