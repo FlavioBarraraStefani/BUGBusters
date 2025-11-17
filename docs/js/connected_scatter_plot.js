@@ -4,7 +4,7 @@ function drawConnectedScatter(rawData) {
     const Cutoff = 1990;
     const DynamicAxis = false;
     const TotalDuration = 20000; // total animation duration in ms (20 sec)
-    const KeyYearColor = "orange"; // color for key years
+    const mainColor = "orange"; // color for key years
 
     const tooltip = d3.select("#nyt_scatter_tooltip");
     const chartContainer = d3.select("#nyt_scatter_svg");
@@ -25,8 +25,9 @@ function drawConnectedScatter(rawData) {
         is_key: !!d.is_key,
         label: d.label || d.year,
         note: d.note || "",
-        dx: +d.dx || 0,
-        dy: +d.dy || -15
+        pos: d.pos || null,           // top-left corner in data units
+        size: d.size || null,         // width/height in data units
+        anchorPos: d.anchorPos || null // line endpoint in data units
       }))
       .filter(d => Number.isFinite(d.year) && Number.isFinite(d.attacks) && Number.isFinite(d.victims))
       .sort((a, b) => d3.ascending(a.year, b.year))
@@ -38,7 +39,7 @@ function drawConnectedScatter(rawData) {
 
     const containerWidth = chartContainer.node().getBoundingClientRect().width || 900;
     const margin = { top: 70, right: 40, bottom: 60, left: 80 };
-    const height = 800;
+    const height = 500;
 
     const svg = chartContainer.append("svg")
       .attr("viewBox", [0, 0, containerWidth, height])
@@ -91,22 +92,6 @@ function drawConnectedScatter(rawData) {
       .style("font-size", "20px")
       .text("Number of victims");
 
-    // Arrow marker (if ti serve altrove)
-    const defs = svg.append("defs");
-    defs.append("marker")
-      .attr("id", "arrow-head")
-      .attr("viewBox", "0 0 6 6")
-      .attr("refX", 5)
-      .attr("refY", 3)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M0,0 L6,3 L0,6 Z")
-      .attr("fill", "#9ca3af");
-
-    const keyData = data.filter(d => d.is_key);
-
     // Slider + play button
     const sliderContainer = chartContainer.append("div")
       .style("display", "flex")
@@ -119,7 +104,7 @@ function drawConnectedScatter(rawData) {
       .attr("min", minYear)
       .attr("max", maxYear)
       .attr("step", 0.01)
-      .attr("value", minYear)
+      .attr("value", maxYear)
       .style("flex", "1");
 
     const playButton = sliderContainer.append("button").text("▶ Play");
@@ -135,10 +120,15 @@ function drawConnectedScatter(rawData) {
       sliderMoving = false;
     });
 
+    slider.on("change", () => {
+      if (!playing) {
+        updateFrame(parseFloat(slider.property("value")));
+      }
+    });
+
     const AnimationSpeed = yearRange / TotalDuration; // years per ms
 
     function updateFrame(time) {
-      // pulizia elementi dinamici
       svg.selectAll(".partial-line, .year-node, .current-point, .current-label, .annotation-group").remove();
 
       // Interpolated point
@@ -160,7 +150,6 @@ function drawConnectedScatter(rawData) {
 
       const visiblePoints = data.filter(d => d.year <= time);
 
-      // Dynamic axes opzionale
       if (DynamicAxis) {
         const xVals = visiblePoints.map(d => d.attacks).concat(interpPoint.attacks);
         const yVals = visiblePoints.map(d => d.victims).concat(interpPoint.victims);
@@ -181,7 +170,7 @@ function drawConnectedScatter(rawData) {
         .datum([...visiblePoints, interpPoint])
         .attr("class", "partial-line")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", mainColor)
         .attr("stroke-width", 2)
         .attr("d", lineGen);
 
@@ -191,18 +180,17 @@ function drawConnectedScatter(rawData) {
         .join("circle")
         .attr("class", "year-node")
         .attr("r", 5)
-        .attr("fill", d => d.is_key ? KeyYearColor : "steelblue")
+        .attr("fill", d => mainColor)
         .attr("cx", d => x(d.attacks))
         .attr("cy", d => y(d.victims))
         .on("mouseenter", function (event, d) {
-          if (playing) return; // niente tooltip durante l'animazione
+          if (playing) return;
           tooltip.transition().duration(80).style("opacity", 0.95);
           tooltip.html(
             `<div style="padding:6px 8px;">
                <div style="font-weight:600; margin-bottom:2px;">Year ${d.year}</div>
                <div><b>Attacks:</b> ${fmt(d.attacks)}</div>
                <div><b>Victims:</b> ${fmt(d.victims)}</div>
-               ${d.is_key ? `<div><b>Note:</b> ${d.note}</div>` : ""}
              </div>`
           )
             .style("left", event.pageX + 10 + "px")
@@ -224,11 +212,11 @@ function drawConnectedScatter(rawData) {
           svg.selectAll(".current-point").attr("opacity", 1);
         });
 
-      // --- Punto corrente che si muove ---
+      // --- Punto corrente ---
       svg.append("circle")
         .attr("class", "current-point")
         .attr("r", 5)
-        .attr("fill", "steelblue")
+        .attr("fill", mainColor)
         .attr("cx", x(interpPoint.attacks))
         .attr("cy", y(interpPoint.victims));
 
@@ -242,8 +230,8 @@ function drawConnectedScatter(rawData) {
           .text(Math.round(interpPoint.year));
       }
 
-      // --- ANNOTAZIONI STATICHE PER I KEY POINT (solo se visibili) ---
-      const visibleKeyPoints = visiblePoints.filter(d => d.is_key);
+      // --- Key points annotations ---
+      const visibleKeyPoints = visiblePoints.filter(d => d.is_key && d.pos && d.size && d.anchorPos);
 
       const annoGroup = svg.append("g")
         .attr("class", "annotation-layer");
@@ -254,67 +242,100 @@ function drawConnectedScatter(rawData) {
         .append("g")
         .attr("class", "annotation-group");
 
-      // linea grigia dal punto alla box
+      const defs = svg.append("defs");
+      defs.append("marker")
+          .attr("id", "arrow-head")
+          .attr("viewBox", "0 0 6 6")
+          .attr("refX", 6)        // position of the tip
+          .attr("refY", 3)
+          .attr("markerWidth", 6)
+          .attr("markerHeight", 6)
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", "M0,0 L6,3 L0,6 Z")
+          .attr("fill", "#9ca3af");
+
+
+      // line from data point to anchorPos
       annos.append("line")
         .attr("x1", d => x(d.attacks))
         .attr("y1", d => y(d.victims))
-        .attr("x2", d => x(d.attacks) + d.dx)
-        .attr("y2", d => y(d.victims) + d.dy)
+        .attr("x2", d => x(d.anchorPos.x))
+        .attr("y2", d => y(d.anchorPos.y))
         .attr("stroke", "#9ca3af")
-        .attr("stroke-width", 1.2);
+        .attr("stroke-width", 1.2)
+        .attr("marker-end", "url(#arrow-head)");
 
-      // gruppo per box + testo
+      // annotation box
       const labelG = annos.append("g")
-        .attr("transform", d => `translate(${x(d.attacks) + d.dx}, ${y(d.victims) + d.dy})`);
+        .attr("transform", d => `translate(${x(d.pos.x)}, ${y(d.pos.y)})`);
 
       labelG.append("rect")
         .attr("class", "annotation-box")
         .attr("x", 0)
-        .attr("y", -16)
+        .attr("y", 0)
+        .attr("width", d => x(d.pos.x + d.size.x) - x(d.pos.x))
+        .attr("height", d => y(d.pos.y) - y(d.pos.y + d.size.y)) // invert because y scale
         .attr("rx", 4)
         .attr("ry", 4)
         .attr("fill", "#f9fafb")
         .attr("stroke", "#d1d5db")
         .attr("stroke-width", 1);
 
-      labelG.append("text")
-        .attr("class", "annotation-text")
-        .attr("x", 6)
-        .attr("y", -4)
-        .style("font-size", "16px")
-        .style("fill", "#4b5563")
-        .style("font-family", "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
-        .each(function (d) {
-          const textSel = d3.select(this);
-          const lines = (d.note || "").split(/\n/);
-
-          // prima riga: anno / etichetta in grassetto
-          textSel.append("tspan")
-            .attr("x", 6)
-            .attr("dy", "0")
-            .style("font-weight", "600")
-            .text(d.label || d.year);
-
-          lines.forEach((ln, i) => {
-            textSel.append("tspan")
+      // Function to wrap text inside annotation box
+      function wrapText(textSel, text, boxWidthPx) {
+          const words = text.split(/\s+/).reverse();
+          let line = [];
+          let lineNumber = 0;
+          const lineHeight = 1.2; // em
+          const y0 = parseFloat(textSel.attr("y"));
+          let tspan = textSel.text(null)
+              .append("tspan")
               .attr("x", 6)
-              .attr("dy", i === 0 ? "1.2em" : "1.2em")
-              .text(ln);
-          });
-        });
+              .attr("y", y0)
+              .attr("dy", "0em");
 
-      // aggiusta le dimensioni del rettangolo in base al testo
-      labelG.each(function () {
-        const g = d3.select(this);
-        const textNode = g.select("text").node();
-        if (!textNode) return;
-        const bbox = textNode.getBBox();
-        g.select("rect")
-          .attr("width", bbox.width + 12)
-          .attr("height", bbox.height + 10);
-      });
+          while (words.length > 0) {
+              const word = words.pop();
+              line.push(word);
+              tspan.text(line.join(" "));
+              if (tspan.node().getComputedTextLength() > boxWidthPx - 12) { // 12px padding
+                  line.pop();
+                  tspan.text(line.join(" "));
+                  line = [word];
+                  tspan = textSel.append("tspan")
+                      .attr("x", 6)
+                      .attr("y", y0)
+                      .attr("dy", ++lineNumber * lineHeight + "em")
+                      .text(word);
+              }
+          }
+      }
+
+      // Append text inside annotation box with automatic wrapping
+      labelG.append("text")
+          .attr("class", "annotation-text")
+          .attr("x", 6)
+          .attr("y", 16) // top padding
+          .each(function(d) {
+              const textSel = d3.select(this);
+
+              // Title (year)
+              textSel.append("tspan")
+                  .attr("class", "annotation-title")
+                  .attr("x", 6)
+                  .attr("y", 16)
+                  .attr("dy", 0)
+                  .text(d.label || d.year);
+
+              // Notes (wrapped)
+              const boxWidthPx = x(d.pos.x + d.size.x) - x(d.pos.x); // convert width in data coords to pixels
+              wrapText(textSel, d.note || "", boxWidthPx);
+          });
+
 
       title.text(`Time Range: ${Cutoff} - ${Math.round(time)}`);
+
     }
 
     function animate(timestamp) {
@@ -354,8 +375,10 @@ function drawConnectedScatter(rawData) {
       }
     });
 
-    // primo frame
-    updateFrame(minYear);
+    // first frame at the end
+    updateFrame(maxYear);
 
   })();
 }
+
+
