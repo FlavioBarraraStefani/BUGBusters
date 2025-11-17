@@ -17,7 +17,7 @@ function drawBoxPlotChart(rawData) {
         const upperWhisker = Math.min(d.q3 + 1.5 * iqr, d.max);
         return { ...d, iqr, lowerWhisker, upperWhisker };
       })
-      .sort((a, b) => d3.descending(a.median, b.median));
+      .sort((a, b) => d3.descending(a.upperWhisker, b.upperWhisker));
 
     const groups = data.map(d => d.group);
 
@@ -265,4 +265,3 @@ function drawBoxPlotChart(rawData) {
 
   })();
 }
-

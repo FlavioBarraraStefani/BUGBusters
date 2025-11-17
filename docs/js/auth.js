@@ -89,7 +89,6 @@ const loadChart = (function() {
 
         try {
           if (!cache.has(filePath)) {
-            console.log(`Fetching chart data from ${filePath}...`);
             const url = `${BASE_URL}/${filePath}`;
             const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
             if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);

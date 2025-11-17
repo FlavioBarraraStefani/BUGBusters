@@ -1,7 +1,11 @@
 function drawConnectedScatter(rawData) {
   (async function () {
 
-    // === Setup ===
+    const Cutoff = 1990;
+    const DynamicAxis = false;
+    const TotalDuration = 20000; // total animation duration in ms (20 sec)
+    const KeyYearColor = "orange"; // color for key years
+
     const tooltip = d3.select("#nyt_scatter_tooltip");
     const chartContainer = d3.select("#nyt_scatter_svg");
     chartContainer.selectAll("*").remove();
@@ -19,133 +23,75 @@ function drawConnectedScatter(rawData) {
         attacks: +d.attacks,
         victims: +d.victims,
         is_key: !!d.is_key,
-        label: d.label || "",
+        label: d.label || d.year,
         note: d.note || "",
         dx: +d.dx || 0,
         dy: +d.dy || -15
       }))
       .filter(d => Number.isFinite(d.year) && Number.isFinite(d.attacks) && Number.isFinite(d.victims))
-      .sort((a, b) => d3.ascending(a.year, b.year));
+      .sort((a, b) => d3.ascending(a.year, b.year))
+      .filter(d => d.year >= Cutoff);
 
-    // --- Dimensions ---
+    const minYear = d3.min(data, d => d.year);
+    const maxYear = d3.max(data, d => d.year);
+    const yearRange = maxYear - minYear;
+
     const containerWidth = chartContainer.node().getBoundingClientRect().width || 900;
-    const margin = { top: 40, right: 40, bottom: 60, left: 80 };
-    const height = 480;
+    const margin = { top: 70, right: 40, bottom: 60, left: 80 };
+    const height = 800;
 
     const svg = chartContainer.append("svg")
       .attr("viewBox", [0, 0, containerWidth, height])
       .attr("preserveAspectRatio", "xMidYMid meet");
 
-    // --- Scales ---
-    const xPad = 0.05;
-    const yPad = 0.05;
+    const title = svg.append("text")
+      .attr("x", containerWidth / 2)
+      .attr("y", 30)
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .style("font-weight", "600")
+      .text(`Time Range: ${Cutoff} - ${minYear}`);
 
-    const xExtent = d3.extent(data, d => d.victims);
-    const yExtent = d3.extent(data, d => d.attacks);
-
-    const xRange = xExtent[1] - xExtent[0];
-    const yRange = yExtent[1] - yExtent[0];
-
-    const x = d3.scaleLinear()
-      .domain([0,90000])
-      .nice()
-      .range([margin.left, containerWidth - margin.right]);
-
-    const y = d3.scaleLinear()
-      .domain([0,18000])
-      .nice()
-      .range([height - margin.bottom, margin.top]);
-
-    // --- Grid ---
-    svg.append("g")
-      .attr("class", "grid")
-      .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(
-        d3.axisBottom(x)
-          .ticks(8)
-          .tickSize(-(height - margin.top - margin.bottom))
-          .tickFormat(() => "")
-      )
-      .selectAll("line")
-      .attr("stroke", "#e5e7eb");
-
-    svg.append("g")
-      .attr("class", "grid")
-      .attr("transform", `translate(${margin.left},0)`)
-      .call(
-        d3.axisLeft(y)
-          .ticks(8)
-          .tickSize(-(containerWidth - margin.left - margin.right))
-          .tickFormat(() => "")
-      )
-      .selectAll("line")
-      .attr("stroke", "#e5e7eb");
-
-    // --- Axes ---
     const fmt = d3.format(",.0f");
 
-    svg.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0, ${height - margin.bottom})`)
-      .call(
-        d3.axisBottom(x)
-          .ticks(8)
-          .tickFormat(d => fmt(d))
-      );
+    // --- Scales ---
+    const x = d3.scaleLinear().range([margin.left, containerWidth - margin.right]);
+    const y = d3.scaleLinear().range([height - margin.bottom, margin.top]);
 
-    svg.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", `translate(${margin.left}, 0)`)
-      .call(
-        d3.axisLeft(y)
-          .ticks(8)
-          .tickFormat(d => fmt(d))
-      );
+    if (!DynamicAxis) {
+      const xVals = data.map(d => d.attacks);
+      const yVals = data.map(d => d.victims);
+      x.domain([0, d3.max(xVals) * 1.05]);
+      y.domain([0, d3.max(yVals) * 1.05]);
+    }
 
-    // Axis labels / hints
+    const lineGen = d3.line()
+      .x(d => x(d.attacks))
+      .y(d => y(d.victims))
+      .curve(d3.curveLinear);
+
+    const xAxisG = svg.append("g").attr("class", "x-axis");
+    const yAxisG = svg.append("g").attr("class", "y-axis");
+
+    // Axis labels
     svg.append("text")
       .attr("class", "axis-hint")
       .attr("x", (margin.left + (containerWidth - margin.right)) / 2)
-      .attr("y", height - margin.bottom + 40)
+      .attr("y", height - margin.bottom + 50)
       .attr("text-anchor", "middle")
-      .text("More victims →");
+      .style("font-size", "20px")
+      .text("Number of attacks");
 
     svg.append("text")
       .attr("class", "axis-hint")
       .attr("x", margin.left - 40)
-      .attr("y", (margin.top + (height - margin.bottom)) / 2)
+      .attr("y", (margin.top + (height - margin.bottom)) / 2 - 25)
       .attr("text-anchor", "middle")
       .attr("transform", `rotate(-90, ${margin.left - 40}, ${(margin.top + (height - margin.bottom)) / 2})`)
-      .text("↑ More attacks");
+      .style("font-size", "20px")
+      .text("Number of victims");
 
-    // --- Line generator (smooth) ---
-    const line = d3.line()
-      .x(d => x(d.victims))
-      .y(d => y(d.attacks))
-      .curve(d3.curveCatmullRom.alpha(0.6));
-
-    // Main line
-    svg.append("path")
-      .datum(data)
-      .attr("class", "main-line")
-      .attr("d", line);
-
-    // --- Points ---
-    const rScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.year))
-      .range([3.5, 5]);
-
-    const nodes = svg.append("g")
-      .selectAll(".year-node")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("class", "year-node")
-      .attr("cx", d => x(d.victims))
-      .attr("cy", d => y(d.attacks))
-      .attr("r", d => rScale(d.year));
-
-    // --- Marker for callout arrows ---
+    // Arrow marker (if ti serve altrove)
     const defs = svg.append("defs");
     defs.append("marker")
       .attr("id", "arrow-head")
@@ -159,85 +105,257 @@ function drawConnectedScatter(rawData) {
       .attr("d", "M0,0 L6,3 L0,6 Z")
       .attr("fill", "#9ca3af");
 
-    // --- Annotations for key years ---
     const keyData = data.filter(d => d.is_key);
 
-    const annotations = svg.append("g").attr("class", "annotations");
+    // Slider + play button
+    const sliderContainer = chartContainer.append("div")
+      .style("display", "flex")
+      .style("align-items", "center")
+      .style("gap", "10px")
+      .style("margin-top", "8px");
 
-    const anno = annotations.selectAll(".annotation")
-      .data(keyData)
-      .enter()
-      .append("g")
-      .attr("class", "annotation");
+    const slider = sliderContainer.append("input")
+      .attr("type", "range")
+      .attr("min", minYear)
+      .attr("max", maxYear)
+      .attr("step", 0.01)
+      .attr("value", minYear)
+      .style("flex", "1");
 
-    anno.append("line")
-      .attr("class", "annotation-line")
-      .attr("x1", d => x(d.victims))
-      .attr("y1", d => y(d.attacks))
-      .attr("x2", d => x(d.victims) + d.dx)
-      .attr("y2", d => y(d.attacks) + d.dy)
-      .attr("marker-end", "url(#arrow-head)");
+    const playButton = sliderContainer.append("button").text("▶ Play");
+    let playing = false;
+    let lastTime = null;
+    let sliderMoving = false;
 
-    anno.append("text")
-      .attr("class", "annotation-text")
-      .attr("x", d => x(d.victims) + d.dx + 4)
-      .attr("y", d => y(d.attacks) + d.dy)
-      .attr("dy", "-0.2em")
-      .each(function (d) {
-        const el = d3.select(this);
-        const lines = (d.note || "").split(/\n/);
-        // first line bold with year
-        el.append("tspan")
-          .attr("x", x(d.victims) + d.dx + 4)
-          .attr("dy", "0")
-          .style("font-weight", "600")
-          .text(d.label || d.year);
+    slider.on("input", () => {
+      playing = false;
+      playButton.text("▶ Play");
+      sliderMoving = true;
+      updateFrame(parseFloat(slider.property("value")));
+      sliderMoving = false;
+    });
 
-        lines.forEach((ln, i) => {
-          el.append("tspan")
-            .attr("x", x(d.victims) + d.dx + 4)
-            .attr("dy", i === 0 ? "1.1em" : "1.1em")
-            .text(ln);
+    const AnimationSpeed = yearRange / TotalDuration; // years per ms
+
+    function updateFrame(time) {
+      // pulizia elementi dinamici
+      svg.selectAll(".partial-line, .year-node, .current-point, .current-label, .annotation-group").remove();
+
+      // Interpolated point
+      let interpPoint = null;
+      for (let i = 0; i < data.length - 1; i++) {
+        const d0 = data[i];
+        const d1 = data[i + 1];
+        if (time >= d0.year && time <= d1.year) {
+          const frac = (time - d0.year) / (d1.year - d0.year);
+          interpPoint = {
+            attacks: d0.attacks + frac * (d1.attacks - d0.attacks),
+            victims: d0.victims + frac * (d1.victims - d0.victims),
+            year: time
+          };
+          break;
+        }
+      }
+      if (!interpPoint) interpPoint = { ...data[data.length - 1] };
+
+      const visiblePoints = data.filter(d => d.year <= time);
+
+      // Dynamic axes opzionale
+      if (DynamicAxis) {
+        const xVals = visiblePoints.map(d => d.attacks).concat(interpPoint.attacks);
+        const yVals = visiblePoints.map(d => d.victims).concat(interpPoint.victims);
+        x.domain([d3.min(xVals) * 0.95, d3.max(xVals) * 1.05]);
+        y.domain([d3.min(yVals) * 0.95, d3.max(yVals) * 1.05]);
+      }
+
+      xAxisG
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(8).tickFormat(fmt));
+
+      yAxisG
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(8).tickFormat(fmt));
+
+      // --- Linea parziale ---
+      svg.append("path")
+        .datum([...visiblePoints, interpPoint])
+        .attr("class", "partial-line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", lineGen);
+
+      // --- Punti raggiunti ---
+      svg.selectAll(".year-node")
+        .data(visiblePoints)
+        .join("circle")
+        .attr("class", "year-node")
+        .attr("r", 5)
+        .attr("fill", d => d.is_key ? KeyYearColor : "steelblue")
+        .attr("cx", d => x(d.attacks))
+        .attr("cy", d => y(d.victims))
+        .on("mouseenter", function (event, d) {
+          if (playing) return; // niente tooltip durante l'animazione
+          tooltip.transition().duration(80).style("opacity", 0.95);
+          tooltip.html(
+            `<div style="padding:6px 8px;">
+               <div style="font-weight:600; margin-bottom:2px;">Year ${d.year}</div>
+               <div><b>Attacks:</b> ${fmt(d.attacks)}</div>
+               <div><b>Victims:</b> ${fmt(d.victims)}</div>
+               ${d.is_key ? `<div><b>Note:</b> ${d.note}</div>` : ""}
+             </div>`
+          )
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 20 + "px");
+
+          svg.selectAll(".year-node").classed("dimmed", n => n !== d);
+          svg.selectAll(".partial-line").attr("stroke-opacity", 0.2);
+          svg.selectAll(".current-point").attr("opacity", 0.2);
+        })
+        .on("mousemove", (event) => {
+          tooltip
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 20 + "px");
+        })
+        .on("mouseleave", () => {
+          tooltip.transition().duration(200).style("opacity", 0);
+          svg.selectAll(".year-node").classed("dimmed", false);
+          svg.selectAll(".partial-line").attr("stroke-opacity", 1);
+          svg.selectAll(".current-point").attr("opacity", 1);
         });
+
+      // --- Punto corrente che si muove ---
+      svg.append("circle")
+        .attr("class", "current-point")
+        .attr("r", 5)
+        .attr("fill", "steelblue")
+        .attr("cx", x(interpPoint.attacks))
+        .attr("cy", y(interpPoint.victims));
+
+      if (playing || sliderMoving) {
+        svg.append("text")
+          .attr("class", "current-label")
+          .attr("x", x(interpPoint.attacks))
+          .attr("y", y(interpPoint.victims) - 10)
+          .attr("text-anchor", "middle")
+          .style("font-weight", "600")
+          .text(Math.round(interpPoint.year));
+      }
+
+      // --- ANNOTAZIONI STATICHE PER I KEY POINT (solo se visibili) ---
+      const visibleKeyPoints = visiblePoints.filter(d => d.is_key);
+
+      const annoGroup = svg.append("g")
+        .attr("class", "annotation-layer");
+
+      const annos = annoGroup.selectAll(".annotation-group")
+        .data(visibleKeyPoints)
+        .enter()
+        .append("g")
+        .attr("class", "annotation-group");
+
+      // linea grigia dal punto alla box
+      annos.append("line")
+        .attr("x1", d => x(d.attacks))
+        .attr("y1", d => y(d.victims))
+        .attr("x2", d => x(d.attacks) + d.dx)
+        .attr("y2", d => y(d.victims) + d.dy)
+        .attr("stroke", "#9ca3af")
+        .attr("stroke-width", 1.2);
+
+      // gruppo per box + testo
+      const labelG = annos.append("g")
+        .attr("transform", d => `translate(${x(d.attacks) + d.dx}, ${y(d.victims) + d.dy})`);
+
+      labelG.append("rect")
+        .attr("class", "annotation-box")
+        .attr("x", 0)
+        .attr("y", -16)
+        .attr("rx", 4)
+        .attr("ry", 4)
+        .attr("fill", "#f9fafb")
+        .attr("stroke", "#d1d5db")
+        .attr("stroke-width", 1);
+
+      labelG.append("text")
+        .attr("class", "annotation-text")
+        .attr("x", 6)
+        .attr("y", -4)
+        .style("font-size", "16px")
+        .style("fill", "#4b5563")
+        .style("font-family", "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
+        .each(function (d) {
+          const textSel = d3.select(this);
+          const lines = (d.note || "").split(/\n/);
+
+          // prima riga: anno / etichetta in grassetto
+          textSel.append("tspan")
+            .attr("x", 6)
+            .attr("dy", "0")
+            .style("font-weight", "600")
+            .text(d.label || d.year);
+
+          lines.forEach((ln, i) => {
+            textSel.append("tspan")
+              .attr("x", 6)
+              .attr("dy", i === 0 ? "1.2em" : "1.2em")
+              .text(ln);
+          });
+        });
+
+      // aggiusta le dimensioni del rettangolo in base al testo
+      labelG.each(function () {
+        const g = d3.select(this);
+        const textNode = g.select("text").node();
+        if (!textNode) return;
+        const bbox = textNode.getBBox();
+        g.select("rect")
+          .attr("width", bbox.width + 12)
+          .attr("height", bbox.height + 10);
       });
 
-    // --- Year labels for key points (near the point) ---
-    svg.append("g")
-      .selectAll(".year-label")
-      .data(keyData)
-      .enter()
-      .append("text")
-      .attr("class", "year-label")
-      .attr("x", d => x(d.victims) + 6)
-      .attr("y", d => y(d.attacks) - 6)
-      .text(d => d.year);
+      title.text(`Time Range: ${Cutoff} - ${Math.round(time)}`);
+    }
 
-    // --- Tooltip interazioni ---
-    nodes
-      .on("mouseenter", function (event, d) {
-        // dimming degli altri punti
-        nodes.classed("dimmed", n => n.year !== d.year);
+    function animate(timestamp) {
+      if (!playing) return;
+      if (lastTime === null) lastTime = timestamp;
 
-        tooltip.transition().duration(120).style("opacity", 0.95);
-        tooltip.html(`
-          <div style="padding:6px 8px;">
-            <div style="font-weight:600; margin-bottom:2px;">Year ${d.year}</div>
-            <div><b>Victims:</b> ${fmt(d.victims)}</div>
-            <div><b>Attacks:</b> ${fmt(d.attacks)}</div>
-          </div>
-        `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 20) + "px");
-      })
-      .on("mousemove", function (event) {
-        tooltip
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 20) + "px");
-      })
-      .on("mouseleave", function () {
-        nodes.classed("dimmed", false);
-        tooltip.transition().duration(200).style("opacity", 0);
-      });
+      const dt = timestamp - lastTime;
+      lastTime = timestamp;
+
+      let val = parseFloat(slider.property("value"));
+      val += dt * AnimationSpeed;
+
+      if (val > maxYear) {
+        val = maxYear;
+        playing = false;
+        playButton.text("▶ Play");
+      }
+
+      slider.property("value", val);
+      updateFrame(val);
+
+      if (playing) requestAnimationFrame(animate);
+    }
+
+    playButton.on("click", () => {
+      playing = !playing;
+      let val = parseFloat(slider.property("value"));
+      if (playing) {
+        if (val >= maxYear) val = minYear;
+        slider.property("value", val);
+        lastTime = null;
+        playButton.text("❚❚ Pause");
+        requestAnimationFrame(animate);
+      } else {
+        playButton.text("▶ Play");
+        updateFrame(val);
+      }
+    });
+
+    // primo frame
+    updateFrame(minYear);
 
   })();
 }
