@@ -4,7 +4,8 @@ function drawConnectedScatter(rawData) {
     const Cutoff = 1990;
     const DynamicAxis = false;
     const TotalDuration = 20000; // total animation duration in ms (20 sec)
-    const mainColor = "orange"; // color for key years
+    const lineColor = "#0EA5E9"; // color for key years
+    const circleColor = "#0369A1"; // color for key years
 
     const tooltip = d3.select("#nyt_scatter_tooltip");
     const chartContainer = d3.select("#nyt_scatter_svg");
@@ -170,7 +171,7 @@ function drawConnectedScatter(rawData) {
         .datum([...visiblePoints, interpPoint])
         .attr("class", "partial-line")
         .attr("fill", "none")
-        .attr("stroke", mainColor)
+        .attr("stroke", lineColor)
         .attr("stroke-width", 2)
         .attr("d", lineGen);
 
@@ -180,7 +181,7 @@ function drawConnectedScatter(rawData) {
         .join("circle")
         .attr("class", "year-node")
         .attr("r", 5)
-        .attr("fill", d => mainColor)
+        .attr("fill", d => circleColor)
         .attr("cx", d => x(d.attacks))
         .attr("cy", d => y(d.victims))
         .on("mouseenter", function (event, d) {
@@ -199,6 +200,8 @@ function drawConnectedScatter(rawData) {
           svg.selectAll(".year-node").classed("dimmed", n => n !== d);
           svg.selectAll(".partial-line").attr("stroke-opacity", 0.2);
           svg.selectAll(".current-point").attr("opacity", 0.2);
+          svg.selectAll(".annotation-group").classed("dimmed", ag => ag.year !== d.year);
+
         })
         .on("mousemove", (event) => {
           tooltip
@@ -210,13 +213,15 @@ function drawConnectedScatter(rawData) {
           svg.selectAll(".year-node").classed("dimmed", false);
           svg.selectAll(".partial-line").attr("stroke-opacity", 1);
           svg.selectAll(".current-point").attr("opacity", 1);
+          svg.selectAll(".annotation-group").classed("dimmed", false);
+
         });
 
       // --- Punto corrente ---
       svg.append("circle")
         .attr("class", "current-point")
         .attr("r", 5)
-        .attr("fill", mainColor)
+        .attr("fill", circleColor)
         .attr("cx", x(interpPoint.attacks))
         .attr("cy", y(interpPoint.victims));
 
@@ -282,6 +287,7 @@ function drawConnectedScatter(rawData) {
         .attr("stroke", "#d1d5db")
         .attr("stroke-width", 1);
 
+
       // Function to wrap text inside annotation box
       function wrapText(textSel, text, boxWidthPx) {
           const words = text.split(/\s+/).reverse();
@@ -326,7 +332,7 @@ function drawConnectedScatter(rawData) {
                   .attr("x", 6)
                   .attr("y", 16)
                   .attr("dy", 0)
-                  .text(d.label || d.year);
+                  .text(d.year);
 
               // Notes (wrapped)
               const boxWidthPx = x(d.pos.x + d.size.x) - x(d.pos.x); // convert width in data coords to pixels
