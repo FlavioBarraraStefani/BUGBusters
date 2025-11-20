@@ -204,19 +204,18 @@ function drawProportionalSymbolMap(rawData) {
         // === Tooltip & hover ===
         bubbles
             .on("mouseenter", function (event, d) {
-                bubbles.classed("dimmed", b => b !== d);
+                bubbles.classed("dimmed_t", b => b !== d);
                 d3.select(this).raise();
-
                 tooltip.transition().duration(120).style("opacity", 0.95);
                 tooltip.html(`
-          <div style="padding:6px 8px; font-size:13px;">
-            <div style="font-weight:600; margin-bottom:4px;">
-              ${d.country_txt}
-            </div>
-            <div><b>Group:</b> ${d.gname}</div>
-            <div><b>Attacks:</b> ${fmt(d.count)}</div>
-          </div>
-        `)
+                    <div style="padding:6px 8px; font-size:13px;">
+                        <div style="font-weight:600; margin-bottom:4px;">
+                        ${d.country_txt}
+                        </div>
+                        <div><b>Group:</b> ${d.gname}</div>
+                        <div><b>Attacks:</b> ${fmt(d.count)}</div>
+                    </div>
+                    `)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 20) + "px");
             })
@@ -226,9 +225,13 @@ function drawProportionalSymbolMap(rawData) {
                     .style("top", (event.pageY - 20) + "px");
             })
             .on("mouseleave", function () {
-                bubbles.classed("dimmed", false);
                 tooltip.transition().duration(150).style("opacity", 0);
+
+                // remove all tooltip dimming
+                bubbles.classed("dimmed_t", false);
             });
+
+
 
         // === Legend: colori gruppi (con acronimo) + Others ===
         const legendWrapper = legendContainer
@@ -283,10 +286,15 @@ function drawProportionalSymbolMap(rawData) {
                 colorLegend.selectAll(".legend-item")
                     .style("opacity", d => (d === g || d === "Others") ? 1 : 0.3);
 
-                bubbles.classed("dimmed", d => d.gname !== g);
+                bubbles.classed("dimmed_l", d => d.gname !== g);
+                bubbles
+                    .style("pointer-events", d => d.gname === g ? "auto" : "none");
+
             } else {
-                bubbles.classed("dimmed", false);
+                bubbles.classed("dimmed_l", false);
+                bubbles.style("pointer-events", "auto");
             }
+
         });
 
         // === Size legend (tre bolle affiancate, niente sovrapposizioni) ===

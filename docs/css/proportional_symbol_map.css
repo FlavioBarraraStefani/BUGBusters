@@ -30,10 +30,10 @@
   transition: opacity 0.15s ease-in-out, r 0.3s ease-out;
 }
 
-#proportional_symbol_map_container .bubble.dimmed {
+#proportional_symbol_map_container .bubble.dimmed_t,
+#proportional_symbol_map_container .bubble.dimmed_l {
   opacity: 0.2;
 }
-
 /* Legend */
 #proportional_symbol_map_legend .legend-item {
   transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
