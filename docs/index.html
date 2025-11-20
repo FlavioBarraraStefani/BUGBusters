@@ -21,6 +21,8 @@
   <!-- D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/topojson-client@3"></script>
+  <script src="https://d3js.org/d3-hexbin.v0.2.min.js" defer></script>
+
 
   <!-- Main styles -->
   <link rel="stylesheet" href="css/main_style.css" />
@@ -77,6 +79,11 @@
   <link rel="stylesheet" href="css/proportional_symbol_map.css" />
   <script src="js/proportional_symbol_map.js" defer></script>
 
+  <!-- HEXGRID MAP -->
+  <link rel="stylesheet" href="css/hexgrid_map.css" />
+  <script src="js/hexgrid_map.js" defer></script>
+
+
 </head>
 
 <body>
@@ -102,9 +109,11 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Charts
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#comparing_categories">Comparing Categories</a></li>
               <li><a class="dropdown-item" href="#visualizing_distributions">Visualizing Distributions</a></li>
+              <li><a class="dropdown-item" href="#timeline_visualization">Time series Visualization</a></li>
+              <li><a class="dropdown-item" href="#maps">Geographical Rapresentations</a></li>
             </ul>
           </li>
           </li>
@@ -629,6 +638,26 @@
 
             <div id="proportional_symbol_map_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
+
+          <div class="p-4 border bg-white rounded-3 mb-4" id="hexgrid_map_container">
+            <div class="chart-wrapper" id="hexgrid_map_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Afghanistan — Hexbin density
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  Hexbin aggregation of supplied point events (lat,long).
+                </p>
+              </div>
+          
+              <div id="hexgrid_map_svg" class="mx-auto"></div>
+              <div id="hexgrid_map_legend" class="mx-auto"></div>
+          
+            </div>
+          
+            <div id="hexgrid_map_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+          
 
         </div>
       </div>
