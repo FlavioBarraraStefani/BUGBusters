@@ -129,7 +129,9 @@ async function initChartsAfterAuth() {
     loadChart("timeline_visualization/connected_scatter_plot.json", drawConnectedScatter, "nyt_scatter_container"),
 
     // Section 4: Maps
-    loadChart("maps/proportional_symbol_map.json", drawProportionalSymbolMap, "proportional_symbol_map_container")
+    loadChart("maps/proportional_symbol_map.json", drawProportionalSymbolMap, "proportional_symbol_map_container"),
+    loadChart("maps/hexgrid_map.json", drawHexgridMap, "hexgrid_map_container")
+
   ];
 
   // load in concurrent way

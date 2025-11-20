@@ -99,7 +99,7 @@ function drawProportionalSymbolMap(rawData) {
         const node = chartContainer.node();
         const containerWidth = node.getBoundingClientRect().width || 900;
         const width = containerWidth;
-        const height = 450//Math.max(420, Math.round(width * 0.55));
+        const height = 450
 
         const svg = chartContainer.append("svg")
             .attr("viewBox", [0, 0, width, height])
