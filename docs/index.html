@@ -20,6 +20,7 @@
 
   <!-- D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
 
   <!-- Main styles -->
   <link rel="stylesheet" href="css/main_style.css" />
@@ -62,9 +63,19 @@
   <link rel="stylesheet" href="css/ridgeline_plot_chart.css" />
   <script src="js/ridgeline_plot_chart.js" defer></script>
 
+
+  <!-- Temporal data -->
+
   <!--TIMELINE STORYLINE CHART -->
   <link rel="stylesheet" href="css/connected_scatter_plot.css" />
   <script src="js/connected_scatter_plot.js" defer></script>
+
+
+  <!-- Maps -->
+   
+  <!-- PROPORTIONAL SYMBOL MAP -->
+  <link rel="stylesheet" href="css/proportional_symbol_map.css" />
+  <script src="js/proportional_symbol_map.js" defer></script>
 
 </head>
 
@@ -301,7 +312,7 @@
               </div>
               <div id="bar_chart_svg" class="mx-auto"></div>
               <div id="bar_chart_legend" class="legend mt-3"></div>
-              
+
             </div>
             <div id="bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -322,7 +333,7 @@
               <div id="stacked_bar_chart_svg" class="mx-auto"></div>
               <div id="stacked_bar_chart_legend" class="legend text-center mt-3"></div>
               <br>
-              
+
             </div>
             <div id="stacked_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -348,7 +359,7 @@
                 <div class="d-none d-lg-block col-lg-1"></div>
               </div>
               <br>
-              
+
             </div>
             <div id="waffle_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -376,7 +387,7 @@
                 </div>
               </div>
               <br>
-              
+
             </div>
             <div id="heatmap_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -399,7 +410,7 @@
                 <div id="multiple_bar_chart_legend" class="legend mt-3 d-flex justify-content-center flex-wrap"></div>
               </div>
               <br>
-              
+
             </div>
             <div id="multiple_bar_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -480,7 +491,7 @@
               <div id="dist_ridgeline_svg" class="mx-auto"></div>
               <div id="dist_ridgeline_legend" class="legend text-center mt-3"></div>
               <br>
-              
+
             </div>
             <div id="dist_ridgeline_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -505,7 +516,7 @@
 
               <div id="dist_boxplot_legend" class="legend mt-3"></div>
               <br>
-              
+
             </div>
             <div id="dist_boxplot_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
@@ -562,7 +573,7 @@
 
               <div id="nyt_scatter_svg" class="mx-auto"></div>
 
-              
+
             </div>
 
             <div id="nyt_scatter_tooltip" class="tooltip" style="opacity:0"></div>
@@ -574,6 +585,56 @@
   </section>
 
 
+  <!-- PLOTS (4): Maps -->
+  <section id="maps" class="py-5 private-section          col-lg-10 mx-auto">
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
+      <!-- Header with toggle -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Geographic Distribution of Attacks</h2>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
+          data-bs-toggle="collapse" data-bs-target="#maps_collapse" aria-expanded="true"
+          aria-controls="maps_collapse" id="maps_toggle">
+          <span class="label-when-open">Hide</span>
+          <span class="label-when-closed d-none">Show</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+      <hr class="my-3">
+      <!-- Intro paragraph -->
+      <div class="mb-4">
+        <p class="mb-0">
+          This section ...
+        </p>
+      </div>
+
+      <!-- Collapsible content -->
+      <div id="maps_collapse" class="collapse show">
+        <div class="rounded-3 border shadow-sm p-4 p-lg-5 maps_collapse-wrapper">
+
+          <!-- Proportional Symbol Map -->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="proportional_symbol_map_container">
+            <div class="chart-wrapper" id="proportional_symbol_map_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Plot Title
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  description
+                </p>
+              </div>
+
+              <div id="proportional_symbol_map_svg" class="mx-auto"></div>
+              <div id="proportional_symbol_map_legend" class="mx-auto"></div>
+
+            </div>
+
+            <div id="proportional_symbol_map_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
 
 
   <!-- FOOTER -->

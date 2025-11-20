@@ -64,7 +64,7 @@ function hideAuthSection() {
 // -------------------------------
 // Initial check for cached token
 // -------------------------------
-(async function() {
+(async function () {
   const savedToken = localStorage.getItem("github_token");
   if (savedToken) {
     hideAuthSection();
@@ -76,36 +76,36 @@ function hideAuthSection() {
   }
 })();
 
-const loadChart = (function() {
-      const BASE_URL = "https://api.github.com/repos/supernino02/BugBuster-project/contents";
-      const cache = new Map();
+const loadChart = (function () {
+  const BASE_URL = "https://api.github.com/repos/supernino02/BugBuster-project/contents";
+  const cache = new Map();
 
-      return async function(filePath, chartFunc, containerId) {
-        const containerDiv = document.getElementById(containerId);
-        if (!containerDiv) return;
+  return async function (filePath, chartFunc, containerId) {
+    const containerDiv = document.getElementById(containerId);
+    if (!containerDiv) return;
 
-        containerDiv.style.display = "none"; // hide until loaded
-        const token = localStorage.getItem("github_token");
+    containerDiv.style.display = "none"; // hide until loaded
+    const token = localStorage.getItem("github_token");
 
-        try {
-          if (!cache.has(filePath)) {
-            const url = `${BASE_URL}/${filePath}`;
-            const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
-            if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
-            const rawData = JSON.parse(atob((await res.json()).content.replace(/\n/g,'')));
-            cache.set(filePath, rawData);
-          }
+    try {
+      if (!cache.has(filePath)) {
+        const url = `${BASE_URL}/${filePath}`;
+        const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
+        if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
+        const rawData = JSON.parse(atob((await res.json()).content.replace(/\n/g, '')));
+        cache.set(filePath, rawData);
+      }
 
-          const rawData = cache.get(filePath);
-          containerDiv.style.display = "block"; // show container
-          chartFunc(rawData);
+      const rawData = cache.get(filePath);
+      containerDiv.style.display = "block"; // show container
+      chartFunc(rawData);
 
-        } catch(err) {
-          containerDiv.innerHTML = `<div class="alert alert-danger">Failed to load chart: ${err.message}</div>`;
-          console.error(err);
-        }
-      };
-    })();
+    } catch (err) {
+      containerDiv.innerHTML = `<div class="alert alert-danger">Failed to load chart: ${err.message}</div>`;
+      console.error(err);
+    }
+  };
+})();
 
 
 // -------------------------------
@@ -113,20 +113,23 @@ const loadChart = (function() {
 // -------------------------------
 async function initChartsAfterAuth() {
   const tasks = [
-  // Section 1: Comparing Categories
+    // Section 1: Comparing Categories
     loadChart("comparing_categories/bar_chart.json", drawBarChart, "bar_chart_container"),
     loadChart("comparing_categories/full_stacked_chart.json", drawStackedBarChart, "stacked_bar_chart_container"),
     loadChart("comparing_categories/waffle_chart.json", drawWaffleChart, "waffle_chart_container"),
     loadChart("comparing_categories/heatmap_chart.json", drawHeatmapChart, "heatmap_chart_container"),
     loadChart("comparing_categories/multiple_bar_chart.json", drawMultipleBarChart, "multiple_bar_chart_container"),
 
-  // Section 2: Visualizing Distributions
+    // Section 2: Visualizing Distributions
     loadChart("visualizing_distributions/mirror_chart.json", drawMirrorChart, "mirror_chart_container"),
     loadChart("visualizing_distributions/box_plot_chart.json", drawBoxPlotChart, "dist_boxplot_container"),
     loadChart("visualizing_distributions/ridgeline_plot_chart.json", drawRidgePlotChart, "dist_ridgeline_container"),
 
-  // Section 3: Visualizing Distributions
+    // Section 3: Visualizing Distributions
     loadChart("timeline_visualization/connected_scatter_plot.json", drawConnectedScatter, "nyt_scatter_container"),
+
+    // Section 4: Maps
+    loadChart("maps/proportional_symbol_map.json", drawProportionalSymbolMap, "proportional_symbol_map_container")
   ];
 
   // load in concurrent way
