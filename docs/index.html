@@ -83,6 +83,10 @@
   <link rel="stylesheet" href="css/hexgrid_map.css" />
   <script src="js/hexgrid_map.js" defer></script>
 
+  <!-- choropleth_map -->
+  <link rel="stylesheet" href="css/choropleth_map.css" />
+  <script src="js/choropleth_map.js"  defer></script>
+
 
 </head>
 
@@ -656,6 +660,27 @@
             </div>
           
             <div id="hexgrid_map_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+
+          <!-- choropleth_map_chart-->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="choropleth_map_container">
+            <div class="chart-wrapper" id="choropleth_map_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                  Iraq chroloplet map
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  description
+                </p>
+              </div>
+          
+              <div id="choropleth_map_chart_svg" class="mx-auto"></div>
+              <div id="choropleth_map_chart_legend" class="mx-auto"></div>
+          
+            </div>
+          
+            <div id="choropleth_map_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
           
 
