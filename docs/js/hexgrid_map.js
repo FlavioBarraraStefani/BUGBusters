@@ -1,334 +1,246 @@
-/*function drawHexgridMap(rawData) {
+function drawHexgridMap(rawData) {
     (async function () {
-        const tooltip = d3.select("#hexgrid_map_tooltip");
-        const chartContainer = d3.select("#hexgrid_map_svg");
-        const legendContainer = d3.select("#hexgrid_map_legend");
+        const chartSvgDiv = d3.select("#hexgrid_map_svg");
+        const legendDiv = d3.select("#hexgrid_map_legend");
+        const chartWrapper = d3.select("#hexgrid_map_chart");
 
-        chartContainer.selectAll("*").remove();
-        legendContainer.selectAll("*").remove();
-        tooltip.style("opacity", 0);
+        // Clear old
+        chartSvgDiv.selectAll("*").remove();
+        legendDiv.selectAll("*").remove();
+        d3.select("#hexgrid_controls").remove();
 
         if (!Array.isArray(rawData) || rawData.length === 0) {
             console.warn("[drawHexgridMap] empty data");
             return;
         }
 
-        const data = rawData
-            .map(d => ({lat: +d.lt, lon: +d.lg, kill: +d.k }))
-            .filter(d => Number.isFinite(d.lat) && Number.isFinite(d.lon));
+        // Parse data
+        const data = rawData.map(d => ({
+            lat: +d.lt,
+            lon: +d.lg,
+            kill: Math.max(+d.k || 0, 0),
+            year: +d.y
+        })).filter(d => Number.isFinite(d.lat) && Number.isFinite(d.lon) && Number.isFinite(d.year));
 
-        if (data.length === 0) {
-            console.warn("[drawHexgridMap] no valid lat/lon rows");
-            return;
-        }
+        if (data.length === 0) return;
 
+        // Load GeoJSON
+        let afg;
+        try { afg = await d3.json("assets/afghanistan.json"); }
+        catch (err) { console.error(err); return; }
 
-        // --- Load Afghanistan GeoJSON ---
-        let afgFeature;
-        try { afgFeature = await d3.json("assets/afghanistan.json"); }
-        catch (err) { console.error("[drawHexgridMap] Cannot load Afghanistan GeoJSON", err); return; }
+        const LEGEND_WIDTH_PX = 100;
+        const svgHeight = 450;
+        chartWrapper.style("position", "relative");
 
-        // --- Dimensions ---
-        const node = chartContainer.node();
-        const width = node.getBoundingClientRect().width || 900;
-        const height = Math.max(420, Math.round(width * 0.6));
+        // --- Controls ---
+        const controls = chartSvgDiv.append("div")
+            .attr("id", "hexgrid_controls")
+            .style("width", "90%")
+            .style("margin", "0 auto")
+            .style("display", "flex")
+            .style("flex-direction", "column")
+            .style("align-items", "center")
+            .style("padding-bottom", "6px");
 
-        const svg = chartContainer.append("svg")
-            .attr("viewBox", [0, 0, width, height])
-            .attr("preserveAspectRatio", "xMidYMid meet");
+        // Title
+        const title = controls.append("div")
+            .attr("id", "hexgrid_map_title")
+            .style("font-weight", 700)
+            .style("font-size", "18px")
+            .style("margin-bottom", "6px")
+            .style("text-align", "center");
 
-        const mapLayer = svg.append("g").attr("class", "map-layer");
-        const hexOverlay = svg.append("g").attr("class", "hex-overlay");
+        // Controls row (play + slider)
+        const controlsRow = controls.append("div")
+            .attr("id", "hexgrid_controls_row")
+            .style("display", "flex")
+            .style("align-items", "center")
+            .style("gap", "8px")
+            .style("width", `calc(100% - ${LEGEND_WIDTH_PX}px)`)
+            .style("max-width", `calc(1000px - ${LEGEND_WIDTH_PX}px)`);
 
-        // --- Projection & path ---
-        const projection = d3.geoNaturalEarth1().fitSize([width, height], afgFeature);
+        const playBtn = controlsRow.append("button")
+            .attr("id", "hex_play_btn")
+            .text("▶ Play")
+            .style("min-width", "72px")
+            .style("padding", "6px 10px")
+            .style("cursor", "pointer");
+
+        const slider = controlsRow.append("input")
+            .attr("type", "range")
+            .attr("id", "hex_year_slider")
+            .style("flex", "1");
+
+        const yearLabel = controls.append("div")
+            .attr("id", "hex_year_label")
+            .style("margin-top", "6px")
+            .style("font-size", "13px");
+
+        // --- SVG ---
+        const containerWidth = chartSvgDiv.node().getBoundingClientRect().width || 900;
+        const svg = chartSvgDiv.append("svg")
+            .attr("viewBox", [0, 0, containerWidth, svgHeight])
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .style("display", "block");
+
+        const mapG = svg.append("g").attr("class", "map-layer");
+        const pointsG = svg.append("g").attr("class", "points-layer");
+
+        const projection = d3.geoNaturalEarth1().fitSize([containerWidth, svgHeight], afg);
         const geoPath = d3.geoPath(projection);
 
-        // --- Draw Afghanistan ---
-        const baseMapG = mapLayer.append("g").attr("class", "basemap");
-        baseMapG.append("path")
-            .datum(afgFeature)
+        mapG.append("path")
+            .datum(afg)
             .attr("d", geoPath)
             .attr("fill", "#f3f4f6")
             .attr("stroke", "#cbd5e1")
             .attr("stroke-width", 0.6);
+            
 
-        // --- Project points ---
-        const projected = data.map(d => {
-            const [x, y] = projection([d.lon, d.lat]);
-            return { x, y, lat: d.lat, lon: d.lon };
-        }).filter(d => isFinite(d.x) && isFinite(d.y));
+        // --- Radius scale ---
+        const maxKill = d3.max(data, d => d.kill) || 1;
+        const rScale = d3.scaleSqrt().domain([0, maxKill]).range([2, 50]);
 
-        if (projected.length === 0) { console.warn("[drawHexgridMap] no projected points"); return; }
-
-        const baseHexRadius = 20;
-        const hex = d3.hexbin().radius(baseHexRadius).extent([[0, 0], [width, height]]);
-
-        // Original points array (for applying zoom transform)
-        const originalPoints = projected.map(p => [p.x, p.y, p]);
-
-        // --- Compute bins ---
-        function computeBins(pointsForHex) {
-            const bins = hex(pointsForHex);
-            bins.forEach(b => b.count = b.length);
-            return bins;
-        }
-
-        let bins = computeBins(originalPoints);
-
-        // --- Color scale ---
-        const maxCount = d3.max(bins, b => b.count) || 1;
-        const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxCount]);
-
-        // --- Draw hexes (pre-create) ---
-        const hexG = hexOverlay.append("g").attr("class", "hexbins");
-        const hexPaths = hexG.selectAll("path.hexbin-cell")
-            .data(bins)
+        // --- Circles ---
+        const circles = pointsG.selectAll("circle")
+            .data(data)
             .enter()
-            .append("path")
-            .attr("class", "hexbin-cell")
-            .attr("d", hex.hexagon())
-            .attr("transform", d => `translate(${d.x},${d.y})`)
-            .attr("fill", d => colorScale(d.count))
-            .attr("fill-opacity", 0.9)
-            .attr("stroke", "#1f2937")
-            .attr("stroke-width", 0.35)
-            .style("pointer-events", "none")
+            .append("circle")
+            .attr("cx", d => projection([d.lon, d.lat])[0])
+            .attr("cy", d => projection([d.lon, d.lat])[1])
+            .attr("r", 0)
             .attr("opacity", 0)
-            .transition()
-            .duration(350)
-            .attr("opacity", 1)
-            .on("end", function () { d3.select(this).style("pointer-events", "auto"); });
+            .attr("fill", "none")
+            .attr("stroke", "#000")
+            .attr("stroke-width", 0.5);
 
-        // --- Tooltip ---
-        const fmt = d3.format(",");
-        hexG.selectAll("path.hexbin-cell")
-            .on("mouseenter", function (event, d) {
-                hexG.selectAll("path.hexbin-cell").classed("dimmed", b => b !== d);
-                d3.select(this).raise();
-                tooltip.transition().duration(120).style("opacity", 0.95);
-                tooltip.html(`<div style="padding:6px 8px; font-size:13px;">
-                    <div style="font-weight:600; margin-bottom:4px;">${fmt(d.count)} events</div>
-                </div>`)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 20) + "px");
-            })
-            .on("mousemove", function (event) {
-                tooltip.style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 20) + "px");
-            })
-            .on("mouseleave", function () {
-                tooltip.transition().duration(150).style("opacity", 0);
-                hexG.selectAll("path.hexbin-cell").classed("dimmed", false);
-            });
+        circles.each(d => d._r = rScale(d.kill));
 
-        // --- Legend ---
-        const legendWrapper = legendContainer
-            .style("display", "flex")
-            .style("justify-content", "center")
-            .style("gap", "12px")
-            .style("margin-top", "10px")
-            .style("align-items", "center");
-
-        const nBuckets = 5;
-        const thresholds = [];
-        for (let i = 1; i <= nBuckets; i++) {
-            thresholds.push(Math.round(d3.quantile(bins.map(b => b.count).sort(d3.ascending), i / (nBuckets + 1)) || 0));
-        }
-        const uniqThresholds = Array.from(new Set(thresholds)).filter(v => v > 0);
-        const legendValues = uniqThresholds.length ? uniqThresholds : [Math.round(maxCount / 3), Math.round(maxCount / 2), maxCount];
-
-        legendValues.forEach(v => {
-            const sw = legendWrapper.append("div").attr("class", "legend-swatch");
-            sw.append("div").attr("class", "box").style("background", colorScale(v));
-            sw.append("div").attr("class", "legend-label").text(`${fmt(v)} events`);
+        // --- Precompute circles by year ---
+        const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => a - b);
+        const circlesByYear = {};
+        years.forEach(y => {
+            circlesByYear[y] = circles.filter(d => d.year === y);
         });
 
-        legendWrapper.append("div")
-            .attr("class", "legend-swatch")
-            .style("margin-left", "8px")
-            .append("div")
-            .attr("class", "legend-label")
-            .text("Hex radius = " + baseHexRadius + "px");
+        let currentIndex = 0;
+        let playing = false;
+        let animationFrame = null;
+        const playIntervalMs = 600;
 
-        // --- Zoom & pan (fast) ---
-        let lastZoomTime = 0;
-        const zoomThrottle = 50; // ms
-
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", (event) => {
-                const now = Date.now();
-                if (now - lastZoomTime < zoomThrottle) return;
-                lastZoomTime = now;
-
-                // transform map layer
-                mapLayer.attr("transform", event.transform);
-                baseMapG.selectAll("path").attr("stroke-width", 0.6 / event.transform.k);
-
-                // transformed points for hex aggregation
-                const transformedPoints = originalPoints.map(pt => {
-                    const t = event.transform.apply([pt[0], pt[1]]);
-                    return [t[0], t[1], pt[2]];
-                });
-                bins = computeBins(transformedPoints);
-
-                // update color scale domain
-                const newMax = d3.max(bins, b => b.count) || 1;
-                colorScale.domain([0, newMax]);
-
-                // update hexes only (reuse DOM elements)
-                hexG.selectAll("path.hexbin-cell")
-                    .data(bins)
-                    .attr("transform", d => `translate(${d.x},${d.y})`)
-                    .attr("fill", d => colorScale(d.count))
-                    .attr("stroke-width", 0.35 / event.transform.k);
+        slider.attr("min", 0)
+            .attr("max", Math.max(0, years.length - 1))
+            .attr("step", 1)
+            .property("value", currentIndex)
+            .on("input", function () {
+                if (playing) stopAnimation();
+                currentIndex = +this.value;
+                const y = years[currentIndex];
+                title.text(`Deadly attacks: ${y}`);
+                yearLabel.text(y);
+                updateCircles(y, true);
             });
 
-        svg.call(zoom);
+        // --- Play button ---
+        playBtn.on("click", function () {
+            if (playing) stopAnimation();
+            else startAnimation();
+        });
+
+        function startAnimation() {
+            playing = true;
+            playBtn.text("❚❚ Pause");
+            if (currentIndex >= years.length - 1) currentIndex = 0;
+            stepAnimation();
+        }
+
+        function stopAnimation() {
+            playing = false;
+            playBtn.text("▶ Play");
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+        }
+
+        function stepAnimation() {
+            if (!playing) return;
+            currentIndex++;
+            if (currentIndex >= years.length) { stopAnimation(); return; }
+            slider.property("value", currentIndex);
+            const y = years[currentIndex];
+            title.text(`Deadly attacks in ${y}`);
+            yearLabel.text(y);
+
+            updateCircles(y); // animate circles
+            animationFrame = setTimeout(() => requestAnimationFrame(stepAnimation), playIntervalMs);
+        }
+
+
+        // --- Update circles ---
+        function updateCircles(year) {
+            circles.each(function (d) {
+                const sel = d3.select(this);
+                if (d.year === year) {
+                    sel.interrupt()
+                        .transition()
+                        .duration(300)
+                        .attr("r", d._r)
+                        .attr("opacity", 0.9);
+                } else {
+                    sel.interrupt()
+                        .transition()
+                        .duration(300)
+                        .attr("r", 0)
+                        .attr("opacity", 0);
+                }
+            });
+        }
+
+
+
+        // --- Initial render ---
+        const initialYear = years[0];
+        title.text(`Deadly attacks: ${initialYear}`);
+        yearLabel.text(initialYear);
+        updateCircles(initialYear, false);
+
+        // --- Legend ---
+        legendDiv.style("position", "absolute")
+            .style("right", "8px")
+            .style("top", "50%")
+            .style("transform", "translateY(-50%)")
+            .style("width", `${LEGEND_WIDTH_PX}px`)
+            .style("pointer-events", "none");
+
+        const legendVals = [
+            Math.max(1, Math.round(maxKill * 0.05)),
+            Math.max(1, Math.round(maxKill * 0.20)),
+            Math.max(1, Math.round(maxKill * 0.40)),
+            Math.max(1, Math.round(maxKill * 0.70)),
+            Math.max(1, Math.round(maxKill * 1.0))
+        ];
+
+        const legendWrap = legendDiv.append("div")
+            .style("display", "flex")
+            .style("flex-direction", "column")
+            .style("align-items", "center")
+            .style("gap", "12px");
+
+        const fmt = d3.format(",");
+        legendVals.forEach(v => {
+            const row = legendWrap.append("div")
+                .style("display", "flex")
+                .style("flex-direction", "column")
+                .style("align-items", "center");
+            row.append("div")
+                .style("width", `${rScale(v) * 2}px`)
+                .style("height", `${rScale(v) * 2}px`)
+                .style("border-radius", "50%")
+                .style("border", "1.2px solid #000")
+                .style("background", "none");
+            row.append("div")
+                .style("font-size", "12px")
+                .text(`${fmt(v)} killed`);
+        });
 
     })();
 }
-
-*/
-
-function drawHexgridMap(rawData) {
-        (async function () {
-            const tooltip = d3.select("#hexgrid_map_tooltip");
-            const chartContainer = d3.select("#hexgrid_map_svg");
-            const legendContainer = d3.select("#hexgrid_map_legend");
-
-            chartContainer.selectAll("*").remove();
-            legendContainer.selectAll("*").remove();
-            tooltip.style("opacity", 0);
-
-            if (!Array.isArray(rawData) || rawData.length === 0) {
-                console.warn("[drawScatterMap] empty data");
-                return;
-            }
-
-            // --- Parse data ---
-            const data = rawData
-                .map(d => ({
-                    lat: +d.lt,
-                    lon: +d.lg,
-                    kill: Math.max(+d.k, 0)
-                }))
-                .filter(d => Number.isFinite(d.lat) && Number.isFinite(d.lon));
-
-            if (data.length === 0) {
-                console.warn("[drawScatterMap] no valid lat/lon rows");
-                return;
-            }
-
-            // --- Load Afghanistan GeoJSON ---
-            let afgFeature;
-            try { afgFeature = await d3.json("assets/afghanistan.json"); }
-            catch (err) { console.error("[drawScatterMap] Cannot load Afghanistan GeoJSON", err); return; }
-
-            // --- Dimensions ---
-            const node = chartContainer.node();
-            const width = node.getBoundingClientRect().width || 900;
-            const height = Math.max(420, Math.round(width * 0.6));
-
-            const svg = chartContainer.append("svg")
-                .attr("viewBox", [0, 0, width, height])
-                .attr("preserveAspectRatio", "xMidYMid meet");
-
-            const mapLayer = svg.append("g").attr("class", "map-layer");
-            const pointsLayer = svg.append("g").attr("class", "points-layer");
-
-            // --- Projection & path ---
-            const projection = d3.geoNaturalEarth1().fitSize([width, height], afgFeature);
-            const geoPath = d3.geoPath(projection);
-
-            // --- Draw Afghanistan ---
-            mapLayer.append("path")
-                .datum(afgFeature)
-                .attr("d", geoPath)
-                .attr("fill", "#f3f4f6")
-                .attr("stroke", "#cbd5e1")
-                .attr("stroke-width", 0.6);
-
-            // --- Scale for kills (radius) ---
-            const maxKill = d3.max(data, d => d.kill) || 1;
-            const rScale = d3.scaleSqrt()
-                .domain([0, maxKill])
-                .range([2, 25]); // bigger radius for visibility
-
-            // --- Draw points ---
-            const circles = pointsLayer.selectAll("circle")
-                .data(data)
-                .enter()
-                .append("circle")
-                .attr("cx", d => projection([d.lon, d.lat])[0])
-                .attr("cy", d => projection([d.lon, d.lat])[1])
-                .attr("r", d => rScale(d.kill))
-                .attr("fill", "none")
-                .attr("stroke", "#f87171")
-                .attr("stroke-width", 1.2)
-                .attr("opacity", 0)
-                .transition()
-                .duration(350)
-                .attr("opacity", 0.9);
-
-            // --- Tooltip ---
-            const fmt = d3.format(",");
-            circles.on("mouseover", function (event, d) {
-                d3.select(this).raise();
-                tooltip.transition().duration(120).style("opacity", 0.95);
-                tooltip.html(`
-                    <div style="padding:6px 8px; font-size:13px;">
-                        <div style="font-weight:600; margin-bottom:4px;">${fmt(d.kill)} killed</div>
-                        <div><b>Lat:</b> ${d.lat.toFixed(4)}</div>
-                        <div><b>Lon:</b> ${d.lon.toFixed(4)}</div>
-                    </div>
-                `)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 20) + "px");
-            })
-                .on("mousemove", function (event) {
-                    tooltip.style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 20) + "px");
-                })
-                .on("mouseout", function () {
-                    tooltip.transition().duration(150).style("opacity", 0);
-                });
-
-            // --- Legend (optional) ---
-            const legendWrapper = legendContainer
-                .style("display", "flex")
-                .style("justify-content", "center")
-                .style("gap", "12px")
-                .style("margin-top", "10px")
-                .style("align-items", "center");
-
-            const legendValues = [1, Math.round(maxKill / 2), maxKill];
-            legendValues.forEach(v => {
-                const sw = legendWrapper.append("div").attr("class", "legend-swatch");
-                sw.append("div")
-                    .attr("class", "circle-box")
-                    .style("width", `${rScale(v) * 2}px`)
-                    .style("height", `${rScale(v) * 2}px`)
-                    .style("border-radius", "50%")
-                    .style("border", "1.2px solid #f87171")
-                    .style("background", "none");
-                sw.append("div")
-                    .attr("class", "legend-label")
-                    .text(`${fmt(v)} killed`);
-            });
-
-            // --- Zoom & pan ---
-            const zoom = d3.zoom()
-                .scaleExtent([1, 8])
-                .on("zoom", (event) => {
-                    mapLayer.attr("transform", event.transform);
-                    pointsLayer.attr("transform", event.transform);
-                    mapLayer.selectAll("path").attr("stroke-width", 0.6 / event.transform.k);
-                    pointsLayer.selectAll("circle").attr("stroke-width", 1.2 / event.transform.k);
-                });
-
-            svg.call(zoom);
-
-        })();
-    }
