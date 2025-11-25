@@ -43,3 +43,41 @@
   font-weight: 600;
   transform: translateY(-1px);
 }
+
+/* Layout per SVG + size legend affiancati */
+#proportional_symbol_map_svg {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap; /* così su schermi stretti la legend va sotto */
+}
+
+/* L'SVG della mappa occupa lo spazio principale */
+#proportional_symbol_map_svg > svg {
+  flex: 1 1 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Contenitore della size legend (affianco alla mappa) */
+#proportional_symbol_map_svg .size-legend-wrapper {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Su schermi piccoli la legend va sotto il plot */
+@media (max-width: 768px) {
+  #proportional_symbol_map_svg {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Effetto dim sulle bolle */
+#proportional_symbol_map_container .bubble.dimmed_t,
+#proportional_symbol_map_container .bubble.dimmed_l {
+  opacity: 0.25;
+}

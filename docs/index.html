@@ -74,7 +74,7 @@
 
 
   <!-- Maps -->
-   
+
   <!-- PROPORTIONAL SYMBOL MAP -->
   <link rel="stylesheet" href="css/proportional_symbol_map.css" />
   <script src="js/proportional_symbol_map.js" defer></script>
@@ -604,8 +604,8 @@
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="section-heading h2 text-body-emphasis mb-0">Geographic Distribution of Attacks</h2>
         <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
-          data-bs-toggle="collapse" data-bs-target="#maps_collapse" aria-expanded="true"
-          aria-controls="maps_collapse" id="maps_toggle">
+          data-bs-toggle="collapse" data-bs-target="#maps_collapse" aria-expanded="true" aria-controls="maps_collapse"
+          id="maps_toggle">
           <span class="label-when-open">Hide</span>
           <span class="label-when-closed d-none">Show</span>
           <span class="chevron" aria-hidden="true">▾</span>
@@ -615,7 +615,10 @@
       <!-- Intro paragraph -->
       <div class="mb-4">
         <p class="mb-0">
-          This section ...
+          Terrorist activity is deeply shaped by geography. This section visualizes how attacks are distributed across
+          the world, highlighting both global patterns and country-level concentrations. Through spatial aggregation and
+          proportional symbols, it becomes possible to immediately compare the intensity of terrorism across continents,
+          identify regional clusters, and observe the influence of major groups in specific territories.
         </p>
       </div>
 
@@ -628,10 +631,14 @@
             <div class="chart-wrapper" id="proportional_symbol_map_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Plot Title
+                  Global Hotspots of Terrorist Activity by Country and Perpetrator Group
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  description
+                  This <b>proportional symbol map</b> displays the global distribution of terrorist attacks by placing
+                  circles over each affected country. The size of each bubble is proportional to the number of
+                  incidents.
+                  The color indicates the perpetrator group, highlighting the presence and reach of the ten most active
+                  organizations worldwide, while all others are unified under a neutral grey category.
                 </p>
               </div>
 
@@ -653,12 +660,12 @@
                   Hexbin aggregation of supplied point events (lat,long).
                 </p>
               </div>
-          
+
               <div id="hexgrid_map_svg" class="mx-auto"></div>
               <div id="hexgrid_map_legend" class="mx-auto"></div>
-          
+
             </div>
-          
+
             <div id="hexgrid_map_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
@@ -674,15 +681,15 @@
                   Choropleth map of Iraq rappresenting number of fatalities per province
                 </p>
               </div>
-          
+
               <div id="choropleth_map_chart_svg" class="mx-auto"></div>
               <div id="choropleth_map_chart_legend" class="mx-auto"></div>
-          
+
             </div>
-          
+
             <div id="choropleth_map_chart_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
-          
+
 
         </div>
       </div>
@@ -754,4 +761,3 @@
 </body>
 
 </html>
-
