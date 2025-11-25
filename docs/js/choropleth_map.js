@@ -1,4 +1,3 @@
-// choropleth_map.js
 
 function drawChoroplethMap(rawData) {
     (async function () {
@@ -200,12 +199,12 @@ function drawChoroplethMap(rawData) {
             });
 
         // === 10. Legenda ===
-        renderDiscreteLegend(legendContainer, domains, colors);
+        renderDiscretizedLegend(legendContainer, domains, colors);
 
     })();
 }
 
-function renderDiscreteLegend(container, domains, colors) {
+/*function renderDiscreteLegend(container, domains, colors) {
     container.html("");
     const wrapper = container.append("div")
         .attr("class", "d-flex flex-wrap justify-content-center align-items-center gap-3 py-2")
@@ -226,4 +225,95 @@ function renderDiscreteLegend(container, domains, colors) {
             .style("background-color", item.color).style("border", "1px solid #ccc").style("border-radius", "2px").style("margin-right", "6px");
         entry.append("span").text(item.label);
     });
+}*/
+
+
+
+/**
+ * Disegna una legenda a barra continua discretizzata (senza percentuali)
+ */
+function renderDiscretizedLegend(container, domains, colors) {
+    container.html(""); // Pulizia
+
+    // Configurazione dimensioni
+    const width = 320;
+    const height = 45;
+    const margin = { top: 10, right: 15, bottom: 20, left: 15 };
+
+    // Crea SVG
+    const svg = container.append("svg")
+        .attr("width", "100%")
+        .attr("height", height)
+        .attr("viewBox", [0, 0, width, height])
+        .style("font-family", "sans-serif")
+        .style("display", "block")
+        .style("margin", "0 auto")
+        .style("overflow", "visible");
+
+    // Calcola larghezza blocchi
+    const barWidth = width - margin.left - margin.right;
+    const blockWidth = barWidth / colors.length;
+
+    const g = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // 1. Disegna i blocchi colore
+    g.selectAll("rect")
+        .data(colors)
+        .enter()
+        .append("rect")
+        .attr("x", (d, i) => i * blockWidth)
+        .attr("y", 0)
+        .attr("width", blockWidth)
+        .attr("height", 10) // Altezza barra
+        .attr("fill", d => d)
+        .attr("stroke", "none");
+
+    // 2. Bordo esterno (opzionale, per rifinitura)
+    g.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", barWidth)
+        .attr("height", 10)
+        .attr("fill", "none")
+        .attr("stroke", "#e5e7eb")
+        .attr("rx", 2); // Angoli arrotondati
+
+    // 3. Etichette (Valori Numerici)
+    const labelsGroup = g.append("g")
+        .style("font-size", "10px")
+        .style("fill", "#6c757d")
+        .style("font-weight", "500")
+        .style("text-anchor", "middle"); // Centra il testo rispetto alla coordinata x
+
+    // Etichetta iniziale "0"
+    labelsGroup.append("text")
+        .attr("x", 0)
+        .attr("y", 22) // Posizione Y sotto la barra
+        .text("0");
+
+    // Etichette per le soglie (domains)
+    domains.forEach((val, i) => {
+        // Posiziona l'etichetta alla fine del blocco di colore corrispondente
+        // Es: domains[0] è 100, che corrisponde alla fine del primo colore
+        const xPosition = (i + 1) * blockWidth;
+        
+        labelsGroup.append("text")
+            .attr("x", xPosition)
+            .attr("y", 22)
+            .text(val >= 1000 ? d3.format(".2s")(val) : val); // Formatta (es. 1000 -> 1.0k) se necessario
+    });
+    
+    // Linee separatori bianche (opzionale, per staccare i colori)
+    g.selectAll("line.separator")
+        .data(domains)
+        .enter()
+        .append("line")
+        .attr("class", "separator")
+        .attr("x1", (d, i) => (i + 1) * blockWidth)
+        .attr("x2", (d, i) => (i + 1) * blockWidth)
+        .attr("y1", 0)
+        .attr("y2", 10)
+        .attr("stroke", "rgba(255,255,255,0.5)")
+        .attr("stroke-width", 1);
 }
