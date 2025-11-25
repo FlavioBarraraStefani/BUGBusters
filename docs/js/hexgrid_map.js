@@ -72,11 +72,6 @@ function drawHexgridMap(rawData) {
             .attr("id", "hex_year_slider")
             .style("flex", "1");
 
-        const yearLabel = controls.append("div")
-            .attr("id", "hex_year_label")
-            .style("margin-top", "6px")
-            .style("font-size", "13px");
-
         // --- SVG ---
         const containerWidth = chartSvgDiv.node().getBoundingClientRect().width || 900;
         const svg = chartSvgDiv.append("svg")
@@ -93,9 +88,10 @@ function drawHexgridMap(rawData) {
         mapG.append("path")
             .datum(afg)
             .attr("d", geoPath)
-            .attr("fill", "#f3f4f6")
+            .attr("fill", "#fcfcfc")
+            //.attr("fill", "#ffffff")
             .attr("stroke", "#cbd5e1")
-            .attr("stroke-width", 0.6);
+            .attr("stroke-width", 1);
             
 
         // --- Radius scale ---
@@ -112,8 +108,7 @@ function drawHexgridMap(rawData) {
             .attr("r", 0)
             .attr("opacity", 0)
             .attr("fill", "none")
-            .attr("stroke", "#000")
-            .attr("stroke-width", 0.5);
+            .attr("stroke-width", 1);
 
         circles.each(d => d._r = rScale(d.kill));
 
@@ -121,7 +116,7 @@ function drawHexgridMap(rawData) {
         const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => a - b);
         const circlesByYear = {};
         years.forEach(y => {
-            circlesByYear[y] = circles.filter(d => d.year === y);
+            circlesByYear[y] = circles.filter(d => d.year <= y);
         });
 
         let currentIndex = 0;
@@ -138,7 +133,6 @@ function drawHexgridMap(rawData) {
                 currentIndex = +this.value;
                 const y = years[currentIndex];
                 title.text(`Deadly attacks: ${y}`);
-                yearLabel.text(y);
                 updateCircles(y, true);
             });
 
@@ -167,8 +161,7 @@ function drawHexgridMap(rawData) {
             if (currentIndex >= years.length) { stopAnimation(); return; }
             slider.property("value", currentIndex);
             const y = years[currentIndex];
-            title.text(`Deadly attacks in ${y}`);
-            yearLabel.text(y);
+            title.text(`Attacks in ${y} - Total victims: ${d3.sum(data.filter(d => d.year <= y), d => d.kill) }`);
 
             updateCircles(y); // animate circles
             animationFrame = setTimeout(() => requestAnimationFrame(stepAnimation), playIntervalMs);
@@ -177,22 +170,11 @@ function drawHexgridMap(rawData) {
 
         // --- Update circles ---
         function updateCircles(year) {
-            circles.each(function (d) {
-                const sel = d3.select(this);
-                if (d.year === year) {
-                    sel.interrupt()
-                        .transition()
-                        .duration(300)
-                        .attr("r", d._r)
-                        .attr("opacity", 0.9);
-                } else {
-                    sel.interrupt()
-                        .transition()
-                        .duration(300)
-                        .attr("r", 0)
-                        .attr("opacity", 0);
-                }
-            });
+
+            circles.transition().duration(300)
+                .attr("r", d => (d.year <= year ? d._r : 0))
+                .attr("opacity", d => (d.year <= year ? 0.9 : 0))
+                .attr("stroke", d =>   d.year === year ? "#444" : "#cecece") 
         }
 
 
@@ -200,7 +182,6 @@ function drawHexgridMap(rawData) {
         // --- Initial render ---
         const initialYear = years[0];
         title.text(`Deadly attacks: ${initialYear}`);
-        yearLabel.text(initialYear);
         updateCircles(initialYear, false);
 
         // --- Legend ---
