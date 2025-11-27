@@ -159,7 +159,7 @@ function drawChoroplethMap(rawData) {
                     .style("opacity", 1, "important") // Forza opacità
                     .html(`
                         <div class="fw-bold border-bottom pb-1 mb-1" style="font-size:13px; font-weight:bold;">${d.properties.displayName}</div>
-                        <div style="font-size:12px">Morti: <span style="color:#dc3545; font-weight:bold;">${valFmt}</span></div>
+                        <div style="font-size:12px">Killed: <span style="color:#dc3545; font-weight:bold;">${valFmt}</span></div>
                     `);
             })
             .on("mousemove", function(event) {

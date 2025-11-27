@@ -130,7 +130,7 @@ async function initChartsAfterAuth() {
 
     // Section 4: Maps
     loadChart("maps/proportional_symbol_map.json", drawProportionalSymbolMap, "proportional_symbol_map_container"),
-    loadChart("maps/hexgrid_map.json", drawHexgridMap, "hexgrid_map_container"),
+    loadChart("maps/bubble_events_map.json", drawBubbleEventsMap, "bubble_events_map_container"),
     loadChart("maps/choropleth_map.json", drawChoroplethMap, "choropleth_map_container")
 
 

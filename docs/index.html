@@ -79,9 +79,9 @@
   <link rel="stylesheet" href="css/proportional_symbol_map.css" />
   <script src="js/proportional_symbol_map.js" defer></script>
 
-  <!-- HEXGRID MAP -->
-  <link rel="stylesheet" href="css/hexgrid_map.css" />
-  <script src="js/hexgrid_map.js" defer></script>
+  <!-- BUBBLE EVENTS MAP -->
+  <link rel="stylesheet" href="css/bubble_events_map.css" />
+  <script src="js/bubble_events_map.js" defer></script>
 
   <!-- choropleth_map -->
   <link rel="stylesheet" href="css/choropleth_map.css" />
@@ -650,23 +650,25 @@
             <div id="proportional_symbol_map_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
-          <div class="p-4 border bg-white rounded-3 mb-4" id="hexgrid_map_container">
-            <div class="chart-wrapper" id="hexgrid_map_chart">
+          <div class="p-4 border bg-white rounded-3 mb-4" id="bubble_events_map_container">
+            <div class="chart-wrapper" id="bubble_events_map_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Afghanistan — Hexbin density
+                  Annual Fatality Distribution Across Afghanistan
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  Hexbin aggregation of supplied point events (lat,long).
+                  Visualization of <b>geocoded deadly events</b>. 
+                  Each circle is placed at an event’s coordinates, sized by the number of reported fatalities. 
+                  Use the timeline controls to explore how the spatial burden of violence evolved over time.
                 </p>
               </div>
 
-              <div id="hexgrid_map_svg" class="mx-auto"></div>
-              <div id="hexgrid_map_legend" class="mx-auto"></div>
+              <div id="bubble_events_map_svg" class="mx-auto"></div>
+              <div id="bubble_events_map_legend" class="mx-auto"></div>
 
             </div>
 
-            <div id="hexgrid_map_tooltip" class="tooltip" style="opacity:0"></div>
+            <div id="bubble_events_map_tooltip" class="tooltip" style="opacity:0"></div>
           </div>
 
 
@@ -675,11 +677,10 @@
             <div class="chart-wrapper" id="choropleth_map_chart">
               <div class="mb-2">
                 <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
-                  Iraq chroloplet map
+                  Provincial-Level Fatality Burden in Iraq
                 </h3>
                 <p class="text-secondary mb-0 py-2 mt-3">
-                  Choropleth map of Iraq rappresenting number of fatalities per province
-                </p>
+                  A discretized <b>choropleth visualization</b> illustrating total fatalities at the governorate level. The legend shows numerical thresholds for each color class.                </p>
               </div>
 
               <div id="choropleth_map_chart_svg" class="mx-auto"></div>
