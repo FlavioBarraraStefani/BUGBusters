@@ -87,6 +87,14 @@
   <link rel="stylesheet" href="css/choropleth_map.css" />
   <script src="js/choropleth_map.js"  defer></script>
 
+  <!-- NETWORK -->
+  <link rel="stylesheet" href="css/network_chart.css" />
+  <script src="js/network_chart.js" defer></script>
+
+  <!-- SANKEY -->
+  <link rel="stylesheet" href="css/sankey_chart.css" />
+  <script src="js/sankey_chart.js" defer></script>
+
 
 </head>
 
@@ -118,6 +126,7 @@
               <li><a class="dropdown-item" href="#visualizing_distributions">Visualizing Distributions</a></li>
               <li><a class="dropdown-item" href="#timeline_visualization">Time series Visualization</a></li>
               <li><a class="dropdown-item" href="#maps">Geographical Rapresentations</a></li>
+              <li><a class="dropdown-item" href="#network">Networks Visualizations</a></li>
             </ul>
           </li>
           </li>
@@ -692,6 +701,78 @@
           </div>
 
 
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLOTS (4): Maps -->
+  <section id="network" class="py-5 private-section          col-lg-10 mx-auto">
+    <div class="rounded-3 border shadow-sm p-4 p-lg-5 section-wrapper">
+      <!-- Header with toggle -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading h2 text-body-emphasis mb-0">Networks visualizations</h2>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" type="button"
+          data-bs-toggle="collapse" data-bs-target="#network_collapse" aria-expanded="true" aria-controls="network_collapse"
+          id="network_toggle">
+          <span class="label-when-open">Hide</span>
+          <span class="label-when-closed d-none">Show</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+      <hr class="my-3">
+      <!-- Intro paragraph -->
+      <div class="mb-4">
+        <p class="mb-0">
+          --------------
+        </p>
+      </div>
+  
+      <!-- Collapsible content -->
+      <div id="network_collapse" class="collapse show">
+        <div class="rounded-3 border shadow-sm p-4 p-lg-5 maps_collapse-wrapper"> 
+  
+          <!-- sankey_chart-->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="sankey_container">
+            <div class="chart-wrapper" id="sankey_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                 SAnkey
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  -------------
+                </p>
+              </div>
+  
+              <div id="sankey_chart_svg" class="mx-auto"></div>
+              <div id="sankey_chart_legend" class="mx-auto"></div>
+  
+            </div>
+  
+            <div id="sankey_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+
+          <!-- network_chart-->
+          <div class="p-4 border bg-white rounded-3 mb-4" id="network_container">
+            <div class="chart-wrapper" id="network_chart">
+              <div class="mb-2">
+                <h3 class="section-heading h3 text-center text-body-emphasis mb-1">
+                 network
+                </h3>
+                <p class="text-secondary mb-0 py-2 mt-3">
+                  -------------
+                </p>
+              </div>
+  
+              <div id="network_chart_svg" class="mx-auto"></div>
+              <div id="network_chart_legend" class="mx-auto"></div>
+  
+            </div>
+  
+            <div id="sankey_chart_tooltip" class="tooltip" style="opacity:0"></div>
+          </div>
+  
+  
         </div>
       </div>
     </div>
