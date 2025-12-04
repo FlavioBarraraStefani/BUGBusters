@@ -1,7 +1,5 @@
 function drawSankeyChart(rawData) {
   (async function () {
-    console.log("Sankey chart - raw data:", rawData);
-
     // === Setup ===
     const tooltip = d3.select("#sankey_chart_tooltip");
     const chartContainer = d3.select("#sankey_chart_svg");
@@ -22,7 +20,14 @@ function drawSankeyChart(rawData) {
     // Transform data into nodes and links format
     // Flow: gname (group) → atk (attack type) → weap (weapon)
     
-    const TOP_K = 10; // Number of top categories to show per layer
+    const TOP_K = 5; // Number of top categories to show per layer
+
+    // Column/key configuration: change these to reorder or rename input fields
+    // layerKeys[0] -> first column (left), layerKeys[1] -> middle, layerKeys[2] -> right
+    const COLS = {
+      layerKeys: ['gp', 'trg', 'atk'],
+      countKey: 'c'
+    };
     
     // Count frequencies for each category
     const gnameCounts = new Map();
@@ -30,10 +35,10 @@ function drawSankeyChart(rawData) {
     const weapCounts = new Map();
     
     rawData.forEach(d => {
-      const cnt = +d.c || 1;
-      gnameCounts.set(d.gp, (gnameCounts.get(d.gp) || 0) + cnt);
-      atkCounts.set(d.atk, (atkCounts.get(d.atk) || 0) + cnt);
-      weapCounts.set(d.trg, (weapCounts.get(d.trg) || 0) + cnt);
+      const cnt = +d[COLS.countKey] || 1;
+      gnameCounts.set(d[COLS.layerKeys[0]], (gnameCounts.get(d[COLS.layerKeys[0]]) || 0) + cnt);
+      atkCounts.set(d[COLS.layerKeys[1]], (atkCounts.get(d[COLS.layerKeys[1]]) || 0) + cnt);
+      weapCounts.set(d[COLS.layerKeys[2]], (weapCounts.get(d[COLS.layerKeys[2]]) || 0) + cnt);
     });
     
     // Get top K categories for each layer
@@ -74,7 +79,7 @@ function drawSankeyChart(rawData) {
     }
     
     // Filter to only include data with top K gnames
-    const filteredData = rawData.filter(d => topGnames.has(d.gp));
+    const filteredData = rawData.filter(d => topGnames.has(d[COLS.layerKeys[0]]));
     
     // Determine if a category should be grouped into "Others" (only for atk and weap)
     function shouldGroup(value, layer) {
@@ -85,14 +90,14 @@ function drawSankeyChart(rawData) {
 
     // Create nodes and links from filtered data
     filteredData.forEach(d => {
-      const gname = d.gp; // No grouping for gname
-      const atk = shouldGroup(d.atk, 1) ? "Others" : d.atk;
-      const weap = shouldGroup(d.trg, 2) ? "Others" : d.trg;
+      const gname = d[COLS.layerKeys[0]]; // No grouping for gname
+      const atk = shouldGroup(d[COLS.layerKeys[1]], 1) ? "Others" : d[COLS.layerKeys[1]];
+      const weap = shouldGroup(d[COLS.layerKeys[2]], 2) ? "Others" : d[COLS.layerKeys[2]];
       
       const gnameIdx = getOrCreateNode(gname, 0);
       const atkIdx = getOrCreateNode(atk, 1);
       const weapIdx = getOrCreateNode(weap, 2);
-      const value = +d.c || 1;
+      const value = +d[COLS.countKey] || 1;
 
       // Link: gname → atk
       links.push({
@@ -121,14 +126,11 @@ function drawSankeyChart(rawData) {
     });
     const aggregatedLinks = Array.from(linkMap.values());
 
-    console.log("Sankey nodes:", nodes);
-    console.log("Sankey links:", aggregatedLinks);
-
     // === Dimensions ===
     const containerWidth = chartContainer.node().getBoundingClientRect().width || 800;
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const width = containerWidth;
-    const height = Math.max(600, nodes.length * 15);
+    const height = Math.max(450, nodes.length * 15);
 
     const svg = chartContainer.append("svg")
       .attr("viewBox", [0, 0, width, height])
@@ -141,7 +143,31 @@ function drawSankeyChart(rawData) {
       .nodeId(d => d.index)
       .nodeWidth(15)
       .nodePadding(10)
-      .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]]);
+      .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]])
+      .nodeSort((a, b) => (b.value || 0) - (a.value || 0));
+
+    // Assign node 'value' based on counts so we can sort categories by descending count
+    nodes.forEach(n => {
+      if (n.layer === 0) {
+        n.value = gnameCounts.get(n.name) || 0;
+      } else if (n.layer === 1) {
+        if (n.name === "Others") {
+          let others = 0;
+          atkCounts.forEach((v, k) => { if (!topAtks.has(k)) others += v; });
+          n.value = others;
+        } else {
+          n.value = atkCounts.get(n.name) || 0;
+        }
+      } else if (n.layer === 2) {
+        if (n.name === "Others") {
+          let others = 0;
+          weapCounts.forEach((v, k) => { if (!topWeaps.has(k)) others += v; });
+          n.value = others;
+        } else {
+          n.value = weapCounts.get(n.name) || 0;
+        }
+      }
+    });
 
     const { nodes: sankeyNodes, links: sankeyLinks } = sankey({
       nodes: nodes.map(d => ({ ...d })),
@@ -233,15 +259,14 @@ function drawSankeyChart(rawData) {
         link.style("opacity", l => 
           (l.source === d || l.target === d) ? 0.8 : 0.1
         );
-
         const inFlow = d3.sum(d.targetLinks || [], l => l.value);
         const outFlow = d3.sum(d.sourceLinks || [], l => l.value);
+        const count = Math.max(inFlow, outFlow);
 
         tooltip.transition().duration(100).style("opacity", 0.9);
         tooltip.html(`
           <div style="font-weight:600;margin-bottom:4px;">${d.name}</div>
-          ${inFlow > 0 ? `<div>In: ${d3.format(",")(inFlow)}</div>` : ''}
-          ${outFlow > 0 ? `<div>Out: ${d3.format(",")(outFlow)}</div>` : ''}
+          <div>Count: ${d3.format(",")(count)}</div>
         `)
         .style("left", (event.pageX + 10) + "px")
         .style("top", (event.pageY - 20) + "px");
@@ -283,7 +308,7 @@ function drawSankeyChart(rawData) {
     const legendData = [
       { label: "Groups", color: layerColors[0] },
       { label: "Attack Types", color: layerColors[1] },
-      { label: "Weapons", color: layerColors[2] }
+      { label: "Targets", color: layerColors[2] }
     ];
 
     legendContainer
