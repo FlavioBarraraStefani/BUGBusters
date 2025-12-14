@@ -2,11 +2,20 @@ function drawNetworkChart(rawData) {
   (async function () {
 
     const tooltip = d3.select("#sankey_chart_tooltip");
+    let currentHoveredNode = null;
     const chartContainer = d3.select("#network_chart_svg");
     const legendContainer = d3.select("#network_chart_legend");
+    
+    let controlsContainer = d3.select("#network_chart_controls");
+    if (controlsContainer.empty()) {
+      controlsContainer = d3.select(chartContainer.node().parentNode)
+        .insert("div", "#network_chart_svg")
+        .attr("id", "network_chart_controls");
+    }
 
     chartContainer.selectAll("*").remove();
     legendContainer.selectAll("*").remove();
+    controlsContainer.selectAll("*").remove();
     tooltip.style("opacity", 0);
 
     if (!Array.isArray(rawData) || !rawData.length) {
@@ -14,33 +23,58 @@ function drawNetworkChart(rawData) {
       return;
     }
 
-    // --- parse & filtra "unknown" ---
-    let nodes = rawData
-      .map(d => ({
-        id: d.id,
-        label: d.label,
-        level: +d.level,
-        parent: d.parent,
-        total: +d.total || 0
-      }))
-      .filter(n => {
-        if (!n.label) return false;
-        const l = String(n.label).toLowerCase();
-        return !l.includes("unknown");
-      });
+    // --- 1. Aggregazione Dati ---
+    const hasYear = rawData.length > 0 && "year" in rawData[0];
+    let nodesMap = new Map();
+    let yearsSet = new Set();
+
+    rawData.forEach(d => {
+      if (!d.label || String(d.label).toLowerCase().includes("unknown")) return;
+
+      const id = d.id;
+      const count = +d.total || 0;
+      const yr = d.year ? +d.year : null;
+
+      if (yr) yearsSet.add(yr);
+
+      if (!nodesMap.has(id)) {
+        nodesMap.set(id, {
+          id: d.id,
+          label: d.label,
+          level: +d.level,
+          parent: d.parent,
+          grandTotal: 0,      
+          currentTotal: 0,    
+          yearlyData: []      
+        });
+      }
+
+      const node = nodesMap.get(id);
+      node.grandTotal += count;
+      node.currentTotal += count; 
+      if (yr) {
+        node.yearlyData.push({ year: yr, count: count });
+      }
+    });
+
+    let nodes = Array.from(nodesMap.values());
+    
+    const years = Array.from(yearsSet).sort((a, b) => a - b);
+    const minYear = years[0];
+    const maxYear = years[years.length - 1];
 
     const root  = nodes.find(n => n.level === 0);
     const types = nodes.filter(n => n.level === 1);
     const subs  = nodes.filter(n => n.level === 2);
 
     if (!root) {
-      console.error("[drawNetworkChart] root node (level 0) not found");
+      console.error("[drawNetworkChart] root node not found");
       return;
     }
 
     const nodeById = new Map(nodes.map(n => [n.id, n]));
 
-    // link root→type e type→subtype
+    // --- 2. Link ---
     const links = [];
     nodes.forEach(n => {
       if (n.parent && nodeById.has(n.parent)) {
@@ -48,54 +82,57 @@ function drawNetworkChart(rawData) {
       }
     });
 
-    // mappa type → figli subtype
     const childrenByType = d3.group(subs, d => d.parent);
 
-    // === dimensioni ===
+    // --- 3. Setup SVG ---
     const containerWidth = chartContainer.node().getBoundingClientRect().width || 800;
-    const width  = containerWidth;
-    const height = 520;
+    
+    // Altezza 600px (Compatta)
+    const height = 450; 
+    const width  = Math.max(containerWidth, 800);
 
     const svg = chartContainer.append("svg")
       .attr("viewBox", [0, 0, width, height])
       .attr("preserveAspectRatio", "xMidYMid meet");
 
     const cx = width / 2;
-    const cy = height / 2 - 50;
+    const cy = height / 2.5;
 
+    // --- 4. Parametri Layout (Ridimensionati per rientrare) ---
     const minDim = Math.min(width, height);
-    const innerRadius = minDim * 0.15; // weapon type
-    const outerRadius = minDim * 0.32; // primo anello subtype
-    const ringStep    = 42;            // distanza tra anelli multipli di subtypes
-    const maxPerRing  = 5;             // max subtypes per anello per singolo type
+    
+    // Riduco i raggi per essere sicuro che nessun pallino esca (padding di sicurezza)
+    // Prima outerRadius era 0.35 * 600 = 210. Ora 0.30 * 600 = 180.
+    // Questo libera circa 30-40px per lato.
+    const innerRadius = minDim * 0.15; 
+    const outerRadius = minDim * 0.35; 
+    const ringStep    = 45;            // Ridotto step (era 50)
+    const maxPerRing  = 7;             
 
-    // === scala raggio nodi ===
-    const totals = nodes.map(n => n.total).filter(v => v > 0);
-    const maxTotal = d3.max(totals) || 1;
+    // --- 5. Scala Dimensioni ---
+    const maxTotal = d3.max(nodes, n => n.grandTotal) || 1;
 
+    // Mantengo i pallini visibili (max 30px)
     const radiusLog = d3.scaleSqrt()
-      .domain([1, maxTotal])
-      .range([4, 20]);
+      .domain([0, maxTotal])
+      .range([3, 35]); 
 
-    const radiusFixed = () => 7;
+    const radiusFixed = () => 8;
     let useLogSize = true;
 
     function nodeRadius(n) {
       if (!useLogSize) return radiusFixed();
-      const v = Math.max(1, n.total);
-      return radiusLog(v);
+      return radiusLog(Math.max(0, n.currentTotal));
     }
 
-    // === layout radiale gerarchico =========================
-    // Root al centro
+    // --- 6. Calcolo Coordinate ---
     root.x = cx;
     root.y = cy;
     root.angle = 0;
 
-    // 1) assegna settori ai weapon type
     const nTypes = Math.max(1, types.length);
     const sectorSize    = (2 * Math.PI) / nTypes;
-    const sectorPadding = sectorSize * 0.25; // 25% di spazio vuoto tra settori
+    const sectorPadding = sectorSize * 0.15; 
 
     types.forEach((t, i) => {
       const sectorStart = i * sectorSize + sectorPadding / 2;
@@ -109,47 +146,37 @@ function drawNetworkChart(rawData) {
       t.y = cy + innerRadius * Math.sin(midAngle);
     });
 
-    // 2) subtypes: ogni type riempie "il proprio arco", con eventuali anelli multipli
     types.forEach(t => {
       const childs = childrenByType.get(t.id) || [];
       if (!childs.length) return;
 
+      childs.sort((a, b) => d3.descending(a.grandTotal, b.grandTotal));
+
       const m = childs.length;
       const fullSpan = t.sectorEnd - t.sectorStart;
 
-      // posizioni angolari globali per tutti i figli (come se fossero su un solo anello)
-      childs.sort((a, b) => d3.descending(a.total, b.total)); // facoltativo: più grossi per primi
-
       childs.forEach((c, idx) => {
-        // a quale anello appartiene questo figlio?
         const ringIdx = Math.floor(idx / maxPerRing);
         const indexInRing = idx % maxPerRing;
-
         c.ringIdx = ringIdx;
 
-        // quanti nodi in questo anello?
         const startIndexForRing = ringIdx * maxPerRing;
         const endIndexForRing   = Math.min(startIndexForRing + maxPerRing, m);
         const countThisRing     = endIndexForRing - startIndexForRing;
 
-        // posizione angolare nel settore del padre
         const k = indexInRing + 1;
         const angle = t.sectorStart + fullSpan * (k / (countThisRing + 1));
 
         c.angle = angle;
-
-        // raggio di questo anello
         const r = outerRadius + ringIdx * ringStep;
 
         c.x = cx + r * Math.cos(angle);
         c.y = cy + r * Math.sin(angle);
-        c.ringRadius = r;
       });
     });
 
-    // === disegno link ===
+    // --- 7. Disegno ---
     const linkG = svg.append("g").attr("class", "links");
-
     const linkSel = linkG.selectAll("line.link")
       .data(links)
       .enter()
@@ -160,8 +187,9 @@ function drawNetworkChart(rawData) {
       .attr("x2", d => nodeById.get(d.target).x)
       .attr("y2", d => nodeById.get(d.target).y);
 
-    // === nodi ===
     const nodeG = svg.append("g").attr("class", "nodes");
+    // Sorting: grandi sotto, piccoli sopra
+    nodes.sort((a, b) => d3.descending(a.grandTotal, b.grandTotal));
 
     const circles = nodeG.selectAll("circle.node-circle")
       .data(nodes)
@@ -170,51 +198,138 @@ function drawNetworkChart(rawData) {
       .attr("class", d => `node-circle level-${d.level}` + (d.level === 0 ? " root" : ""))
       .attr("cx", d => d.x)
       .attr("cy", d => d.y)
-      .attr("r", 0);
+      .attr("r", 0); 
 
-    await circles
-      .transition().duration(450)
-      .attr("r", d => nodeRadius(d))
-      .end();
-
-    // === label: tutti i weapon type + solo top-K subtypes ===
-    const typeLabels = types;
-
-    const NUM_TOP_SUBTYPES = 30;
-    const topSubtypes = subs
-      .slice()
-      .sort((a, b) => d3.descending(a.total, b.total))
-      .slice(0, NUM_TOP_SUBTYPES);
-
-    const labelNodes = typeLabels.concat(topSubtypes);
-
-    // label: appena fuori dal raggio del nodo, non sopra il pallino
-    nodeG.selectAll("text.node-label")
-      .data(labelNodes)
-      .enter()
-      .append("text")
-      .attr("class", "node-label")
-      .attr("x", d => {
-        const baseR =
-          d.level === 1 ? innerRadius :
-          (d.ringRadius != null ? d.ringRadius : outerRadius);
-        const labelR = baseR + 18; // distanza extra dal centro
-        return cx + labelR * Math.cos(d.angle);
-      })
-      .attr("y", d => {
-        const baseR =
-          d.level === 1 ? innerRadius :
-          (d.ringRadius != null ? d.ringRadius : outerRadius);
-        const labelR = baseR + 18;
-        return cy + labelR * Math.sin(d.angle);
-      })
-      .attr("text-anchor", d => Math.cos(d.angle) >= 0 ? "start" : "end")
-      .attr("dominant-baseline", "middle")
-      .text(d => d.label);
-
-    // === interazioni ===
     const fmt = d3.format(",.0f");
 
+    // --- 8. Timeline ---
+    let currentYear = hasYear ? minYear : null;
+    let isPlaying = false;
+    let timer = null;
+
+    function updateToYear(year) {
+      currentYear = year;
+      nodes.forEach(n => {
+        if (!hasYear) {
+          n.currentTotal = n.grandTotal; 
+        } else {
+          const sum = n.yearlyData
+            .filter(d => d.year <= year)
+            .reduce((acc, curr) => acc + curr.count, 0);
+          n.currentTotal = sum;
+        }
+      });
+      
+      circles.transition().duration(400)
+        .attr("r", d => nodeRadius(d));
+
+      if (hasYear) {
+        d3.select("#year-display-val").text(year);
+        d3.select("#year-slider-input").property("value", year);
+      }
+
+      if (currentHoveredNode) {
+        const levelLabel = currentHoveredNode.level === 0 ? "Root" 
+                         : currentHoveredNode.level === 1 ? "Weapon type" 
+                         : "Weapon subtype";
+        const countVal = currentHoveredNode.currentTotal; 
+        const yearLabel = hasYear ? ` (up to ${currentYear})` : "";
+        tooltip.html(`
+          <div style="padding: 8px 12px;">
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #fff;">
+              ${currentHoveredNode.label}
+            </div>
+            <div style="margin-bottom: 3px; font-size: 13px;">
+              <span style="font-weight: 600; color: #d1d5db;">Level:</span> 
+              <span style="color: #f3f4f6;">${levelLabel}</span>
+            </div>
+            <div style="font-size: 13px;">
+              <span style="font-weight: 600; color: #d1d5db;">Attacks${yearLabel}:</span> 
+              <span style="color: #f3f4f6;">${fmt(countVal)}</span>
+            </div>
+          </div>
+        `);
+      }
+    }
+
+    updateToYear(hasYear ? maxYear : 0);
+
+    if (hasYear && years.length > 1) {
+      const row = controlsContainer.append("div").attr("class", "timeline-row");
+
+      const playBtn = row.append("button")
+        .attr("class", "play-btn")
+        .text("Play");
+
+      const slider = row.append("input")
+        .attr("type", "range")
+        .attr("class", "year-slider")
+        .attr("id", "year-slider-input")
+        .attr("min", minYear)
+        .attr("max", maxYear)
+        .attr("step", 1)
+        .attr("value", maxYear)
+        .on("input", function() {
+          stopAnimation();
+          updateToYear(+this.value);
+        });
+
+      const yearDisplay = row.append("div")
+        .attr("class", "year-display")
+        .attr("id", "year-display-val")
+        .text(maxYear);
+
+      function stopAnimation() {
+        isPlaying = false;
+        playBtn.text("Play");
+        if (timer) clearInterval(timer);
+      }
+
+      function startAnimation() {
+        isPlaying = true;
+        playBtn.text("Pause");
+        if (currentYear >= maxYear) updateToYear(minYear);
+
+        timer = setInterval(() => {
+          if (currentYear >= maxYear) {
+            stopAnimation();
+            return;
+          }
+          updateToYear(currentYear + 1);
+        }, 300);
+      }
+
+      playBtn.on("click", () => {
+        if (isPlaying) stopAnimation();
+        else startAnimation();
+      });
+    }
+
+    controlsContainer
+      .style("display", "flex")
+      .style("flex-direction", "row")
+      .style("justify-content", "space-between")
+      .style("align-items", "center")
+      .style("gap", "20px");
+
+    const sizeToggle = controlsContainer.append("div").attr("class", "size-toggle");
+    sizeToggle.append("span").text("Node size:");
+
+    const btnFixed = sizeToggle.append("button").text("Fixed").classed("active", !useLogSize).style("transition", "all 0.3s ease");
+    const btnScaled = sizeToggle.append("button").text("By attacks").classed("active", useLogSize).style("transition", "all 0.3s ease");
+
+    function applySizeMode() {
+      btnFixed.classed("active", !useLogSize);
+      btnScaled.classed("active", useLogSize);
+      circles.transition().duration(300).attr("r", d => nodeRadius(d));
+    }
+
+    btnFixed.on("click", () => { useLogSize = false; applySizeMode(); });
+    btnScaled.on("click", () => { useLogSize = true; applySizeMode(); });
+
+    sizeToggle.style("display", "none");
+
+    // --- 9. Interazioni ---
     circles
       .on("mouseenter", function (event, d) {
         const relatedIds = new Set([d.id]);
@@ -223,30 +338,52 @@ function drawNetworkChart(rawData) {
           if (l.target === d.id) relatedIds.add(l.source);
         });
 
+        let curr = d;
+        while (curr.parent && nodeById.has(curr.parent)) {
+          const p = nodeById.get(curr.parent);
+          relatedIds.add(p.id);
+          curr = p;
+        }
+
         circles.classed("dimmed", n => !relatedIds.has(n.id));
-        linkSel.classed("dimmed", l => !(relatedIds.has(l.source) && relatedIds.has(l.target)));
+        linkSel
+          .classed("active", l => relatedIds.has(l.source) && relatedIds.has(l.target))
+          .classed("dimmed", l => !(relatedIds.has(l.source) && relatedIds.has(l.target)));
 
         d3.select(this).raise().transition().duration(120)
-          .attr("stroke-width", 2)
+          .attr("stroke-width", 3)
           .attr("fill-opacity", 1);
 
-        tooltip.transition().duration(100).style("opacity", 0.95);
+        const levelLabel = d.level === 0 ? "Root" 
+                         : d.level === 1 ? "Weapon type" 
+                         : "Weapon subtype";
+        
+        const countVal = d.currentTotal; 
+        const yearLabel = hasYear ? ` (up to ${currentYear})` : "";
+
+        tooltip.transition().duration(100).style("opacity", 1);
         tooltip.html(`
-          <div style="padding:6px 8px; font-size:13px;">
-            <div style="font-weight:600; margin-bottom:3px;">${d.label}</div>
-            <div><b>Level:</b> ${
-              d.level === 0 ? "Root (all attacks)"
-                : (d.level === 1 ? "Weapon type" : "Weapon subtype")
-            }</div>
-            <div><b>Attacks:</b> ${fmt(d.total)}</div>
+          <div style="padding: 8px 12px;">
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #fff;">
+              ${d.label}
+            </div>
+            <div style="margin-bottom: 3px; font-size: 13px;">
+              <span style="font-weight: 600; color: #d1d5db;">Level:</span> 
+              <span style="color: #f3f4f6;">${levelLabel}</span>
+            </div>
+            <div style="font-size: 13px;">
+              <span style="font-weight: 600; color: #d1d5db;">Attacks${yearLabel}:</span> 
+              <span style="color: #f3f4f6;">${fmt(countVal)}</span>
+            </div>
           </div>
         `)
-          .style("left", (event.pageX + 10) + "px")
+          .style("left", (event.pageX + 15) + "px")
           .style("top", (event.pageY - 20) + "px");
+        currentHoveredNode = d;
       })
       .on("mousemove", function (event) {
         tooltip
-          .style("left", (event.pageX + 10) + "px")
+          .style("left", (event.pageX + 15) + "px")
           .style("top", (event.pageY - 20) + "px");
       })
       .on("mouseleave", function () {
@@ -255,21 +392,24 @@ function drawNetworkChart(rawData) {
           .transition().duration(150)
           .attr("stroke-width", 1)
           .attr("fill-opacity", d => d.level === 0 ? 1 : 0.9);
-        linkSel.classed("dimmed", false);
+        linkSel.classed("dimmed", false)
+               .classed("active", false);
+        currentHoveredNode = null;
       });
 
-    // === legenda + toggle size ===
+    // --- 10. Legenda ---
     const legendDiv = legendContainer
       .style("display", "flex")
-      .style("flex-direction", "column")
+      .style("flex-direction", "row")
       .style("align-items", "center")
+      .style("justify-content", "center")
       .style("gap", "8px")
       .style("margin-top", "10px");
 
     const levelItems = [
-      { level: 0, label: "All attacks (root)" },
-      { level: 1, label: "Weapon type" },
-      { level: 2, label: "Weapon subtype (top ones labelled)" }
+      { level: 0, label: "All attacks" },
+      { level: 1, label: "Type" },
+      { level: 2, label: "Subtype" }
     ];
 
     levelItems.forEach(item => {
@@ -277,49 +417,18 @@ function drawNetworkChart(rawData) {
         .style("display", "inline-flex")
         .style("align-items", "center")
         .style("gap", "6px")
-        .style("font-size", "12px");
+        .style("font-size", "13px");
 
       d.append("span")
-        .style("width", "10px")
-        .style("height", "10px")
+        .style("width", "12px")
+        .style("height", "12px")
         .style("border-radius", "50%")
         .style("display", "inline-block")
         .style("background",
           item.level === 0 ? "#111827" :
           item.level === 1 ? "#1d4ed8" : "#f97316"
         );
-
       d.append("span").text(item.label);
-    });
-
-    const sizeToggle = legendDiv.append("div")
-      .attr("class", "size-toggle");
-
-    sizeToggle.append("span").text("Node size:");
-
-    const btnFixed = sizeToggle.append("button")
-      .text("Fixed")
-      .classed("active", !useLogSize);
-
-    const btnScaled = sizeToggle.append("button")
-      .text("By attacks")
-      .classed("active", useLogSize);
-
-    function applySizeMode() {
-      btnFixed.classed("active", !useLogSize);
-      btnScaled.classed("active", useLogSize);
-      circles.transition().duration(300)
-        .attr("r", d => nodeRadius(d));
-    }
-
-    btnFixed.on("click", () => {
-      useLogSize = false;
-      applySizeMode();
-    });
-
-    btnScaled.on("click", () => {
-      useLogSize = true;
-      applySizeMode();
     });
 
   })();

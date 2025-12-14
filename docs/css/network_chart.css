@@ -2,20 +2,35 @@
 #network_container svg {
   width: 100%;
   height: auto;
+  font-family: sans-serif;
 }
 
-/* link tra nodi */
+/* === LINK (Connessioni) === */
 #network_container .link {
-  stroke: #d1d5db;
-  stroke-width: 1.2;
+  stroke: #6b7280;       
+  stroke-width: 1.5px;   
+  stroke-opacity: 0.6;   
+  transition: stroke 0.2s, stroke-width 0.2s, stroke-opacity 0.2s;
 }
 
-/* nodi */
+#network_container .link.active {
+  stroke: #000000 !important;
+  stroke-width: 2.5px;
+  stroke-opacity: 1;
+}
+
+#network_container .link.dimmed {
+  stroke-opacity: 0.1;
+  stroke: #d1d5db; 
+}
+
+/* === NODI === */
 #network_container .node-circle {
   stroke: #111827;
   stroke-width: 1px;
   cursor: pointer;
   transition: transform 0.15s ease-out, stroke-width 0.15s ease-out, fill-opacity 0.15s ease-out;
+  /* La transizione sul raggio (r) è gestita via D3 per fluidità durante l'animazione */
 }
 
 #network_container .node-circle.root {
@@ -34,21 +49,17 @@
   fill-opacity: 0.9;
 }
 
-/* testo label */
-#network_container .node-label {
-  font-size: 11px;
-  fill: #374151;
-  text-anchor: middle;
-  pointer-events: none;
+#network_container .node-circle.dimmed {
+  opacity: 0.1;
 }
 
+/* === LEGENDA & CONTROLLI === */
 #network_container .legend-block-title {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-/* toggle dimensione nodi */
 #network_container .size-toggle {
   display: inline-flex;
   gap: 6px;
@@ -70,11 +81,73 @@
   color: #f9fafb;
 }
 
-/* dimming in hover */
-#network_container .node-circle.dimmed {
-  opacity: 0.25;
+/* === CONTROLLI TEMPORALI (Nuovi) === */
+#network_chart_controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
-#network_container .link.dimmed {
-  opacity: 0.15;
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.play-btn {
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.play-btn:hover {
+  background: #374151;
+}
+
+.year-slider {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.year-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  min-width: 50px;
+  text-align: right;
+}
+
+/* === TOOLTIP DARK MODE === */
+#sankey_chart_tooltip {
+  position: absolute;
+  background-color: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 0;
+  pointer-events: none;
+  z-index: 50;
+  font-family: sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  opacity: 0;
 }

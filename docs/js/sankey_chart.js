@@ -307,8 +307,8 @@ function drawSankeyChart(rawData) {
     // === Legend ===
     const legendData = [
       { label: "Groups", color: layerColors[0] },
-      { label: "Attack Types", color: layerColors[1] },
-      { label: "Targets", color: layerColors[2] }
+      { label: "Targets", color: layerColors[1] },
+      { label: "Attack Types", color: layerColors[2] }
     ];
 
     legendContainer

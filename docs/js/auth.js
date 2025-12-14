@@ -135,7 +135,7 @@ async function initChartsAfterAuth() {
 
     // Section 5: Network Analysis
     loadChart("network/sankey.json", drawSankeyChart, "sankey_container"),
-    loadChart("network/network.json", drawNetworkChart, "network_container")
+    loadChart("network/network_weapons_yearly_flat.json", drawNetworkChart, "network_container")
 
   ];
 
