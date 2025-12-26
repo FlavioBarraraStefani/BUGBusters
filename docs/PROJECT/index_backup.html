@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visualizing Conflict and Human Suffering through Data</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;600;700&family=Roboto+Slab:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <script src="https://d3js.org/d3-hexbin.v0.2.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+
+  <!-- Main styles -->
+  <link rel="stylesheet" href="css/main_style.css" />
+
+   <!-- Authentication Script -->
+  <script src="js/main.js" defer></script>
+
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
+        <span class="brand-text">BUGBusters</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
+        aria-expanded="false" aria-label="Apri menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#about-us">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="#project-description">Description</a></li>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- INTRO -->
+  <section id="about-us" class="py-5">
+    <div class="container">
+      <div class="bg-white shadow-sm p-4 p-lg-5 rounded-3">
+        <div class="mb-4 text-center">
+          <h2 class="section-heading h2 text-body-emphasis mb-0">About Us</h2>
+        </div>
+
+        <div class="row g-4 align-items-center justify-content-center text-center text-lg-start">
+          <!-- Logo UniGe -->
+          <div class="col-4 col-md-3 col-lg-2 text-center">
+            <img src="assets/logoUnige.png" class="img-fluid section-image" alt="University of Genoa Logo"
+              style="max-width: 130px; height: auto;" />
+          </div>
+
+          <!-- Text -->
+          <div class="col-12 col-md-6 col-lg-8 d-flex justify-content-center">
+            <div class="p-4 border rounded-3 text-justify" style="max-width: 65ch;">
+              <p class="mb-3">
+                The <strong>BUGBusters</strong> study group is composed of three students enrolled in the
+                <a href="https://corsi.unige.it/en/corsi/10852" target="_blank">Master’s Degree in Artificial
+                  Intelligence</a>
+                at the
+                <a href="https://unige.it/en" target="_blank">University of Genoa</a>, within the
+                <a href="https://corsi.unige.it/off.f/2022/ins/53404" target="_blank">Data Visualization course</a>
+                taught by
+                <a href="https://rubrica.unige.it/personale/UkNHU15t" target="_blank">Professor Annalisa Barla</a>.
+              </p>
+
+              <p class="mb-0">
+                The goal of the project is to provide an intuitive and informative visualization
+                of a dataset on global terrorism, revealing significant trends, patterns, and correlations.
+                The work aims to turn complex data into clear, meaningful insights that promote
+                a deeper understanding of global security phenomena.
+              </p>
+            </div>
+          </div>
+
+          <!-- Logo DIBRIS -->
+          <div class="col-4 col-md-3 col-lg-2 text-center">
+            <img src="assets/logoDibris.png" class="img-fluid section-image" alt="DIBRIS Logo"
+              style="max-width: 130px; height: auto;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="project-description" class="py-5">
+    <div class="container">
+      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
+        <div class="mb-4 text-center">
+          <h2 class="section-heading h2 text-body-emphasis mb-0">
+            Project Description and Data at Hand
+          </h2>
+        </div>
+
+        <div class="row g-4 align-items-center">
+          <!-- Text -->
+          <div class="col-12 col-lg-8">
+            <div class="p-4 border rounded-3 h-100" style="max-width: 65ch;">
+
+              <h3 class="h5 mb-3">What are we talking about?</h3>
+              <p class="mb-4">
+                The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database
+                  (GTD)</a>
+                is an event-level dataset maintained by the
+                <a href="https://umd.edu/" target="_blank">University of Maryland</a>.
+                It contains over 200,000 records of terrorist attacks worldwide, spanning from 1970 to 2020.
+              </p>
+
+              <p class="mb-4">
+                Data are collected from multiple open sources. The GTD research team integrates and standardizes them to
+                ensure consistency over time, performing rigorous quality control, retrospective coding, and
+                cross-referencing with other terrorism databases to identify and include missing events.
+              </p>
+
+              <h3 class="h5 mb-3">What are we dealing with?</h3>
+              <p class="mb-4">
+                Each record in the GTD represents a single terrorist incident and includes detailed information such as
+                the date and location of the attack, type of weapon used, targets and victims, perpetrators, and any
+                claims of responsibility.
+              </p>
+
+              <p class="mb-0">
+                Additional variables describe casualties, outcomes, and data sources.
+                A full codebook and documentation can be found on the
+                <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">GTD
+                  website</a>.
+              </p>
+
+            </div>
+          </div>
+
+          <!-- Image -->
+          <div class="col-6 col-lg-4 col-sm-4 order-first order-lg-last mx-auto mx-lg-0 text-center">
+            <img src="assets/gtd.jpg" class="img-fluid object-fit-cover section-image" alt="GTD Cover Image"
+              style="max-width: 260px; border-radius: 8px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Authentication Section -->
+  <section id="api-auth" class="py-5 auth-status">
+    <div class="container">
+      <div class="rounded-3 border bg-white shadow-sm p-4 p-lg-5">
+        <div class="mb-4">
+          <h2 class="section-heading h2 text-center text-body-emphasis mb-0">Access Private Content</h2>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-8 col-lg-6">
+            <div class="p-4 border rounded-3">
+              <div id="auth-status" class="alert alert-info mb-3">Enter your GitHub Personal Access Token to view
+                additional content</div>
+              <div class="mb-3">
+                <input type="password" id="github-token" class="form-control"
+                  placeholder="Enter your GitHub Personal Access Token">
+              </div>
+              <div class="text-center">
+                <button onclick="validateToken()" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer" class="py-3 border-top">
+    <div class="container">
+      <div class="row align-items-center gy-3">
+        <!-- Unige logo -->
+        <div class="col-12 col-md-2 text-center text-md-start">
+          <a href="https://unige.it/en" target="_blank" rel="noopener noreferrer"
+            class="d-inline-flex align-items-center text-decoration-none">
+            <img src="https://id.unige.it/sites/id.unige.it/files/2022-02/logo-colore.png?itok=WQlW_KLU"
+              alt="Università di Genova" height="60" class="me-2" />
+          </a>
+        </div>
+
+        <!-- GitHub links (one per team member) -->
+        <div class="col-12 col-md-10 text-center text-md-end">
+          <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
+            <a href="https://github.com/Isabibbi" target="_blank" rel="noopener noreferrer"
+              class="text-decoration-none small d-inline-flex align-items-center">
+              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                  0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+                  -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+                  0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27
+                  1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                  0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              Isabella Tagliafico
+            </a>
+
+            <a href="https://github.com/supernino02" target="_blank" rel="noopener noreferrer"
+              class="text-decoration-none small d-inline-flex align-items-center">
+              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                  0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+                  -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+                  0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27
+                  1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                  0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              Luca Ninivaggi
+            </a>
+
+            <a href="https://github.com/FlavioBarraraStefani" target="_blank" rel="noopener noreferrer"
+              class="text-decoration-none small d-inline-flex align-items-center">
+              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                  0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+                  -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+                  0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27
+                  1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                  0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              Flavio Barrara Stefani
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
