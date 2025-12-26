@@ -3,6 +3,22 @@ const authStatusEl = document.getElementById("auth-status");
 const tokenInputEl = document.getElementById("github-token");
 const authSectionEl = document.getElementById("api-auth");
 
+// Global variable to store main plots data
+let main_plots_data = null;
+
+// Category definitions
+const CATEGORIES = {
+  group: ['ISIL', 'taliban', 'SL'],
+  attack: ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack'],
+  target: ['military_police', 'government', 'business', 'citizens', 'transportations']
+};
+
+// Chart dimension constants (used by all draw functions)
+// Aspect ratio 3:2 (width:height)
+const CHART_WIDTH = 300;
+const CHART_HEIGHT = 200;
+const CHART_MARGIN = { top: 20, right: 20, bottom: 40, left: 50 };
+
 // -------------------------------
 // Token Validation
 // -------------------------------
@@ -76,15 +92,14 @@ function hideAuthSection() {
   }
 })();
 
+// -------------------------------
+// Load Chart Function
+// -------------------------------
 const loadChart = (function () {
   const BASE_URL = "https://api.github.com/repos/supernino02/BugBuster-project/contents";
   const cache = new Map();
 
-  return async function (filePath, chartFunc, containerId) {
-    const containerDiv = document.getElementById(containerId);
-    if (!containerDiv) return;
-
-    containerDiv.style.display = "none"; // hide until loaded
+  return async function (filePath, chartFunc, choice, containerId) {
     const token = localStorage.getItem("github_token");
 
     try {
@@ -97,15 +112,14 @@ const loadChart = (function () {
       }
 
       const rawData = cache.get(filePath);
-      containerDiv.style.display = "block"; // show container
-      chartFunc(rawData);
+      chartFunc(rawData, choice, containerId);
 
     } catch (err) {
-      containerDiv.innerHTML = `<div class="alert alert-danger">Failed to load chart: ${err.message}</div>`;
-      console.error(err);
+      console.error(`Error loading chart for ${containerId}:`, err);
     }
   };
 })();
+
 // -------------------------------
 // Function to load all charts after authentication
 // -------------------------------
@@ -122,28 +136,104 @@ async function initChartsAfterAuth() {
   if (errorContent) errorContent.style.display = 'none';
   if (mainContent) mainContent.style.display = 'none';
 
-  // Define files to fetch from GitHub repo
-  const filesToFetch = [
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    {path: 'network/sankey.json', handler: null},
-    // Add your file paths here, e.g.:
-    // { path: 'data/file1.json', handler: handleFile1 },
-    // { path: 'data/file2.json', handler: handleFile2 },
+  // Explicitly define ALL charts to load (main page + all modal charts)
+  const chartsToLoad = [
+    // ===== GROUP CATEGORY =====
+    // For each choice in ['ISIL', 'taliban', 'SL']
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'ISIL', container: 'plot_group_ISIL_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'taliban', container: 'plot_group_taliban_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'SL', container: 'plot_group_SL_2' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'ISIL', container: 'plot_group_ISIL_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'taliban', container: 'plot_group_taliban_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'SL', container: 'plot_group_SL_3' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'ISIL', container: 'plot_group_ISIL_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'taliban', container: 'plot_group_taliban_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'SL', container: 'plot_group_SL_4' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'ISIL', container: 'plot_group_ISIL_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'taliban', container: 'plot_group_taliban_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'SL', container: 'plot_group_SL_5' },
+
+    // ===== ATTACK CATEGORY =====
+    // For each choice in ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack']
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'explosion', container: 'plot_attack_explosion_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'armed_assault', container: 'plot_attack_armed_assault_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'assassination', container: 'plot_attack_assassination_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_1' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'explosion', container: 'plot_attack_explosion_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'armed_assault', container: 'plot_attack_armed_assault_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'assassination', container: 'plot_attack_assassination_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_2' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'explosion', container: 'plot_attack_explosion_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'armed_assault', container: 'plot_attack_armed_assault_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'assassination', container: 'plot_attack_assassination_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_3' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'explosion', container: 'plot_attack_explosion_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'armed_assault', container: 'plot_attack_armed_assault_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'assassination', container: 'plot_attack_assassination_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_4' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'explosion', container: 'plot_attack_explosion_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'armed_assault', container: 'plot_attack_armed_assault_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'assassination', container: 'plot_attack_assassination_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_5' },
+
+    // ===== TARGET CATEGORY =====
+    // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'military_police', container: 'plot_target_military_police_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'citizens', container: 'plot_target_citizens_2' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'military_police', container: 'plot_target_military_police_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'government', container: 'plot_target_government_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'business', container: 'plot_target_business_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'citizens', container: 'plot_target_citizens_3' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'transportations', container: 'plot_target_transportations_3' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'military_police', container: 'plot_target_military_police_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'government', container: 'plot_target_government_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'business', container: 'plot_target_business_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'citizens', container: 'plot_target_citizens_4' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'transportations', container: 'plot_target_transportations_4' },
+
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'military_police', container: 'plot_target_military_police_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'government', container: 'plot_target_government_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
+    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
+  
+      // ===== MAIN PAGE CHARTS =====
+    { file: "comparing_categories/bar_chart.json", func: (data) => {main_plots_data = data}, choice: null, container: "body" },
+
   ];
 
-  const token = localStorage.getItem('github_token');
-  const BASE_URL = 'https://api.github.com/repos/supernino02/BugBuster-project/contents';
-  const fetchedData = new Map();
+  console.log(`Total charts to load: ${chartsToLoad.length}`);
 
   try {
     let completed = 0;
-    const total = filesToFetch.length || 1;
+    const total = chartsToLoad.length;
 
     // Update progress helper
     const updateProgress = () => {
@@ -151,45 +241,21 @@ async function initChartsAfterAuth() {
       if (loadingProgress) loadingProgress.textContent = `${percent}%`;
     };
 
-    // Fetch all files concurrently
-    if (filesToFetch.length > 0) {
-      await Promise.all(
-        filesToFetch.map(async (file) => {
-          try {
-            const url = `${BASE_URL}/${file.path}`;
-            const res = await fetch(url, {
-              headers: token ? { Authorization: `token ${token}` } : {}
-            });
-            if (!res.ok) throw new Error(`Failed to fetch ${file.path}`);
-            const json = await res.json();
-            const data = JSON.parse(atob(json.content.replace(/\n/g, '')));
-            fetchedData.set(file.path, data);
-          } catch (err) {
-            console.error(`Error fetching ${file.path}:`, err);
-          } finally {
-            completed++;
-            updateProgress();
-          }
-        })
-      );
-
-      // Call handlers with fetched data
-      for (const file of filesToFetch) {
-        if (file.handler && fetchedData.has(file.path)) {
-          try {
-            await file.handler(fetchedData.get(file.path));
-          } catch (err) {
-            console.error(`Error in handler for ${file.path}:`, err);
-          }
+    // Load all charts concurrently
+    await Promise.all(
+      chartsToLoad.map(async (chart) => {
+        try {
+          await loadChart(chart.file, chart.func, chart.choice, chart.container);
+        } catch (err) {
+          console.error(`Error loading chart ${chart.container}:`, err);
+        } finally {
+          completed++;
+          updateProgress();
         }
-      }
-    } else {
-      // No files to fetch, simulate brief loading
-      updateProgress();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      completed = 1;
-      updateProgress();
-    }
+      })
+    );
+
+    console.log('All charts pre-computed successfully');
 
     // Hide loading, show content
     if (loadingOverlay) loadingOverlay.style.display = 'none';
@@ -205,6 +271,7 @@ async function initChartsAfterAuth() {
     const loadingContent = document.getElementById('loading-content');
     const errorMessage = document.getElementById('error-message');
     if (loadingContent) loadingContent.style.display = 'none';
+    if (errorContent) errorContent.style.display = 'flex';
     if (errorMessage) errorMessage.textContent = err.message;
   }
 }
