@@ -4,7 +4,8 @@ const tokenInputEl = document.getElementById("github-token");
 const authSectionEl = document.getElementById("api-auth");
 
 // Global variable to store main plots data
-let main_plots_data = null;
+window.main_plots_data = [];
+// Define as an array of tuples (key, value), allowing for key duplicates
 
 // Category definitions
 const CATEGORIES = {
@@ -14,6 +15,11 @@ const CATEGORIES = {
 };
 
 // Chart dimension constants (used by all draw functions)
+// Aspect ratio 1:1 (width:height)
+const CHART_HEIGHT_MAIN = 200;
+const CHART_WIDTH_MAIN = 200;
+const GLOBE_PATH = 'assets/globe.json';
+
 // Aspect ratio 3:2 (width:height)
 const CHART_WIDTH = 300;
 const CHART_HEIGHT = 200;
@@ -107,7 +113,27 @@ const loadChart = (function () {
         const url = `${BASE_URL}/${filePath}`;
         const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
         if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
-        const rawData = JSON.parse(atob((await res.json()).content.replace(/\n/g, '')));
+        
+        let rawData;
+        const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
+        if (filePath.endsWith('.json')) {
+          rawData = JSON.parse(decodedContent);
+        } else if (filePath.endsWith('.csv')) {
+          // Simple CSV parser: assumes comma-separated, first line is headers
+          const lines = decodedContent.split('\n').filter(line => line.trim());
+          if (lines.length < 1) throw new Error('CSV file is empty');
+          const headers = lines[0].split(',').map(h => h.trim());
+          rawData = lines.slice(1).map(line => {
+            const values = line.split(',');
+            const obj = {};
+            headers.forEach((header, i) => {
+              obj[header] = values[i] ? values[i].trim() : '';
+            });
+            return obj;
+          });
+        } else {
+          throw new Error(`Unsupported file format for ${filePath}`);
+        }
         cache.set(filePath, rawData);
       }
 
@@ -225,7 +251,8 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
   
       // ===== MAIN PAGE CHARTS =====
-    { file: "comparing_categories/bar_chart.json", func: (data) => {main_plots_data = data}, choice: null, container: "body" },
+    { file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
+    { file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
 
   ];
 
@@ -262,9 +289,9 @@ async function initChartsAfterAuth() {
     if (mainContent) mainContent.style.display = 'block';
 
     // Add resize listener
-    window.addEventListener('resize', setCanvasSizes);
+    window.addEventListener('resize', updateMainCanvases);
     // Set canvas sizes dynamically
-    setCanvasSizes();
+    updateMainCanvases();
 
   } catch (err) {
     console.error('Error during initialization:', err);
