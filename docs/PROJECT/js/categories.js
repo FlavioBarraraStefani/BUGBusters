@@ -73,21 +73,14 @@ function updateMainCanvases(data) {
   // Recalculate sizes after DOM changes
   requestAnimationFrame(() => {
     setCanvasSizes();
-
-    // Use existing data if none provided
-    const drawData = data || main_plots_data;
-    if (data) main_plots_data = data;
-
     const categoryInfo = {
       current: currentCategory,
       previous: previousCategory
     };
 
     // Draw canvases
-    draw_main_left(drawData, categoryInfo, 'canvas-left');
-    if (currentCategory) {
-      draw_main_right(drawData, categoryInfo, 'canvas-right');
-    }
+    draw_main_left(categoryInfo, 'canvas-left');
+    if (currentCategory) draw_main_right(categoryInfo, 'canvas-right');
   });
 }
 
@@ -98,6 +91,7 @@ function setCanvasSizes() {
   const navbar = document.querySelector('.navbar');
   const categoryHeader = document.querySelector('.category-header');
   const footer = document.querySelector('footer');
+  const timelineContainer = document.getElementById('timeline-container');
   const mainContent = document.getElementById('main-content');
 
   if (!navbar || !categoryHeader || !mainContent) return;
@@ -107,9 +101,10 @@ function setCanvasSizes() {
   const navbarHeight = navbar.offsetHeight;
   const categoryHeight = categoryHeader.offsetHeight;
   const footerHeight = footer ? footer.offsetHeight : 0;
+  const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
   const padding = 32; // Account for padding/margins
 
-  const availableHeight = window.innerHeight - navbarHeight - categoryHeight - footerHeight - padding;
+  const availableHeight = window.innerHeight - navbarHeight - categoryHeight - footerHeight - timelineHeight - padding;
 
   // Target the inner canvas-wrapper divs (not the column wrappers)
   const leftCol = document.getElementById('canvas-left');

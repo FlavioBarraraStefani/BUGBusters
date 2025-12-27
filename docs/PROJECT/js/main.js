@@ -2,9 +2,6 @@ const API_URL = "https://api.github.com/repos/supernino02/BugBuster-project/cont
 const authStatusEl = document.getElementById("auth-status");
 const tokenInputEl = document.getElementById("github-token");
 const authSectionEl = document.getElementById("api-auth");
-
-// Global variable to store main plots data
-window.main_plots_data = [];
 // Define as an array of tuples (key, value), allowing for key duplicates
 
 // Category definitions
@@ -107,37 +104,70 @@ const loadChart = (function () {
 
   return async function (filePath, chartFunc, choice, containerId) {
     const token = localStorage.getItem("github_token");
+    const cacheKey = Array.isArray(filePath) ? filePath.join('|') : filePath;
 
     try {
-      if (!cache.has(filePath)) {
-        const url = `${BASE_URL}/${filePath}`;
-        const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
-        if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
-        
+      if (!cache.has(cacheKey)) {
         let rawData;
-        const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
-        if (filePath.endsWith('.json')) {
-          rawData = JSON.parse(decodedContent);
-        } else if (filePath.endsWith('.csv')) {
-          // Simple CSV parser: assumes comma-separated, first line is headers
-          const lines = decodedContent.split('\n').filter(line => line.trim());
-          if (lines.length < 1) throw new Error('CSV file is empty');
-          const headers = lines[0].split(',').map(h => h.trim());
-          rawData = lines.slice(1).map(line => {
-            const values = line.split(',');
-            const obj = {};
-            headers.forEach((header, i) => {
-              obj[header] = values[i] ? values[i].trim() : '';
-            });
-            return obj;
-          });
+        if (Array.isArray(filePath)) {
+          const allData = [];
+          for (const path of filePath) {
+            const url = `${BASE_URL}/${path}`;
+            const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
+            if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.statusText}`);
+            
+            const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
+            let data;
+            if (path.endsWith('.json')) {
+              data = JSON.parse(decodedContent);
+            } else if (path.endsWith('.csv')) {
+              // Simple CSV parser: assumes comma-separated, first line is headers
+              const lines = decodedContent.split('\n').filter(line => line.trim());
+              if (lines.length < 1) throw new Error('CSV file is empty');
+              const headers = lines[0].split(',').map(h => h.trim());
+              data = lines.slice(1).map(line => {
+                const values = line.split(',');
+                const obj = {};
+                headers.forEach((header, i) => {
+                  obj[header] = values[i] ? values[i].trim() : '';
+                });
+                return obj;
+              });
+            } else {
+              throw new Error(`Unsupported file format for ${path}`);
+            }
+            allData.push(data);
+          }
+          rawData = allData.flat();
         } else {
-          throw new Error(`Unsupported file format for ${filePath}`);
+          const url = `${BASE_URL}/${filePath}`;
+          const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
+          if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
+          
+          const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
+          if (filePath.endsWith('.json')) {
+            rawData = JSON.parse(decodedContent);
+          } else if (filePath.endsWith('.csv')) {
+            // Simple CSV parser: assumes comma-separated, first line is headers
+            const lines = decodedContent.split('\n').filter(line => line.trim());
+            if (lines.length < 1) throw new Error('CSV file is empty');
+            const headers = lines[0].split(',').map(h => h.trim());
+            rawData = lines.slice(1).map(line => {
+              const values = line.split(',');
+              const obj = {};
+              headers.forEach((header, i) => {
+                obj[header] = values[i] ? values[i].trim() : '';
+              });
+              return obj;
+            });
+          } else {
+            throw new Error(`Unsupported file format for ${filePath}`);
+          }
         }
-        cache.set(filePath, rawData);
+        cache.set(cacheKey, rawData);
       }
 
-      const rawData = cache.get(filePath);
+      const rawData = cache.get(cacheKey);
       chartFunc(rawData, choice, containerId);
 
     } catch (err) {
@@ -165,6 +195,7 @@ async function initChartsAfterAuth() {
   // Explicitly define ALL charts to load (main page + all modal charts)
   const chartsToLoad = [
     // ===== GROUP CATEGORY =====
+    /*
     // For each choice in ['ISIL', 'taliban', 'SL']
     { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
     { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
@@ -249,14 +280,21 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
-  
+  */
       // ===== MAIN PAGE CHARTS =====
-    { file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
-    { file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
-
+    { file: "PROJECT/CATEGORIES/globe.json", func: (data) => {window.globe_data = data}, choice: null, container: "body" },    
+    { file: [
+      //"PROJECT/CATEGORIES/GTD_events_grouped.csv", //minimal data for globe points
+      "PROJECT/CATEGORIES/default.csv", //medium data for globe points
+      //"PROJECT/CATEGORIES/default_1.csv", //full data for globe points
+      //"PROJECT/CATEGORIES/default_2.csv",
+      //"PROJECT/CATEGORIES/default_3.csv",
+      //"PROJECT/CATEGORIES/default_4.csv",
+      //"PROJECT/CATEGORIES/default_5.csv"
+    ], 
+    func: (data) => {window.globe_default_data = data}, choice: null, container: "body" },
+    //{ file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
   ];
-
-  console.log(`Total charts to load: ${chartsToLoad.length}`);
 
   try {
     let completed = 0;
@@ -281,8 +319,6 @@ async function initChartsAfterAuth() {
         }
       })
     );
-
-    console.log('All charts pre-computed successfully');
 
     // Hide loading, show content
     if (loadingOverlay) loadingOverlay.style.display = 'none';

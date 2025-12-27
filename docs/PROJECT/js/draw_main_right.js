@@ -1,8 +1,8 @@
 window.addEventListener('resize', () => { if (window._draw_main_right_lastCall) draw_main_right(...window._draw_main_right_lastCall); });
 
 // Draw function for main page right canvas
-function draw_main_right(data, categoryInfo, containerId) {
-  window._draw_main_right_lastCall = [data, categoryInfo, containerId];
+function draw_main_right(categoryInfo, containerId) {
+  window._draw_main_right_lastCall = [categoryInfo, containerId];
 
   const container = d3.select(`#${containerId}`);
   // SVG is inside .canvas-wrapper child

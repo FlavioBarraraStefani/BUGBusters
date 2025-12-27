@@ -157,6 +157,18 @@
               <svg></svg>
             </div>
           </div>
+
+          <div id="timeline-container" class="col-12 d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center col-1">
+              <button id="timeline_play_btn" class="btn btn-primary">▶</button>
+            </div>
+            <div class="d-flex align-items-center flex-grow-1 justify-content-center px-3 col-10">
+              <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100" />
+            </div>
+            <div class="d-flex align-items-center col-1">
+              <output for="timeline_year_slider" id="year_title" class="fw-bold">1969</output>
+            </div>
+          </div>
         </div>
       </div>
     </section>
