@@ -80,7 +80,7 @@ function updateMainCanvases(data) {
 
     // Draw canvases
     draw_main_left(categoryInfo, 'canvas-left');
-    if (currentCategory) draw_main_right(categoryInfo, 'canvas-right');
+    draw_main_right(categoryInfo, 'canvas-right');
   });
 }
 

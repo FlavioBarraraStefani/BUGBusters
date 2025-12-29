@@ -11,11 +11,34 @@ const CATEGORIES = {
   target: ['military_police', 'government', 'business', 'citizens', 'transportations']
 };
 
+const COLORS = {
+    // Structured color definitions
+  GLOBE:{
+    ocean: '#9fc3cfff',
+    country: {
+      stroke: "#cbd5e1",
+      fill: "#fcfcfc"
+    },
+    event: {
+      highlight: "#444",
+      default: "#cecece"
+    },
+  },
+
+  //EACH CATEGORY COLOR SET
+  groupColors:['red','green','blue'],
+  attackColors:['#FF5252', '#1E88E5', '#00BCD4', '#FFA726', '#AB47BC'],
+  targetColors:['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
+
+  //COMMON COLORS
+  axisLine:'#64B5F6',    //axes
+  textPrimary:'#1565C0', //labels
+}
+
 // Chart dimension constants (used by all draw functions)
 // Aspect ratio 1:1 (width:height)
 const CHART_HEIGHT_MAIN = 200;
 const CHART_WIDTH_MAIN = 200;
-const GLOBE_PATH = 'assets/globe.json';
 
 // Aspect ratio 3:2 (width:height)
 const CHART_WIDTH = 300;
@@ -216,15 +239,15 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'ISIL', container: 'plot_group_ISIL_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'taliban', container: 'plot_group_taliban_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'SL', container: 'plot_group_SL_5' },
-
+*/
     // ===== ATTACK CATEGORY =====
     // For each choice in ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack']
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'explosion', container: 'plot_attack_explosion_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'armed_assault', container: 'plot_attack_armed_assault_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'assassination', container: 'plot_attack_assassination_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_1, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_1' },
-
+    { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'explosion', container: 'plot_attack_explosion_1' },
+    { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'armed_assault', container: 'plot_attack_armed_assault_1' },
+    { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'assassination', container: 'plot_attack_assassination_1' },
+    { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_1' },
+    { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_1' },
+/*
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'explosion', container: 'plot_attack_explosion_2' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'armed_assault', container: 'plot_attack_armed_assault_2' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'assassination', container: 'plot_attack_assassination_2' },
@@ -293,6 +316,8 @@ async function initChartsAfterAuth() {
       //"PROJECT/CATEGORIES/default_5.csv"
     ], 
     func: (data) => {window.globe_default_data = data}, choice: null, container: "body" },
+    { file: "PROJECT/CATEGORIES/groups.json", func: (data) => {window.globe_group_data = data}, choice: null, container: "body" },
+
     //{ file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
   ];
 
