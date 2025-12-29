@@ -46,6 +46,8 @@
   <script src="js/draw_target_4.js" defer></script>
   <script src="js/draw_target_5.js" defer></script>
   <script src="js/draw_main_left.js" defer></script>
+  <script src="js/globe/globe_default.js" defer></script>
+  <script src="js/globe/globe_group.js" defer></script>
   <script src="js/draw_main_right.js" defer></script>
   <script src="js/main.js" defer></script>
 
@@ -159,17 +161,22 @@
             </div>
           </div>
 
-          <div id="timeline-container" class="col-12 d-flex justify-content-between align-items-center mb-2">
-            <div class="d-flex align-items-center col-1">
-              <button id="timeline_play_btn" class="btn btn-primary">▶</button>
+          <div id="timeline-container" class="d-flex align-items-center w-100 mb-2 gap-2">
+            <!-- Left: fixed-size play button -->
+            <div class="flex-shrink-0">
+              <button id="timeline_play_btn" class="btn btn-primary btn-sm">▶</button>
             </div>
-            <div class="d-flex align-items-center flex-grow-1 justify-content-center px-3 col-10">
-              <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100" />
-            </div>
-            <div class="d-flex align-items-center col-1">
-              <output for="timeline_year_slider" id="year_title" class="fw-bold">1969</output>
+
+            <!-- Middle: flexible slider -->
+            <div class="flex-grow-1 px-2">
+              <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100"/></div>
+
+            <!-- Right: fixed-width year label (4 chars) -->
+            <div class="flex-shrink-0 text-end " style="width: 6ch;">
+              <output for="timeline_year_slider" id="year_title" class="fw-bold d-flex align-items-center">1969</output>
             </div>
           </div>
+
         </div>
       </div>
     </section>
