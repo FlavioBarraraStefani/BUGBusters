@@ -13,6 +13,11 @@
   let needsUpdate = false;
   let updateGlobe = null;   // function to update globe rendering
 
+  let baseScale = 1;
+  function computeBaseGlobeScale() {
+    return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;
+  }
+
   let rotateOnStart = true;
   let isRotating = false;
   let rotationSpeed = 0.3; // degrees per frame
@@ -83,12 +88,13 @@ function draw_main_left(categoryInfo, containerId) {
   const currentCat = categoryInfo?.current || null;
   const previousCat = categoryInfo?.previous || null;
 
+  //called once to initialize
   if (!window._draw_main_left_lastCall) {
     //initialize SVG
     svg.selectAll('*').remove();
     svg.attr('width', '100%')
        .attr('height', '100%')
-       .attr('viewBox', `0 0 ${CHART_WIDTH_MAIN} ${CHART_HEIGHT_MAIN}`)
+       .attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`)
 
     //-----------------//
     //EDIT AFTER THIS LINE
@@ -98,14 +104,14 @@ function draw_main_left(categoryInfo, containerId) {
     g = svg.append('g').attr('transform', 'translate(0,0)');
 
     //render once the globe
-    window.globeRotation = [-30, -20];
-    const scale = Math.min(CHART_WIDTH_MAIN, CHART_HEIGHT_MAIN) / 2.4;
+    window.globeRotation = [-20, -35];
+    baseScale = computeBaseGlobeScale();
 
     projection = d3.geoOrthographic()
-      .scale(scale)
+      .scale(baseScale)
       .center([0, 0])
       .rotate(window.globeRotation)
-      .translate([CHART_WIDTH_MAIN / 2, CHART_HEIGHT_MAIN / 2]);
+      .translate([LEFT_CHART_WIDTH / 2, LEFT_CHART_HEIGHT / 2]);
 
     countries = topojson.feature(window.globe_data, window.globe_data.objects.countries);
     path = d3.geoPath().projection(projection);
@@ -162,7 +168,7 @@ function draw_main_left(categoryInfo, containerId) {
     const drag = d3.drag()
       .on('drag', function(event) {
         const rotate = projection.rotate();
-        const k = 25 / projection.scale(); // scale-aware sensitivity
+        let k = 50 / projection.scale(); // scale-aware sensitivity
         window.globeRotation = [rotate[0] + event.dx * k, rotate[1] - event.dy * k];
         projection.rotate(window.globeRotation);
         needsUpdate = true;
@@ -174,7 +180,7 @@ function draw_main_left(categoryInfo, containerId) {
     //----------//
       //enable zoom to scale globe
       //----------//
-      const baseScale = projection.scale(); // store initial scale
+      baseScale = projection.scale(); // store initial scale
       const zoom = d3.zoom()
         .scaleExtent([1, 4]) // keep lower bound at initial scale (k >= 1)
         .on('zoom', function(event) {

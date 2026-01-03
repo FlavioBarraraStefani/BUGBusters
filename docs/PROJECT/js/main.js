@@ -29,21 +29,20 @@ const COLORS = {
   groupColors:['red','green','blue'],
   attackColors:['#FF5252', '#1E88E5', '#00BCD4', '#FFA726', '#AB47BC'],
   targetColors:['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
+  defaultComparison:'#78909C',
 
   //COMMON COLORS
   axisLine:'#64B5F6',    //axes
   textPrimary:'#1565C0', //labels
 }
 
-// Chart dimension constants (used by all draw functions)
-// Aspect ratio 1:1 (width:height)
-const CHART_HEIGHT_MAIN = 200;
-const CHART_WIDTH_MAIN = 200;
+//FONT SIZE OF EACH CHART LABEL
+const labelFontSize = 12
 
 // Aspect ratio 3:2 (width:height)
 const CHART_WIDTH = 300;
 const CHART_HEIGHT = 200;
-const CHART_MARGIN = { top: 20, right: 20, bottom: 40, left: 50 };
+const CHART_MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 
 // -------------------------------
 // Token Validation
@@ -303,7 +302,7 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
-  */
+*/
       // ===== MAIN PAGE CHARTS =====
     { file: "PROJECT/CATEGORIES/globe.json", func: (data) => {window.globe_data = data}, choice: null, container: "body" },    
     { file: [
@@ -316,9 +315,7 @@ async function initChartsAfterAuth() {
       //"PROJECT/CATEGORIES/default_5.csv"
     ], 
     func: (data) => {window.globe_default_data = data}, choice: null, container: "body" },
-    { file: "PROJECT/CATEGORIES/groups.json", func: (data) => {window.globe_group_data = data}, choice: null, container: "body" },
-
-    //{ file: "comparing_categories/bar_chart.json", func: (data) => {window.main_plots_data.push(["default", data])}, choice: null, container: "body" },
+    { file: "PROJECT/CATEGORIES/groups.json", func: (data) => {window.globe_group_data = data;computeGroupCumulativeCountry()}, choice: null, container: "body" },
   ];
 
   try {
