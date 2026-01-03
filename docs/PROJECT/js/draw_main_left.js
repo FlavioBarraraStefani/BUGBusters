@@ -5,6 +5,7 @@
   let countries = null;
   let isFront = null;
 
+  let legendGlobe = null;
   let playBtn = null;
   let slider = null;
   let title = null;
@@ -101,7 +102,7 @@ function draw_main_left(categoryInfo, containerId) {
     //-----------------//
 
     //put everything in a group
-    g = svg.append('g').attr('transform', 'translate(0,0)');
+    g = svg.append('g').attr('class', 'main_group');
 
     //render once the globe
     window.globeRotation = [-20, -35];
@@ -127,13 +128,14 @@ function draw_main_left(categoryInfo, containerId) {
       .attr('stroke-width', 1);
 
     // Countries
-    g.selectAll('path')
+    g.selectAll('path.country')
       .data(countries.features)
       .enter().append('path')
+      .attr('class', 'country')
       .attr('d', path)
       .attr('fill', COLORS.GLOBE.country.fill)
       .attr('stroke', COLORS.GLOBE.country.stroke)
-      .attr('stroke-width', 0.2)
+      .attr('stroke-width', 0.75)
       .attr('data-name', d => d.properties.name);
 
         // helper: returns true if point is on the visible (front) hemisphere
@@ -143,6 +145,8 @@ function draw_main_left(categoryInfo, containerId) {
       return d3.geoDistance([lon, lat], center) <= Math.PI / 2;
     };
 
+    legendGlobe = d3.select('#globe_color_map');
+    createLegendGlobe();
     playBtn = d3.select('#timeline_play_btn');
     slider = d3.select('#timeline_year_slider');
     title = d3.select('#year_title'); 
@@ -182,7 +186,7 @@ function draw_main_left(categoryInfo, containerId) {
       //----------//
       baseScale = projection.scale(); // store initial scale
       const zoom = d3.zoom()
-        .scaleExtent([1, 4]) // keep lower bound at initial scale (k >= 1)
+        .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
         .on('zoom', function(event) {
           // event.transform.k is the zoom factor
           projection.scale(baseScale * event.transform.k);
@@ -222,27 +226,32 @@ function draw_main_left(categoryInfo, containerId) {
       }
       startRotationLoop();
     }
+  //save last call params for resize
+  window._draw_main_left_lastCall = [categoryInfo, containerId];
+
   //each  time redraw based on category
-  g = svg.select('g');
+  g = svg.select('.main_group');
   
   //if the category changed, reset the globe to default
   if (currentCat !== previousCat) {
-    if (previousCat === null) { //remove bubbles
-      let circles = g.select('g.data-points').selectAll('circle.data-point');
-      circles.transition().duration(playIntervalMs)
-        .attr('r', 0)
+    stopAnimation();
+
+    if (previousCat === null) { //remove hexbins
+      g.selectAll('g.hex-bins')
+        .transition().duration(playIntervalMs)
         .attr('opacity', 0)
-        .remove();      
+        .on('end', function() { d3.select(this).remove(); });
+      
+      hideColormapLegend(true);
 
     } else if (previousCat === 'group') { //remove group coloring
-      g.selectAll('path').attr('d', path)
+      g.selectAll('path.country').attr('d', path)
       .transition().duration(playIntervalMs)
       .style('fill',COLORS.GLOBE.country.fill);
 
     } else if (previousCat === 'attack') {
     } else if (previousCat === 'target') {
     }
-    stopAnimation();
   }
 
   //draw according to current category
@@ -251,7 +260,4 @@ function draw_main_left(categoryInfo, containerId) {
   } else if (currentCat === 'group') {
     globe_group(svg);
   }
-    
-  //save last call params for resize
-  window._draw_main_left_lastCall = [categoryInfo, containerId];
 }

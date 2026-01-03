@@ -179,6 +179,7 @@ section {
    =========================== */
 .category-header {
   text-align: center;
+  z-index:100;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -216,6 +217,7 @@ section {
 
 #canvas-left,
 #canvas-right {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -223,11 +225,18 @@ section {
 
 #canvas-left > .canvas-wrapper,
 #canvas-right > .canvas-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   /* Width and height set by JS */
+}
+
+/* Globe colormap legend */
+#globe_color_map {
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* ===========================

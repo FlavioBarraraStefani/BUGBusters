@@ -14,15 +14,22 @@ const CATEGORIES = {
 const COLORS = {
     // Structured color definitions
   GLOBE:{
-    ocean: '#9fc3cfff',
+    ocean: "rgba(200, 209, 211, 0.84)",
+    //ocean: '#b4dbe7ff',
     country: {
-      stroke: "#cbd5e1",
-      fill: "#fcfcfc"
+      stroke: "#171717ff",
+      fill: "#f4f3f3ff"
     },
-    event: {
-      highlight: "#444",
-      default: "#cecece"
-    },
+    hexbin:{
+      stroke: 'black',
+      colormap: [
+        //"#f6f1e6","#f0e6c5","#d8e5cf","#aed6cc","#7fb8c5",
+        //"#5f8fb1","#4a5f8f","#3a3f64","#2d2a3e"] //lipari
+        "#fcfdbf", "#fb9f3a", "#ed7953", "#d8576b", "#bc3f85",
+        "#9e2f7f", "#7c1f6d", "#5c126e", "#3b0f70", "#1c1044", 
+        "#000004" //magma
+      ]
+    }
   },
 
   //EACH CATEGORY COLOR SET
@@ -84,6 +91,7 @@ async function validateToken(token) {
       authStatusEl.className = "alert alert-danger mb-3";
       authStatusEl.textContent = "Authentication failed: " + err.message;
     }
+    //throw err;
     return false;
   }
 }
@@ -246,7 +254,7 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'assassination', container: 'plot_attack_assassination_1' },
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_1' },
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_1' },
-/*
+
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'explosion', container: 'plot_attack_explosion_2' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'armed_assault', container: 'plot_attack_armed_assault_2' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'assassination', container: 'plot_attack_assassination_2' },
@@ -270,7 +278,7 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'assassination', container: 'plot_attack_assassination_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_5' },
-
+/*
     // ===== TARGET CATEGORY =====
     // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
     { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
@@ -306,15 +314,15 @@ async function initChartsAfterAuth() {
       // ===== MAIN PAGE CHARTS =====
     { file: "PROJECT/CATEGORIES/globe.json", func: (data) => {window.globe_data = data}, choice: null, container: "body" },    
     { file: [
-      //"PROJECT/CATEGORIES/GTD_events_grouped.csv", //minimal data for globe points
-      "PROJECT/CATEGORIES/default.csv", //medium data for globe points
-      //"PROJECT/CATEGORIES/default_1.csv", //full data for globe points
-      //"PROJECT/CATEGORIES/default_2.csv",
-      //"PROJECT/CATEGORIES/default_3.csv",
-      //"PROJECT/CATEGORIES/default_4.csv",
-      //"PROJECT/CATEGORIES/default_5.csv"
+      "PROJECT/CATEGORIES/default_float_1.csv",
+      "PROJECT/CATEGORIES/default_float_2.csv",
+      "PROJECT/CATEGORIES/default_float_3.csv",
     ], 
-    func: (data) => {window.globe_default_data = data}, choice: null, container: "body" },
+    func: (data) => {
+      window.globe_default_data = data; 
+      precomputeGlobeData();
+      precomputeColormap();
+    }, choice: null, container: "body" },
     { file: "PROJECT/CATEGORIES/groups.json", func: (data) => {window.globe_group_data = data;computeGroupCumulativeCountry()}, choice: null, container: "body" },
   ];
 

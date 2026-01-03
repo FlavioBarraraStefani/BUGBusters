@@ -1,4 +1,5 @@
 function globe_group(svg) {
+
   const groupData = window.group_cumulate_country;
 
   const MAX_CUMULATIVE = d3.max(
@@ -13,7 +14,7 @@ function globe_group(svg) {
   // value → interpolation factor
   const colorInterp = d3.scaleSqrt()
     .domain([0, MAX_CUMULATIVE])
-    .range([0.15, 1])
+    .range([0.1, 1])
     .clamp(true);
 
   // =============================
@@ -22,7 +23,7 @@ function globe_group(svg) {
   stepAnimation = () => {
     const year = +slider.property('value');
 
-    g.selectAll('path')
+    g.selectAll('path.country')
       .attr('d', path)
       .each(function(d) {
         const countryName = d.properties.name;
@@ -91,8 +92,50 @@ function globe_group(svg) {
     if (!needsUpdate) return;
     needsUpdate = false;
 
-    // move countries
-    g.selectAll('path').attr('d', path);
+    // move countries and re-apply colors (no transition for smooth dragging)
+    const year = +slider.property('value');
+
+    g.selectAll('path.country')
+      .attr('d', path)
+      .each(function(d) {
+        const countryName = d.properties.name;
+        const entry = groupData[countryName];
+        const sel = d3.select(this);
+
+        if (!entry) {
+          sel.style('fill', COLORS.GLOBE.country.fill);
+          return;
+        }
+
+        let dominantGroup = null;
+        let dominantCount = 0;
+
+        Object.entries(entry).forEach(([group, years]) => {
+          const validYears = Object.keys(years)
+            .map(Number)
+            .filter(y => y <= year);
+
+          if (!validYears.length) return;
+
+          const latestYear = d3.max(validYears);
+          const val = years[latestYear];
+
+          if (val > dominantCount) {
+            dominantCount = val;
+            dominantGroup = group;
+          }
+        });
+
+        if (!dominantGroup) {
+          sel.style('fill', COLORS.GLOBE.country.fill);
+          return;
+        }
+
+        const baseColor = COLORS.GLOBE.country.fill;
+        const targetColor = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
+        const t = colorInterp(dominantCount);
+        sel.style('fill', d3.interpolateRgb(baseColor, targetColor)(t));
+      });
   };
 
   // =============================
@@ -102,6 +145,9 @@ function globe_group(svg) {
   playIntervalMs = 300;
   stepAnimation();
 }
+
+
+
 
 // =============================
 // PRECOMPUTE CUMULATIVE DATA

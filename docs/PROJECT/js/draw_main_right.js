@@ -30,6 +30,7 @@ function draw_main_right(categoryInfo, containerId) {
     //put everything in a group
     g_right = svg.append('g').attr('transform', 'translate(0,0)');
 
+    //TODO: better define axes
     const xAxis = g_right.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN})`);
@@ -39,6 +40,7 @@ function draw_main_right(categoryInfo, containerId) {
         .domain([1969, maxYear])
         .range([RIGHT_CHART_MARGIN, LEFT_CHART_WIDTH - RIGHT_CHART_MARGIN]);
 
+      
       const tickVals = d3.range(1969, maxYear + 1, 5);
       const axis = d3.axisBottom(x)
         .tickValues(tickVals)
@@ -48,5 +50,7 @@ function draw_main_right(categoryInfo, containerId) {
 
   }
   window._draw_main_right_lastCall = [categoryInfo, containerId];
+
+  //TODO: how is this updated on each call?
 
 }

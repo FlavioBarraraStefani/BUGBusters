@@ -4,16 +4,17 @@
 
 let currentCategory = null;
 let previousCategory = null;
+let STACKED_LAYOUT_PREFERRED;
 
 // Canvas dimensions - updated in real time by setCanvasSizes()
-let LEFT_CHART_WIDTH = 0;
-let LEFT_CHART_HEIGHT = 0;
-let RIGHT_CHART_WIDTH = 0;
-let RIGHT_CHART_HEIGHT = 0;
+let LEFT_CHART_WIDTH ;
+let LEFT_CHART_HEIGHT;
+let RIGHT_CHART_WIDTH;
+let RIGHT_CHART_HEIGHT;
 
 // Previous dimensions for calculating zoom factor
-let PREV_LEFT_CHART_WIDTH = 0;
-let PREV_LEFT_CHART_HEIGHT = 0;
+let PREV_LEFT_CHART_WIDTH;
+let PREV_LEFT_CHART_HEIGHT;
 
 
 /**
@@ -136,6 +137,18 @@ function setCanvasSizes() {
     LEFT_CHART_HEIGHT = availableHeight;
     RIGHT_CHART_WIDTH = 0;
     RIGHT_CHART_HEIGHT = 0;
+
+    // Precompute STACKED_LAYOUT_PREFERRED for when both canvases will be visible
+    // This is needed for legend orientation before the right canvas appears
+    const stackedLeftW = availableWidth;
+    const stackedLeftH = (availableHeight * 2) / 3;
+    const stackedLeftMin = Math.min(stackedLeftW, stackedLeftH);
+
+    const sideBySideLeftW = availableWidth / 2;
+    const sideBySideLeftH = availableHeight;
+    const sideBySideLeftMin = Math.min(sideBySideLeftW, sideBySideLeftH);
+
+    STACKED_LAYOUT_PREFERRED = (stackedLeftMin >= sideBySideLeftMin);
   } else {
     // Both canvases present - calculate both layouts and choose the best one
 
@@ -156,8 +169,10 @@ function setCanvasSizes() {
     const sideBySideRightH = availableHeight;
     const sideBySideLeftMin = Math.min(sideBySideLeftW, sideBySideLeftH);
 
+    STACKED_LAYOUT_PREFERRED = (stackedLeftMin >= sideBySideLeftMin);
+    
     // Choose layout that maximizes min(width, height) of left canvas
-    if (stackedLeftMin >= sideBySideLeftMin) {
+    if (STACKED_LAYOUT_PREFERRED) {
       // Use stacked layout
       leftCol.classList.remove('col-xl-6');
       leftCol.classList.add('col-xl-12');
@@ -195,9 +210,8 @@ function setCanvasSizes() {
   }
 
   // Rescale globe if dimensions changed and globe exists
-  rescaleGlobe();
-
-  rescaleRightChart();
+  rescaleGlobe(); //left chart
+  rescaleRightChart(); //right chart
 }
 
 /**
@@ -248,12 +262,6 @@ function rescaleGlobe() {
     if (typeof path !== 'undefined' && path) {
       g.selectAll('path').attr('d', path);
     }
-
-    // Update data points if they exist
-    if (typeof updateGlobe === 'function') {
-      needsUpdate = true;
-      requestAnimationFrame(updateGlobe);
-    }
   }
 }
 
@@ -266,6 +274,8 @@ function rescaleRightChart() {
     svg.attr('viewBox', `0 0 ${RIGHT_CHART_WIDTH} ${RIGHT_CHART_HEIGHT}`);
   }
 
+  //change things in g_right accordingly
+  //TODO: actually implement proper rescaling of elements
   if (!g_right) return;
   g_right.attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN})`);
 }
