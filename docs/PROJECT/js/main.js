@@ -241,29 +241,23 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
-    // ===== GROUP CATEGORY =====
-    /*
-    // For each choice in ['ISIL', 'taliban', 'SL']
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
 
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'ISIL', container: 'plot_group_ISIL_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'taliban', container: 'plot_group_taliban_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_2, choice: 'SL', container: 'plot_group_SL_2' },
+    { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'ISIL', container: 'plot_group_ISIL_2' },
+    { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'taliban', container: 'plot_group_taliban_2' },
+    { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'SL', container: 'plot_group_SL_2' },
+    
+    { file: 'PROJECT/GROUPS/groups_flows.json', func: draw_group_3, choice: 'ISIL', container: 'plot_group_ISIL_3' },
+    { file: 'PROJECT/GROUPS/groups_flows.json', func: draw_group_3, choice: 'taliban', container: 'plot_group_taliban_3' },
+    { file: 'PROJECT/GROUPS/groups_flows.json', func: draw_group_3, choice: 'SL', container: 'plot_group_SL_3' },
 
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'ISIL', container: 'plot_group_ISIL_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'taliban', container: 'plot_group_taliban_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_3, choice: 'SL', container: 'plot_group_SL_3' },
+    { file: 'PROJECT/GROUPS/groups_bump_data.json', func: draw_group_4, choice: 'ISIL', container: 'plot_group_ISIL_4' },
+    { file: 'PROJECT/GROUPS/groups_bump_data.json', func: draw_group_4, choice: 'taliban', container: 'plot_group_taliban_4' },
+    { file: 'PROJECT/GROUPS/groups_bump_data.json', func: draw_group_4, choice: 'SL', container: 'plot_group_SL_4' },
 
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'ISIL', container: 'plot_group_ISIL_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'taliban', container: 'plot_group_taliban_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_4, choice: 'SL', container: 'plot_group_SL_4' },
+    { file: 'PROJECT/GROUPS/groups_casualty_bins.json', func: draw_group_5, choice: 'ISIL', container: 'plot_group_ISIL_5' },
+    { file: 'PROJECT/GROUPS/groups_casualty_bins.json', func: draw_group_5, choice: 'taliban', container: 'plot_group_taliban_5' },
+    { file: 'PROJECT/GROUPS/groups_casualty_bins.json', func: draw_group_5, choice: 'SL', container: 'plot_group_SL_5' },
 
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'ISIL', container: 'plot_group_ISIL_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'taliban', container: 'plot_group_taliban_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_group_5, choice: 'SL', container: 'plot_group_SL_5' },
-*/
     // ===== ATTACK CATEGORY =====
     // For each choice in ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack']
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'explosion', container: 'plot_attack_explosion_1' },

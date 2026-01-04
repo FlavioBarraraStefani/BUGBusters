@@ -8,47 +8,200 @@ function draw_group_3(data, choice, containerId) {
   
   const svg = container.select('svg');
   if (svg.empty()) return;
-  
-  // Clear existing content
+
   svg.selectAll('*').remove();
-  
-  // Use fixed dimensions from constants (viewBox handles responsive scaling)
-  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
-  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
-  
-  svg
-    .attr('width', '100%')
-    .attr('height', '100%')
-    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`)
-  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
 
-  //----------------------//
-  //MODIFY AFTER THIS LINE//
-  //----------------------//
+  // 1. DIMENSIONS
+  const localMargin = { top: 35, right: 65, bottom: 10, left: 65 };
+  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
+  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
 
-  //example
-  
-  // Sample data
-  const chartData = [
-    { label: '2014', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2015', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2016', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2017', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2018', value: Math.floor(Math.random() * 300) + 100 }
-  ];
-  
-  const xScale = d3.scaleBand().domain(chartData.map(d => d.label)).range([0, innerWidth]).padding(0.2);
-  const yScale = d3.scaleLinear().domain([0, d3.max(chartData, d => d.value)]).nice().range([innerHeight, 0]);
-  
-  // Bars
-  g.selectAll('rect').data(chartData).enter().append('rect')
-    .attr('x', d => xScale(d.label))
-    .attr('y', d => yScale(d.value))
-    .attr('width', xScale.bandwidth())
-    .attr('height', d => innerHeight - yScale(d.value))
-    .attr('fill', '#0d6efd');
-  
-  // Axes
-  g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
-  g.append('g').call(d3.axisLeft(yScale).ticks(5));
+  svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
+
+  // 2. DATA PREP
+  const rawData = data[choice];
+  if (!rawData || !rawData.nodes || rawData.nodes.length === 0) {
+    g.append("text").text("No Data").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle");
+    return;
+  }
+
+  const sankeyData = {
+    nodes: rawData.nodes.map(d => ({ ...d })),
+    links: rawData.links.map(d => ({ ...d }))
+  };
+
+  // 3. SANKEY GENERATOR
+  if (!d3.sankey) return;
+
+  const sankey = d3.sankey()
+    .nodeId(d => d.index)
+    .nodeWidth(12)
+    .nodePadding(12)
+    .extent([[0, 0], [innerWidth, innerHeight]]);
+
+  const { nodes, links } = sankey(sankeyData);
+
+  // 4. COLORS
+  const getAttackColor = (i) => COLORS.attackColors[i % COLORS.attackColors.length];
+  const getTargetColor = (i) => COLORS.targetColors[i % COLORS.targetColors.length];
+
+  // 5. DRAW LINKS
+  const link = g.append("g")
+    .attr("fill", "none")
+    .selectAll("path")
+    .data(links)
+    .enter().append("path")
+    .attr("class", "sankey-link") 
+    .attr("d", d3.sankeyLinkHorizontal())
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", d => Math.max(1, d.width))
+    .style("stroke-opacity", 0.3)
+    .sort((a, b) => b.width - a.width);
+
+  // Link Hover
+  link.on("mouseover", function(event, d) {
+      d3.select(this).style("stroke-opacity", 0.7).attr("stroke", "#999");
+      showTooltip(event, `${d.value}`);
+  })
+  .on("mousemove", moveTooltip)
+  .on("mouseout", function() {
+      d3.select(this).style("stroke-opacity", 0.3).attr("stroke", "#ccc");
+      hideTooltip();
+  });
+
+  // 6. DRAW NODES
+  const node = g.append("g")
+    .selectAll("rect")
+    .data(nodes)
+    .enter().append("rect")
+    .attr("class", "sankey-node")
+    .attr("x", d => d.x0)
+    .attr("y", d => d.y0)
+    .attr("height", d => Math.max(1, d.y1 - d.y0))
+    .attr("width", d => d.x1 - d.x0)
+    .attr("fill", (d, i) => d.type === 'attack' ? getAttackColor(i) : getTargetColor(i))
+    .attr("stroke", "#333");
+
+  // --- Node Hover Interaction (UPDATED) ---
+  node.on("mouseover", function(event, d) {
+      // 1. Sbiadisci TUTTO inizialmente (Link, Nodi, Labels)
+      d3.selectAll('.sankey-link').style("stroke-opacity", 0.05);
+      d3.selectAll('.sankey-node').style("opacity", 0.3);
+      d3.selectAll('.sankey-label').style("opacity", 0.2); // Sbiadisce le scritte
+
+      // 2. Evidenzia il NODO corrente e la sua LABEL
+      d3.select(this).style("opacity", 1);
+      
+      // Filtra la label corrispondente a questo nodo
+      d3.selectAll('.sankey-label')
+        .filter(labelData => labelData.index === d.index)
+        .style("opacity", 1)
+        .style("font-weight", "bold");
+
+      // 3. Evidenzia i LINK connessi
+      d3.selectAll('.sankey-link')
+        .filter(l => l.source.index === d.index || l.target.index === d.index)
+        .style("stroke-opacity", 0.8)
+        .attr("stroke", "#666");
+
+      // 4. Evidenzia i NODI connessi e le loro LABELS
+      const connectedNodeIndices = new Set();
+      
+      // Troviamo gli indici dei nodi connessi
+      links.forEach(l => {
+         if (l.source.index === d.index) connectedNodeIndices.add(l.target.index);
+         if (l.target.index === d.index) connectedNodeIndices.add(l.source.index);
+      });
+
+      // Applichiamo l'evidenziazione ai nodi connessi
+      d3.selectAll('.sankey-node')
+        .filter(n => connectedNodeIndices.has(n.index))
+        .style("opacity", 1);
+
+      // Applichiamo l'evidenziazione alle labels connesse
+      d3.selectAll('.sankey-label')
+        .filter(labelData => connectedNodeIndices.has(labelData.index))
+        .style("opacity", 1);
+
+      showTooltip(event, `${d.value}`);
+  })
+  .on("mousemove", moveTooltip)
+  .on("mouseout", function() {
+      // RESET COMPLETO
+      d3.selectAll('.sankey-link').style("stroke-opacity", 0.3).attr("stroke", "#ccc");
+      d3.selectAll('.sankey-node').style("opacity", 1);
+      
+      // Reset Labels
+      d3.selectAll('.sankey-label')
+        .style("opacity", 1)
+        .style("font-weight", "normal");
+        
+      hideTooltip();
+  });
+
+  // 7. LABELS (con classe aggiunta 'sankey-label')
+  const texts = g.append("g")
+    .style("font-size", "7px")
+    .style("fill", COLORS.textPrimary)
+    .style("pointer-events", "none")
+    .selectAll("text")
+    .data(nodes)
+    .enter().append("text")
+    .attr("class", "sankey-label") // CLASSE FONDAMENTALE PER LA SELEZIONE
+    .attr("x", d => d.x0 < innerWidth / 2 ? d.x0 - 6 : d.x1 + 6)
+    .attr("y", d => (d.y1 + d.y0) / 2)
+    .attr("text-anchor", d => d.x0 < innerWidth / 2 ? "end" : "start");
+
+  texts.each(function(d) {
+      wrapByChar(d3.select(this), d.name, 12, 1.1); 
+  });
+
+  // 8. TITLES
+  const headerY = -15;
+  svg.append("text").attr("x", localMargin.left).attr("y", localMargin.top + headerY).attr("text-anchor", "middle").style("font-size", "10px").style("font-weight", "bold").style("fill", "#666").text("ATTACKS");
+  svg.append("text").attr("x", CHART_WIDTH - localMargin.right).attr("y", localMargin.top + headerY).attr("text-anchor", "middle").style("font-size", "10px").style("font-weight", "bold").style("fill", "#666").text("TARGETS");
+
+  // --- TOOLTIP ---
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
+  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
+  const tooltipText = tooltipGroup.append("text").attr("x", 4).attr("y", 9).style("font-size", "8px").style("font-family", "sans-serif");
+
+  function showTooltip(event, text) {
+      tooltipGroup.style("display", null);
+      tooltipText.text(text);
+      const bbox = tooltipText.node().getBBox();
+      tooltipRect.attr("width", bbox.width + 8).attr("height", bbox.height + 5);
+      moveTooltip(event);
+  }
+
+  function moveTooltip(event) {
+      const [x, y] = d3.pointer(event, svg.node());
+      const xOffset = (x > CHART_WIDTH / 2) ? - (tooltipRect.attr("width") * 1) - 10 : 10; 
+      const yOffset = -15;
+      tooltipGroup.attr("transform", `translate(${x + xOffset}, ${y + yOffset})`);
+  }
+
+  function hideTooltip() { tooltipGroup.style("display", "none"); }
+
+  // --- WRAP FUNCTION ---
+  function wrapByChar(textElement, rawString, maxCharsPerLine, lineHeightEm) {
+      const cleanString = rawString.replace(/\//g, ' / ');
+      const words = cleanString.split(/\s+/);
+      let lines = [], currentLine = [], currentLen = 0;
+      words.forEach(word => {
+          if (currentLen + word.length > maxCharsPerLine && currentLine.length > 0) {
+              lines.push(currentLine.join(" ")); currentLine = [word]; currentLen = word.length;
+          } else {
+              currentLine.push(word); currentLen += word.length + 1;
+          }
+      });
+      if (currentLine.length > 0) lines.push(currentLine.join(" "));
+      textElement.text(null);
+      const x = textElement.attr("x");
+      const startDy = -((lines.length * lineHeightEm) / 2) + (lineHeightEm / 2) + 0.1;
+      lines.forEach((line, i) => {
+          textElement.append("tspan").attr("x", x).attr("dy", i === 0 ? `${startDy}em` : `${lineHeightEm}em`).text(line);
+      });
+  }
 }
