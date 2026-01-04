@@ -237,6 +237,11 @@ async function initChartsAfterAuth() {
   // Explicitly define ALL charts to load (main page + all modal charts)
   const chartsToLoad = [
     // ===== GROUP CATEGORY =====
+    // Note: We use the SAME file for all 3 because the JSON contains keys for each choice
+    { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
+    { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
+    { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
+    // ===== GROUP CATEGORY =====
     /*
     // For each choice in ['ISIL', 'taliban', 'SL']
     { file: 'comparing_categories/bar_chart.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
