@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="css/svg_elements.css" />
 
   <!-- Scripts -->
-  <script src="js/categories.js"></script>
+  <script src="js/categories.js" defer></script>
   <script src="js/draw_group_1.js"></script>
   <script src="js/draw_group_2.js"></script>
   <script src="js/draw_group_3.js" ></script>
@@ -47,8 +47,10 @@
   <script src="js/draw_target_5.js"></script>
   <script src="js/draw_main_left.js"></script>
   <script src="js/globe/globe_default.js"></script>
+  <script src="js/globe/globe_default_preprocessing.js"></script>
   <script src="js/globe/globe_group.js"></script>
   <script src="js/draw_main_right.js"></script>
+  <script src="js/right_chart/right_chart_group.js"></script>
   <script src="js/main.js" defer></script>
 
 </head>
@@ -82,7 +84,7 @@
   </nav>
 
   <!-- CATEGORY SELECTION HEADER (shown when authenticated) -->
-  <div class="category-header bg-white shadow-sm py-3 private-section">
+  <div id="main-header" class="category-header bg-white shadow-sm py-3 private-section">
     <div class="container">
       <div class="d-flex justify-content-center gap-3 gap-lg-4">
         <button type="button" class="btn btn-outline-primary category-btn flex-fill" data-category="group" onclick="selectCategory('group')">

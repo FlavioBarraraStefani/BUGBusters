@@ -1,83 +1,85 @@
-  //valuies initialized once the SVG is created
-  let projection = null;
-  let path = null;
-  let g = null;
-  let countries = null;
-  let isFront = null;
+//valuies initialized once the SVG is created
+let projection = null;
+let path = null;
+let g = null;
+let countries = null;
+let isFront = null;
 
-  let legendGlobe = null;
-  let playBtn = null;
-  let slider = null;
-  let title = null;
+let legendGlobe = null;
+let playBtn = null;
+let slider = null;
+let title = null;
 
-  //ALLOW drag to rotate globe
-  let needsUpdate = false;
-  let updateGlobe = null;   // function to update globe rendering
+//ALLOW drag to rotate globe
+let needsUpdate = false;
+let updateGlobe = null;   // function to update globe rendering
 
-  let baseScale = 1;
-  function computeBaseGlobeScale() {
-    return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;
+let baseScale = 1;
+function computeBaseGlobeScale() {
+  return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;
+}
+
+let rotateOnStart = true;
+let isRotating = false;
+let rotationSpeed = 0.3; // degrees per frame
+
+let playing = false;
+let currentIndex = 0;
+const years = d3.range(1969, 2021);
+let playIntervalMs = 500;
+let animationFrame = null;
+
+let stepAnimation = null; //function to step animation (optional year param)
+let stepAnimationRight = () => {}; //function to step right animation (optional year param)
+
+
+function loopAnimation() {
+  if (!playing) return;
+
+  updateSlider();
+  stepAnimation(); stepAnimationRight();
+
+  animationFrame = setTimeout(loopAnimation, playIntervalMs);
+}
+
+function startAnimation() {
+  if (animationFrame) {
+    clearTimeout(animationFrame);
+    animationFrame = null;
   }
 
-  let rotateOnStart = true;
-  let isRotating = false;
-  let rotationSpeed = 0.3; // degrees per frame
+  playing = true;
+  playBtn.text('❚❚');
+  currentIndex = years.indexOf(+slider.property('value'));
+  if (currentIndex < 0 || currentIndex >= years.length - 1) currentIndex = 0;
+  if (rotateOnStart) isRotating = true;
 
-  let playing = false;
-  let currentIndex = 0;
-  const years = d3.range(1969, 2021);
-  let playIntervalMs = 500;
-  let animationFrame = null;
+  loopAnimation();
+}
 
-  let stepAnimation = null; //function to step animation (optional year param)
+function stopAnimation() {
+  playBtn.text('▶');
+  isRotating = false;
 
-  function loopAnimation() {
-    if (!playing) return;
-
-    updateSlider();
-    stepAnimation();
-
-    animationFrame = setTimeout(loopAnimation, playIntervalMs);
+  playing = false;
+  if (animationFrame) {
+    clearTimeout(animationFrame);
+    animationFrame = null;
   }
+}
 
-  function startAnimation() {
-    if (animationFrame) {
-      clearTimeout(animationFrame);
-      animationFrame = null;
-    }
-
-    playing = true;
-    playBtn.text('❚❚');
-    currentIndex = years.indexOf(+slider.property('value'));
-    if (currentIndex < 0 || currentIndex >= years.length - 1) currentIndex = 0;
-    if (rotateOnStart) isRotating = true;
-
-    loopAnimation();
+function updateSlider() {
+  currentIndex++;
+  if (currentIndex >= years.length) {
+    stopAnimation();
+    return;
   }
+  const y = years[currentIndex];
+  title.property('value', y);
+  slider.property('value', y);
+  return y;
+}
 
-  function stopAnimation() {
-    playBtn.text('▶');
-    isRotating = false;
-
-    playing = false;
-    if (animationFrame) {
-      clearTimeout(animationFrame);
-      animationFrame = null;
-    }
-  }
- 
-  function updateSlider() {
-    currentIndex++;
-    if (currentIndex >= years.length) {
-      stopAnimation();
-      return ;
-    }
-    const y = years[currentIndex];
-    title.property('value', y);
-    slider.property('value', y);
-    return y;
-  }
-  
 window.addEventListener('resize', () => { if (window._draw_main_left_lastCall) draw_main_left(...window._draw_main_left_lastCall); });
 // Draw function for main page left canvas
 function draw_main_left(categoryInfo, containerId) {
@@ -94,8 +96,8 @@ function draw_main_left(categoryInfo, containerId) {
     //initialize SVG
     svg.selectAll('*').remove();
     svg.attr('width', '100%')
-       .attr('height', '100%')
-       .attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`)
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`)
 
     //-----------------//
     //EDIT AFTER THIS LINE
@@ -119,7 +121,7 @@ function draw_main_left(categoryInfo, containerId) {
 
     // Ocean background
     g.append('circle')
-      .attr('class', 'ocean-bg') 
+      .attr('class', 'ocean-bg')
       .attr('cx', projection.translate()[0])
       .attr('cy', projection.translate()[1])
       .attr('r', projection.scale())
@@ -138,7 +140,7 @@ function draw_main_left(categoryInfo, containerId) {
       .attr('stroke-width', 0.75)
       .attr('data-name', d => d.properties.name);
 
-        // helper: returns true if point is on the visible (front) hemisphere
+    // helper: returns true if point is on the visible (front) hemisphere
     isFront = (lon, lat) => {
       const rotate = projection.rotate(); // [lambda, phi, gamma]
       const center = [-rotate[0], -rotate[1]]; // center lon/lat
@@ -149,18 +151,18 @@ function draw_main_left(categoryInfo, containerId) {
     createLegendGlobe();
     playBtn = d3.select('#timeline_play_btn');
     slider = d3.select('#timeline_year_slider');
-    title = d3.select('#year_title'); 
+    title = d3.select('#year_title');
 
     // --- Slider input handler ---
-    slider.on('input', function() {
+    slider.on('input', function () {
       if (playing) stopAnimation();
 
       const year = +this.value;
       title.property('value', year);
-      stepAnimation();
+      stepAnimation(); stepAnimationRight();
     });
-
-    playBtn.on('click', function() {
+;
+    playBtn.on('click', function () {
       playing ? stopAnimation() : startAnimation();
     });
 
@@ -170,7 +172,7 @@ function draw_main_left(categoryInfo, containerId) {
     // Enable drag to rotate globe
     //----------//
     const drag = d3.drag()
-      .on('drag', function(event) {
+      .on('drag', function (event) {
         const rotate = projection.rotate();
         let k = 50 / projection.scale(); // scale-aware sensitivity
         window.globeRotation = [rotate[0] + event.dx * k, rotate[1] - event.dy * k];
@@ -182,56 +184,53 @@ function draw_main_left(categoryInfo, containerId) {
     svg.call(drag);
 
     //----------//
-      //enable zoom to scale globe
-      //----------//
-      baseScale = projection.scale(); // store initial scale
-      const zoom = d3.zoom()
-        .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
-        .on('zoom', function(event) {
-          // event.transform.k is the zoom factor
-          projection.scale(baseScale * event.transform.k);
+    //enable zoom to scale globe
+    //----------//
+    baseScale = projection.scale(); // store initial scale
+    const zoom = d3.zoom()
+      .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
+      .on('zoom', function (event) {
+        // event.transform.k is the zoom factor
+        projection.scale(baseScale * event.transform.k);
 
-          // update background circle to match new projection scale/translate
-          const t = projection.translate();
-          g.select('circle.ocean-bg')
-            .attr('r', projection.scale())
-            .attr('cx', t[0])
-            .attr('cy', t[1]);
+        // update background circle to match new projection scale/translate
+        const t = projection.translate();
+        g.select('circle.ocean-bg')
+          .attr('r', projection.scale())
+          .attr('cx', t[0])
+          .attr('cy', t[1]);
 
-          needsUpdate = true;
-          requestAnimationFrame(updateGlobe);
-        });
-      svg.call(zoom);
+        needsUpdate = true;
+        requestAnimationFrame(updateGlobe);
+      });
+    svg.call(zoom);
 
     //----------//
     // Auto-rotation loop
     //----------//    
     let rotationRAF = null;
-      function startRotationLoop() {
-        if (rotationRAF) return;
-        let last = performance.now();
-        function frame(now) {
-          const dt = now - last;
-          last = now;
-          if (isRotating) {
-            // scale rotationSpeed to time delta (assumes rotationSpeed is degrees per ~16.67ms frame)
-            window.globeRotation[0] = (window.globeRotation[0] + rotationSpeed * (dt / 16.6667)) % 360;
-            projection.rotate(window.globeRotation);
-            needsUpdate = true;
-            requestAnimationFrame(updateGlobe);
-          }
-          rotationRAF = requestAnimationFrame(frame);
+    function startRotationLoop() {
+      if (rotationRAF) return;
+      let last = performance.now();
+      function frame(now) {
+        const dt = now - last;
+        last = now;
+        if (isRotating) {
+          // scale rotationSpeed to time delta (assumes rotationSpeed is degrees per ~16.67ms frame)
+          window.globeRotation[0] = (window.globeRotation[0] + rotationSpeed * (dt / 16.6667)) % 360;
+          projection.rotate(window.globeRotation);
+          needsUpdate = true;
+          requestAnimationFrame(updateGlobe);
         }
         rotationRAF = requestAnimationFrame(frame);
       }
-      startRotationLoop();
+      rotationRAF = requestAnimationFrame(frame);
     }
+    startRotationLoop();
+  }
   //save last call params for resize
   window._draw_main_left_lastCall = [categoryInfo, containerId];
 
-  //each  time redraw based on category
-  g = svg.select('.main_group');
-  
   //if the category changed, reset the globe to default
   if (currentCat !== previousCat) {
     stopAnimation();
@@ -240,14 +239,14 @@ function draw_main_left(categoryInfo, containerId) {
       g.selectAll('g.hex-bins')
         .transition().duration(playIntervalMs)
         .attr('opacity', 0)
-        .on('end', function() { d3.select(this).remove(); });
-      
-      hideColormapLegend(true);
+        .on('end', function () { d3.select(this).remove(); });
+
+      hideColormapLegend(true); //hide legend
 
     } else if (previousCat === 'group') { //remove group coloring
       g.selectAll('path.country').attr('d', path)
-      .transition().duration(playIntervalMs)
-      .style('fill',COLORS.GLOBE.country.fill);
+        .transition().duration(playIntervalMs)
+        .style('fill', COLORS.GLOBE.country.fill);
 
     } else if (previousCat === 'attack') {
     } else if (previousCat === 'target') {
@@ -256,8 +255,10 @@ function draw_main_left(categoryInfo, containerId) {
 
   //draw according to current category
   if (currentCat === null) {
-    globe_default(svg);
+    globe_default();
   } else if (currentCat === 'group') {
-    globe_group(svg);
+    globe_group();
+  } else if (currentCat === 'attack') {
+  } else if (currentCat === 'target') {
   }
 }

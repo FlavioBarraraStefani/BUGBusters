@@ -12,39 +12,47 @@ const CATEGORIES = {
 };
 
 const COLORS = {
-    // Structured color definitions
-  GLOBE:{
+  // Structured color definitions
+  GLOBE: {
     ocean: "rgba(200, 209, 211, 0.84)",
     //ocean: '#b4dbe7ff',
     country: {
       stroke: "#171717ff",
       fill: "#f4f3f3ff"
     },
-    hexbin:{
-      stroke: 'black',
+    hexbin: {
       colormap: [
-        //"#f6f1e6","#f0e6c5","#d8e5cf","#aed6cc","#7fb8c5",
-        //"#5f8fb1","#4a5f8f","#3a3f64","#2d2a3e"] //lipari
         "#fcfdbf", "#fb9f3a", "#ed7953", "#d8576b", "#bc3f85",
-        "#9e2f7f", "#7c1f6d", "#5c126e", "#3b0f70", "#1c1044", 
+        "#9e2f7f", "#7c1f6d", "#5c126e", "#3b0f70", "#1c1044",
         "#000004" //magma
       ]
     }
   },
 
+  RIGHT_CHART:{
+    axisLine: '#05253fff',    //axes
+    textPrimary: '#1565C0', //labels
+  },
+
   //EACH CATEGORY COLOR SET
-  groupColors:['red','green','blue'],
-  attackColors:['#FF5252', '#1E88E5', '#00BCD4', '#FFA726', '#AB47BC'],
-  targetColors:['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
-  defaultComparison:'#78909C',
+  groupColors: ['red', 'green', 'blue'],
+  attackColors: [
+  '#4E79A7', // blue
+  '#F28E2B', // orange
+  '#E15759', // red
+  '#76B7B2', // teal
+  '#59A14F'  // green
+  ], 
+  targetColors: ['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
+  defaultComparison: '#78909C',
 
   //COMMON COLORS
-  axisLine:'#64B5F6',    //axes
-  textPrimary:'#1565C0', //labels
+  axisLine: '#64B5F6',    //axes
+  textPrimary: '#1565C0', //labels
 }
 
 //FONT SIZE OF EACH CHART LABEL
-const labelFontSize = 12
+const labelFontSize = 16//px
 
 // Aspect ratio 3:2 (width:height)
 const CHART_WIDTH = 300;
@@ -145,7 +153,7 @@ const loadChart = (function () {
             const url = `${BASE_URL}/${path}`;
             const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
             if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.statusText}`);
-            
+
             const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
             let data;
             if (path.endsWith('.json')) {
@@ -173,7 +181,7 @@ const loadChart = (function () {
           const url = `${BASE_URL}/${filePath}`;
           const res = await fetch(url, { headers: token ? { Authorization: `token ${token}` } : {} });
           if (!res.ok) throw new Error(`Failed to fetch ${filePath}: ${res.statusText}`);
-          
+
           const decodedContent = atob((await res.json()).content.replace(/\n/g, ''));
           if (filePath.endsWith('.json')) {
             rawData = JSON.parse(decodedContent);
@@ -213,6 +221,9 @@ async function initChartsAfterAuth() {
   const loadingOverlay = document.getElementById('loading-overlay');
   const loadingProgress = document.getElementById('loading-progress');
   const mainContent = document.getElementById('main-content');
+  const header = document.getElementById('main-header');
+  const globeColorMap = document.getElementById('globe_color_map');
+
 
   // Show loading overlay
   if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -220,8 +231,9 @@ async function initChartsAfterAuth() {
   const errorContent = document.getElementById('error-content');
   if (loadingContent) loadingContent.style.display = 'flex';
   if (errorContent) errorContent.style.display = 'none';
-  if (mainContent) mainContent.style.display = 'none';
-
+  if (mainContent) { mainContent.style.display = 'none'; mainContent.style.opacity = 0; }
+  if (header) { header.style.display = 'none'; header.style.opacity = 0; }
+  if (globeColorMap) { globeColorMap.style.display = 'none'; globeColorMap.style.opacity = 0; }
   // Explicitly define ALL charts to load (main page + all modal charts)
   const chartsToLoad = [
     // ===== GROUP CATEGORY =====
@@ -255,12 +267,12 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_1' },
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_1' },
 
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'explosion', container: 'plot_attack_explosion_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'armed_assault', container: 'plot_attack_armed_assault_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'assassination', container: 'plot_attack_assassination_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_2, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_2' },
-
+    { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'explosion', container: 'plot_attack_explosion_2' },
+    { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'armed_assault', container: 'plot_attack_armed_assault_2' },
+    { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'assassination', container: 'plot_attack_assassination_2' },
+    { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_2' },
+    { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_2' },
+    
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'explosion', container: 'plot_attack_explosion_3' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'armed_assault', container: 'plot_attack_armed_assault_3' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'assassination', container: 'plot_attack_assassination_3' },
@@ -278,52 +290,58 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'assassination', container: 'plot_attack_assassination_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_5' },
-/*
-    // ===== TARGET CATEGORY =====
-    // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
-
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'military_police', container: 'plot_target_military_police_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'citizens', container: 'plot_target_citizens_2' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
-
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'military_police', container: 'plot_target_military_police_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'government', container: 'plot_target_government_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'business', container: 'plot_target_business_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'citizens', container: 'plot_target_citizens_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'transportations', container: 'plot_target_transportations_3' },
-
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'military_police', container: 'plot_target_military_police_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'government', container: 'plot_target_government_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'business', container: 'plot_target_business_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'citizens', container: 'plot_target_citizens_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'transportations', container: 'plot_target_transportations_4' },
-
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'military_police', container: 'plot_target_military_police_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'government', container: 'plot_target_government_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
-*/
-      // ===== MAIN PAGE CHARTS =====
-    { file: "PROJECT/CATEGORIES/globe.json", func: (data) => {window.globe_data = data}, choice: null, container: "body" },    
-    { file: [
-      "PROJECT/CATEGORIES/default_float_1.csv",
-      "PROJECT/CATEGORIES/default_float_2.csv",
-      "PROJECT/CATEGORIES/default_float_3.csv",
-    ], 
-    func: (data) => {
-      window.globe_default_data = data; 
-      precomputeGlobeData();
-      precomputeColormap();
+    /*
+        // ===== TARGET CATEGORY =====
+        // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
+    
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'military_police', container: 'plot_target_military_police_2' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'citizens', container: 'plot_target_citizens_2' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
+    
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'military_police', container: 'plot_target_military_police_3' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'government', container: 'plot_target_government_3' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'business', container: 'plot_target_business_3' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'citizens', container: 'plot_target_citizens_3' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'transportations', container: 'plot_target_transportations_3' },
+    
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'military_police', container: 'plot_target_military_police_4' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'government', container: 'plot_target_government_4' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'business', container: 'plot_target_business_4' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'citizens', container: 'plot_target_citizens_4' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'transportations', container: 'plot_target_transportations_4' },
+    
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'military_police', container: 'plot_target_military_police_5' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'government', container: 'plot_target_government_5' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
+        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
+    */
+    // ===== MAIN PAGE CHARTS =====
+    { file: "PROJECT/CATEGORIES/globe.json", func: (data) => { window.globe_data = data }, choice: null, container: "body" },
+    {
+      file: [
+        "PROJECT/CATEGORIES/default_float_1.csv",
+        "PROJECT/CATEGORIES/default_float_2.csv",
+        "PROJECT/CATEGORIES/default_float_3.csv",
+      ],
+      func: (data) => {
+        window.globe_default_data = data;
+        precomputeGlobeData();
+        precomputeColormap();
+      }, choice: null, container: "body"
+    },
+    { file: "PROJECT/CATEGORIES/groups.json", func: (data) => { 
+      window.globe_group_data = data; 
+      computeGroupCumulativeCountry();
+      precompute_group() 
     }, choice: null, container: "body" },
-    { file: "PROJECT/CATEGORIES/groups.json", func: (data) => {window.globe_group_data = data;computeGroupCumulativeCountry()}, choice: null, container: "body" },
   ];
 
   try {
@@ -352,7 +370,26 @@ async function initChartsAfterAuth() {
 
     // Hide loading, show content
     if (loadingOverlay) loadingOverlay.style.display = 'none';
-    if (mainContent) mainContent.style.display = 'block';
+    if (mainContent) {
+      mainContent.style.display = 'block';
+      mainContent.style.transition = 'opacity 1s';
+      setTimeout(() => { mainContent.style.opacity = 1; }, 10);
+    }
+    if (globeColorMap) {
+      globeColorMap.style.display = 'none';
+      globeColorMap.style.opacity = '0';
+      setTimeout(() => {
+        globeColorMap.style.display = 'block';
+        globeColorMap.style.opacity = '1';
+      }, 1010);
+    }
+
+
+    if (header) {
+      header.style.display = 'block';
+      header.style.transition = 'opacity 1s';
+      setTimeout(() => { header.style.opacity = 1; }, 10);
+    }
 
     // Add resize listener
     window.addEventListener('resize', updateMainCanvases);

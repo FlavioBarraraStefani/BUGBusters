@@ -241,9 +241,8 @@ function rescaleGlobe() {
   // Update the SVG viewBox
   const container = d3.select('#canvas-left');
   const svg = container.select('.canvas-wrapper svg');
-  if (!svg.empty()) {
-    svg.attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`);
-  }
+  svg.attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`);
+
 
   // Reuse the globe zoom instance if it exists (avoid duplicate implementations)
   if (window.globeZoom && !svg.empty()) {
@@ -266,19 +265,21 @@ function rescaleGlobe() {
 }
 
 function rescaleRightChart() {
-    // Update projection translate to center of new canvas
+  return;
+
+  if (RIGHT_CHART_WIDTH === 0 || RIGHT_CHART_HEIGHT === 0) return;
   // Update the SVG viewBox
   const container = d3.select('#canvas-right');
   const svg = container.select('.canvas-wrapper svg');
-  if (!svg.empty()) {
-    svg.attr('viewBox', `0 0 ${RIGHT_CHART_WIDTH} ${RIGHT_CHART_HEIGHT}`);
-  }
+  // update viewBox
+  svg.attr('viewBox', `0 0 ${RIGHT_CHART_WIDTH} ${RIGHT_CHART_HEIGHT}`);
 
-  //change things in g_right accordingly
-  //TODO: actually implement proper rescaling of elements
-  if (!g_right) return;
-  g_right.attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN})`);
+  // update group container transform if needed (reset to origin)
+  // update axis and ridgelines (stepAnimationRight handles ridges)
+  stepAnimationRight();
+  //if (typeof stepAnimationRight === 'function') stepAnimationRight();
 }
+
 
 /**
  * Show modal for a specific category and choice

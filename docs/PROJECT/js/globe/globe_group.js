@@ -1,4 +1,4 @@
-function globe_group(svg) {
+function globe_group() {
 
   const groupData = window.group_cumulate_country;
 

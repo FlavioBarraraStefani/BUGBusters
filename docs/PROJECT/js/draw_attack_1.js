@@ -42,15 +42,16 @@ function draw_attack_1(data, choice, containerId) {
     'avg_damage': data.meta.global_max_values.avg_damage
   };
 
-  // Scaling factors based on labelFontSize (base size = 12)
-  const fontScale = labelFontSize / 12;
-  const labelOffset = labelFontSize * 1.2 + 10;
-  const maxValOffset = labelFontSize * 1.1 + 5;
-  const pointRadius = Math.max(3, labelFontSize * 0.35);
-  const hoverRadius = Math.max(7, labelFontSize * 0.8);
+
+  const fontSize = 12;  
+  // Scaling factors based on fontSize (base size = 12)
+  const labelOffset = fontSize * 1.2 + 10;
+  const maxValOffset = fontSize * 1.1 + 5;
+  const pointRadius = Math.max(3, fontSize * 0.35);
+  const hoverRadius = Math.max(7, fontSize * 0.8);
 
   // Adjust radius to account for labels
-  const labelSpace = labelFontSize *1.5;
+  const labelSpace = fontSize *1.5;
   const centerX = CHART_WIDTH / 2;
   const centerY = CHART_HEIGHT / 2;
   const radius = Math.min(centerX, centerY) - labelSpace;
@@ -151,28 +152,28 @@ function draw_attack_1(data, choice, containerId) {
       // Success Rate (alto)
       anchor = 'middle';
       xOffset = 0;
-      yOffsetTitle = -labelFontSize * 0.7;
+      yOffsetTitle = -fontSize * 0.7;
     } else if (feature.key === 'nkill') {
       // Avg Kills (destra)
       anchor = 'start';
-      xOffset = labelFontSize * 0.7;
+      xOffset = fontSize * 0.7;
       yOffsetTitle = 0;
     } else if (feature.key === 'nwound') {
       // Avg Wounded (basso)
       anchor = 'middle';
       xOffset = 0;
-      yOffsetTitle = labelFontSize * 1.5;
+      yOffsetTitle = fontSize * 1.5;
     } else if (feature.key === 'propvalue') {
       // Avg Damage (sinistra)
       anchor = 'start';
-      xOffset = -labelFontSize * 3.5;
+      xOffset = -fontSize * 3.5;
       yOffsetTitle = 0;
     }
 
     const textLabel = g.append('text')
       .attr('x', labelX + xOffset).attr('y', labelY + yOffsetTitle)
       .attr('text-anchor', anchor).attr('dominant-baseline', 'middle')
-      .attr('font-size', labelFontSize + 'px')
+      .attr('font-size', fontSize + 'px')
       .attr('font-weight', '1000').attr('fill', COLORS.textPrimary)
       .attr('letter-spacing', '0.3').style('pointer-events', 'none');
 
@@ -219,7 +220,7 @@ function draw_attack_1(data, choice, containerId) {
       return v.toFixed(2);
     };
 
-    const maxLabelRadius = radius - labelFontSize * 0.9; 
+    const maxLabelRadius = radius - fontSize * 0.9; 
     const maxLx = centerX + maxLabelRadius * cosA;
     const maxLy = centerY + maxLabelRadius * sinA - 1;
     
@@ -253,7 +254,7 @@ function draw_attack_1(data, choice, containerId) {
     g.append('text')
       .attr('x', maxLx + maxValXOffset).attr('y', maxLy + maxValYOffset)
       .attr('text-anchor', maxValAnchor).attr('dominant-baseline', 'middle')
-      .attr('font-size', labelFontSize + 'px').attr('font-weight', 'bold').attr('fill', '#555')
+      .attr('font-size', fontSize + 'px').attr('font-weight', 'bold').attr('fill', '#555')
       .text(fmt(maxValue));
   });
 
@@ -319,9 +320,9 @@ function draw_attack_1(data, choice, containerId) {
         
         g.append('text')
          .attr('class', 'hover-label')
-         .attr('x', coord[0]).attr('y', coord[1] - labelFontSize * 1.3)
+         .attr('x', coord[0]).attr('y', coord[1] - fontSize * 1.3)
          .attr('text-anchor', 'middle')
-         .attr('font-size', labelFontSize + 'px').attr('font-weight', 'bold')
+         .attr('font-size', fontSize + 'px').attr('font-weight', 'bold')
          .attr('fill', 'black').attr('stroke', 'white')
          .attr('stroke-width', 3).attr('paint-order', 'stroke')
          .text(fmt(actualValue));
@@ -334,10 +335,10 @@ function draw_attack_1(data, choice, containerId) {
   });
   
   // Legend with font-relative sizing
-  const legendRectWidth = labelFontSize * 0.8;
-  const legendRectHeight = labelFontSize * 0.8;
-  const legendSpacing = labelFontSize * 0.9;
-  const legendTextOffset = legendRectWidth + labelFontSize * 0.3;
+  const legendRectWidth = fontSize * 0.8;
+  const legendRectHeight = fontSize * 0.8;
+  const legendSpacing = fontSize * 0.9;
+  const legendTextOffset = legendRectWidth + fontSize * 0.3;
 
   const LegendLabels = [
     'Explosion',
@@ -348,8 +349,8 @@ function draw_attack_1(data, choice, containerId) {
   ]
   
   const legend = g.append('g')
-    .attr('transform', `translate(${labelFontSize * 0.8},${labelFontSize * 0.3})`)
-    .style('font-family', 'Arial, sans-serif').style('font-size', labelFontSize + 'px')
+    .attr('transform', `translate(${fontSize * 0.8},${fontSize * 0.3-CHART_MARGIN.top})`)
+    .style('font-family', 'Arial, sans-serif').style('font-size', fontSize + 'px')
     .style('opacity', 0.98).attr('filter', 'url(#dropshadow)');
 
   legend.append('rect')
