@@ -119,7 +119,7 @@ function createLegendGlobe() {
   }
 
   // Title dimensions
-  const TITLE_FONT_SIZE = labelFontSize * 1.1;
+  const TITLE_FONT_SIZE = labelFontSize;
   let TITLE_HEIGHT = 30;  // Space for title (increased for larger font)
   const VERTICAL_LEGEND_WIDTH = 100;  // Width for vertical legend to allow text wrapping
 
@@ -155,7 +155,7 @@ function createLegendGlobe() {
   }
 
 
-  const LEGEND_TITLE = "Total count of attacks";
+  const LEGEND_TITLE = "Cumulative # of attacks";
     
     if (!STACKED_LAYOUT_PREFERRED) {
       legendSvg = legendGlobe.append('svg')

@@ -61,7 +61,7 @@ function right_chart_group(svg) {
   // container for groups (create if missing)
   let container = svg.select('.groups-container');
   if (container.empty()) {
-    container = svg.append('g').attr('class','groups-container').attr('transform','translate(0,0)');
+    container = svg.append('g').attr('class','groups-container');
   }
 
   // layout params
@@ -82,7 +82,7 @@ function right_chart_group(svg) {
     .attr('x2', d => x(maxYear))
     .attr('y1', axisY)
     .attr('y2', axisY)
-    .attr('stroke', (d,i) => (COLORS && COLORS.groupColors && COLORS.groupColors[i]) ? COLORS.groupColors[i] : 'steelblue')
+    .attr('stroke', (d,i) => COLORS.groupColors[i])
     .attr('stroke-width', 3)
     .style('opacity', 0);
 
