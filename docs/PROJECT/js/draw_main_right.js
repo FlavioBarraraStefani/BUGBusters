@@ -31,7 +31,7 @@ function draw_main_right(categoryInfo, containerId) {
       .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN})`);
 
     // helper: recalc and render the axis (called on every draw)
-    function updateAxis() {
+    xAxis._updateAxis = () => {
       const maxYear = +slider.property('value') || years[years.length - 1];
       const minYear = 1969;
 
@@ -44,7 +44,24 @@ function draw_main_right(categoryInfo, containerId) {
         .domain([minYear, maxYear])
         .range([leftPadAxis, RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN]);
 
-      const tickVals = d3.range(minYear, maxYear + 1, timeAxisBinning);
+      const width = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - leftPadAxis;
+      
+      // --- DYNAMIC TICK CALCULATION ---
+      // 1. Define safe width per label (e.g. 50px is safe for "1999" + padding)
+      const pxPerTick = 50; 
+      
+      // 2. Calculate max ticks that fit in current width
+      const maxTicksPossible = Math.floor(width / pxPerTick);
+
+      // 3. Start with default binning and double it (halve ticks) until they fit
+      let step = timeAxisBinning;
+      while (((maxYear - minYear) / step) > maxTicksPossible) {
+         step *= 2;
+      }
+
+      const tickVals = d3.range(minYear, maxYear + 1, step);      
+      // --- END DYNAMIC TICK CALCULATION ---
+
       // optionally ensure the last tick lands exactly on maxYear when maxYear > minYear
       if (RIGHT_AXIS_FORCE_LAST_TICK && maxYear > minYear) {
         const last = tickVals[tickVals.length - 1];
@@ -69,9 +86,7 @@ function draw_main_right(categoryInfo, containerId) {
       xAxis.selectAll('line')
       .attr('stroke', COLORS.RIGHT_CHART.axisLine)
       .attr('stroke-width', 2);
-
     }
-    xAxis._updateAxis = updateAxis;
   } 
   window._draw_main_right_lastCall = [categoryInfo, containerId];
 
@@ -103,34 +118,4 @@ function draw_main_right(categoryInfo, containerId) {
     
       stepAnimationRight();
     },playIntervalMs);
-}
-
-function precompute_group() {
-  const data = window.globe_group_data;
-  const groups = CATEGORIES.group;
-  const minYear = 1969;
-
-  // 1. Find max year (Assuming data[g] always exists and keys are valid numbers)
-  let dataMax = minYear;
-  groups.forEach(g => {
-    Object.keys(data[g]).forEach(ky => {
-      const y = +ky;
-      if (y > dataMax) dataMax = y;
-    });
-  });
-
-  const yearsArr = d3.range(minYear, dataMax + 1);
-
-  const seriesByGroup = groups.map(gname => {
-    return yearsArr.map(y => {
-      return data[gname][y] ? +data[gname][y].total_count : 0;
-    });
-  });
-
-  window._precomputed_group = {
-    minYear: minYear,
-    maxYear: dataMax,
-    years: yearsArr,
-    seriesByGroup: seriesByGroup
-  };
 }

@@ -1,3 +1,66 @@
+
+function precompute_group() {
+  const data = window.globe_group_data;
+  const groups = CATEGORIES.group;
+  const minYear = 1969;
+
+  let dataMax = minYear;
+  groups.forEach(g => {
+    if (data[g]) {
+      Object.keys(data[g]).forEach(ky => {
+        const y = +ky;
+        if (y > dataMax) dataMax = y;
+      });
+    }
+  });
+
+  const fullYearsArr = d3.range(minYear, dataMax + 1);
+  const rawCountsByGroup = groups.map(gname => {
+    return fullYearsArr.map(y => {
+      return (data[gname] && data[gname][y]) ? +data[gname][y].total_count : 0;
+    });
+  });
+
+  const snapshots = {};
+  for (let endYear = minYear; endYear <= dataMax; endYear++) {
+    
+    const count = endYear - minYear + 1;
+
+    const snapshotData = groups.map((gname, i) => {
+        const currentCounts = rawCountsByGroup[i].slice(0, count);
+        
+        const totalCount = currentCounts.reduce((a, b) => a + b, 0);
+        const divisor = totalCount || 1; 
+
+        // Generate the PDF series objects
+        const series = currentCounts.map((val, idx) => ({
+            year: minYear + idx,
+            value: val / divisor, // Normalized PDF value
+            count: val            // Raw count for tooltip
+        }));
+
+        const maxVal = d3.max(series, s => s.value) || 0;
+
+        return {
+            name: gname,
+            index: i, 
+            series: series,
+            maxVal: maxVal,
+            totalCount: totalCount
+        };
+    });
+    
+    snapshots[endYear] = snapshotData;
+  }
+
+  window._precomputed_group = {
+    minYear: minYear,
+    maxYear: dataMax,
+    snapshots: snapshots
+  };
+}
+
+
 function right_chart_group(svg) {
   // --- Constants & Config ---
   const groups = CATEGORIES.group;
@@ -17,28 +80,10 @@ function right_chart_group(svg) {
 
   // --- Helper: Data Processing ---
   const getSeriesData = (currentMaxYear) => {
-    const count = Math.max(0, currentMaxYear - minYear + 1);
-
-    return groups.map((gname, i) => {
-      const fullSeries = pre.seriesByGroup[i];
-      const counts = fullSeries.slice(0, count);
-      
-      const sum = counts.reduce((a, b) => a + b, 0) || 1;
-      
-      const series = counts.map((val, idx) => ({
-        year: minYear + idx,
-        value: val / sum, 
-        count: val        
-      }));
-
-      return { 
-        name: gname, 
-        series, 
-        maxVal: d3.max(series, s => s.value) || 0,
-        index: i,
-        totalCount: sum 
-      };
-    });
+    let y = Math.round(currentMaxYear);
+    if (y < pre.minYear) y = pre.minYear;
+    if (y > pre.maxYear) y = pre.maxYear;
+    return pre.snapshots[y] || [];
   };
 
   // --- Core Render Function ---
@@ -205,7 +250,7 @@ function right_chart_group(svg) {
           .style('border-radius', '4px')
           .style('pointer-events', 'none')
           .style('opacity', 0)
-          .style('z-index', 9999);
+          .style('z-index', 100);
       }
     }
 
