@@ -16,7 +16,7 @@ let updateGlobe = null;   // function to update globe rendering
 
 let baseScale = 1;
 function computeBaseGlobeScale() {
-  return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;
+  return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;//padding to make the globe fit
 }
 
 let rotateOnStart = true;
@@ -253,12 +253,15 @@ function draw_main_left(categoryInfo, containerId) {
     }
   }
 
-  //draw according to current category
-  if (currentCat === null) {
-    globe_default();
-  } else if (currentCat === 'group') {
-    globe_group();
-  } else if (currentCat === 'attack') {
-  } else if (currentCat === 'target') {
-  }
+  setTimeout(() => {
+
+    //draw according to current category
+    if (currentCat === null) {
+      globe_default();
+    } else if (currentCat === 'group') {
+      globe_group();
+    } else if (currentCat === 'attack') {
+    } else if (currentCat === 'target') {
+    }
+  }, playIntervalMs);
 }

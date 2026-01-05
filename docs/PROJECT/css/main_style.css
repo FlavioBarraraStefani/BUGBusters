@@ -16,11 +16,20 @@
   /* Font Families */
   --font-sans: "Fira Sans", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   --font-serif: "Roboto Slab", Georgia, "Times New Roman", serif;
+  
+  /* Layout */
+  --footer-height: 77px;
+  --category-header-height: 77px;
 }
 
 /* ===========================
    Base Styles
    =========================== */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   line-height: 1.6;
@@ -60,6 +69,11 @@ section {
   background-color: rgba(255, 255, 255, 0.98) !important;
   transition: all 0.3s ease;
   min-height: var(--navbar-height);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
 }
 
 @media (max-width: 991.98px) {
@@ -107,8 +121,16 @@ section {
   font-size: 1.1rem;
 }
 
+/* Main content - position and size set dynamically by JS */
+main {
+  /* Padding removed - JS handles positioning */
+}
+
 #main-content {
-  display: none; width:100%; height:100%;
+  display: none; 
+  width: 100%; 
+  overflow: hidden;
+  /* Position and height set dynamically by JS */
 }
 
 /* ===========================
@@ -145,6 +167,12 @@ section {
   display: none; 
 }
 
+/* Footer - position set dynamically by JS */
+footer {
+  z-index: 90;
+  background: var(--color-white);
+}
+
 /* ===========================
    Loading Overlay
    =========================== */
@@ -179,8 +207,10 @@ section {
    =========================== */
 .category-header {
   text-align: center;
-  z-index:100;
+  z-index: 1020;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--color-white);
+  /* Position set dynamically by JS */
 }
 
 .category-btn {
@@ -200,19 +230,32 @@ section {
    Canvas category Styles
    =========================== */
 #main-content .container-fluid {
-  /*max-width: 2500px;*/
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
 }
 
 .canvas-row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  /* Width and height set by JS */
+}
+
+/* Stacked layout: column direction */
+.stacked-layout .canvas-row {
+  flex-direction: column;
+}
+
+/* Side by side layout: row direction */
+.side-by-side-layout .canvas-row {
+  flex-direction: row;
 }
 
 #canvas-left,
@@ -221,6 +264,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 #canvas-left > .canvas-wrapper,
@@ -231,6 +275,38 @@ section {
   justify-content: center;
   overflow: visible;
   /* Width and height set by JS */
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+/* Right canvas positioning and transitions */
+#canvas-right {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Side-by-side: right canvas slides from the right */
+.side-by-side-layout #canvas-right {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.side-by-side-layout.right-canvas-active #canvas-right {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Stacked: right canvas slides from the bottom */
+.stacked-layout #canvas-right {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stacked-layout.right-canvas-active #canvas-right {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Globe colormap legend */
@@ -243,9 +319,13 @@ section {
    Time Control Styles
    =========================== */
 #timeline-container {
-  max-width: 1320px;
-  margin-top: auto;
-  padding-top: 0.5rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  background: var(--color-background);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  /* Position set dynamically by JS */
 }
 
 #timeline_controls {

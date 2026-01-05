@@ -1,6 +1,9 @@
+// Global cache for map topology
+window._worldTopologyCache = null;
+
 window.addEventListener('resize', () => { if (window._draw_group_2_lastCall) draw_group_2(...window._draw_group_2_lastCall); });
 
-function draw_group_2(data, choice, containerId) {
+async function draw_group_2(data, choice, containerId) {
   window._draw_group_2_lastCall = [data, choice, containerId];
   
   const container = d3.select(`#${containerId}`);
@@ -8,47 +11,133 @@ function draw_group_2(data, choice, containerId) {
   
   const svg = container.select('svg');
   if (svg.empty()) return;
-  
-  // Clear existing content
+
   svg.selectAll('*').remove();
-  
-  // Use fixed dimensions from constants (viewBox handles responsive scaling)
-  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
-  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
+
+  // 1. SETUP DIMENSIONS
+  const width = CHART_WIDTH;
+  const height = CHART_HEIGHT;
   
   svg
     .attr('width', '100%')
     .attr('height', '100%')
-    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`)
-  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
+    .attr('viewBox', `0 0 ${width} ${height}`);
 
-  //----------------------//
-  //MODIFY AFTER THIS LINE//
-  //----------------------//
+  // 2. FETCH TOPOLOGY
+  if (!window._worldTopologyCache) {
+    try {
+        const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
+        window._worldTopologyCache = await response.json();
+    } catch (error) {
+        svg.append("text").text("Error loading map").attr("x", width/2).attr("y", height/2);
+        return;
+    }
+  }
+  const world = window._worldTopologyCache;
+  const countriesFeatures = topojson.feature(world, world.objects.countries).features;
 
-  //example
+  // 3. PREPARE DATA
+  const groupInfo = data[choice];
   
-  // Sample data
-  const chartData = [
-    { label: '2014', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2015', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2016', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2017', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '2018', value: Math.floor(Math.random() * 300) + 100 }
-  ];
+  if (!groupInfo || !groupInfo.data) {
+    svg.append("text").text("No Data").attr("x", width/2).attr("y", height/2);
+    return;
+  }
+
+  const dataMap = new Map(groupInfo.data.map(d => [d.country, d.count]));
   
-  const xScale = d3.scaleBand().domain(chartData.map(d => d.label)).range([0, innerWidth]).padding(0.2);
-  const yScale = d3.scaleLinear().domain([0, d3.max(chartData, d => d.value)]).nice().range([innerHeight, 0]);
+  // 4. FILTER FEATURES
+  const relevantCountries = countriesFeatures.filter(d => dataMap.has(d.properties.name));
+  const featuresToFit = relevantCountries.length > 0 ? relevantCountries : countriesFeatures;
+
+  // 5. PROJECTION & PATH
+  // Manteniamo il padding superiore di 30px per fare spazio al titolo
+  const topPadding = 30;
   
-  // Bars
-  g.selectAll('rect').data(chartData).enter().append('rect')
-    .attr('x', d => xScale(d.label))
-    .attr('y', d => yScale(d.value))
-    .attr('width', xScale.bandwidth())
-    .attr('height', d => innerHeight - yScale(d.value))
-    .attr('fill', '#0d6efd');
+  const projection = d3.geoMercator()
+    .fitExtent([[5, topPadding], [width - 5, height - 5]], { type: "FeatureCollection", features: featuresToFit });
+    
+  const pathGenerator = d3.geoPath().projection(projection);
+
+  // 6. COLOR SCALE
+  const groupIndex = CATEGORIES.group.indexOf(choice);
+  const baseColor = (groupIndex >= 0 && COLORS.groupColors[groupIndex]) 
+                    ? COLORS.groupColors[groupIndex] 
+                    : COLORS.defaultComparison;
+
+  const maxVal = d3.max(groupInfo.data, d => d.count) || 100;
+  const colorScale = d3.scaleSequential(d3.interpolateRgb("white", baseColor))
+    .domain([0, maxVal]);
+
+  const g = svg.append('g');
+
+  // 7. DRAW COUNTRIES
+  g.selectAll("path")
+    .data(featuresToFit)
+    .enter().append("path")
+    .attr("d", pathGenerator)
+    .attr("fill", d => {
+        const value = dataMap.get(d.properties.name);
+        return value ? colorScale(value) : "#f0f0f0"; 
+    })
+    .attr("stroke", "#bbb") 
+    .attr("stroke-width", 0.5)
+    // Interaction
+    .on("mouseover", function(event, d) {
+        d3.select(this).attr("stroke", "#333").attr("stroke-width", 1).raise();
+        const value = dataMap.get(d.properties.name) || 0;
+        
+        tooltipGroup.style("display", null);
+        tooltipText.text(`${d.properties.name}: ${value}`);
+        
+        const bbox = tooltipText.node().getBBox();
+        tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
+    })
+    .on("mousemove", function(event) {
+        const [x, y] = d3.pointer(event, svg.node());
+        const xOffset = (x > width / 2) ? -100 : 10; 
+        tooltipGroup.attr("transform", `translate(${x + xOffset}, ${y - 20})`);
+    })
+    .on("mouseout", function() {
+        d3.select(this).attr("stroke", "#bbb").attr("stroke-width", 0.5);
+        tooltipGroup.style("display", "none");
+    });
+
+  // 8. ADD REGION LABEL (CENTERED)
+  // Posizioniamo il gruppo esattamente al centro della larghezza (width/2) e a 20px dall'alto
+  const titleGroup = svg.append("g")
+     .attr("transform", `translate(${width / 2}, 20)`)
+     .style("text-anchor", "middle"); // Fondamentale per centrare il testo
+
+  // 8a. Halo (White stroke outline)
+  titleGroup.append("text")
+    .text(groupInfo.region)
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("stroke", "white")
+    .style("stroke-width", "3px")
+    .style("stroke-linejoin", "round")
+    .style("fill", "white")
+    .style("opacity", 0.8);
+
+  // 8b. Actual Text
+  titleGroup.append("text")
+    .text(groupInfo.region)
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("fill", COLORS.textPrimary);
+
+  // 9. TOOLTIP GROUP
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
   
-  // Axes
-  g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(xScale));
-  g.append('g').call(d3.axisLeft(yScale).ticks(5));
+  const tooltipRect = tooltipGroup.append("rect")
+    .attr("fill", "rgba(255, 255, 255, 0.95)")
+    .attr("stroke", "#333")
+    .attr("rx", 4);
+
+  const tooltipText = tooltipGroup.append("text")
+    .attr("x", 5)
+    .attr("y", 12)
+    .style("font-size", "10px")
+    .style("font-weight", "bold");
 }

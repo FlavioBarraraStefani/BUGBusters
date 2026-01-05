@@ -23,6 +23,7 @@
   <script src="https://unpkg.com/topojson-client@3"></script>
   <script src="https://d3js.org/d3-hexbin.v0.2.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 
   <!-- Main styles -->
   <link rel="stylesheet" href="css/main_style.css" />
@@ -57,8 +58,8 @@
 
 <body class="d-flex flex-column min-vh-100" id="body">
 
-  <!-- NAVBAR (sticky top) -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+  <!-- NAVBAR (fixed top) -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="#">
         <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
@@ -146,40 +147,41 @@
     </div>
 
     <!-- Main Canvas Section (hidden by default, shown after auth) -->
-    <section id="main-content" class="w-100 h-100 private-section align-self-stretch">
+    <section id="main-content" class="w-100 private-section align-self-stretch">
       <div class="container-fluid w-100" style="padding-right: 0; padding-left: 0; height: 100%;">
         <!-- Canvas Row -->
-        <div class="row canvas-row g-0">
-          <!-- Canvas 1 -->
-          <div id="canvas-left" class="col-12 col-xl-6">
+        <div class="canvas-row">
+          <!-- Canvas 1 (Left - always visible) -->
+          <div id="canvas-left">
             <div id="globe_color_map" class="rounded-3 bg-white"></div>
             <div class="canvas-wrapper rounded-3">
               <svg></svg>
             </div>
           </div>
-          <!-- Canvas 2 -->
-          <div id="canvas-right" class="col-12 col-xl-6">
+          <!-- Canvas 2 (Right - slides in when needed) -->
+          <div id="canvas-right">
             <div class="canvas-wrapper bg-white rounded-3 shadow-sm">
               <svg></svg>
             </div>
           </div>
+        </div>
 
-          <div id="timeline-container" class="d-flex align-items-center w-100 gap-2 px-4">
-            <!-- Left: fixed-size play button -->
-            <div class="flex-shrink-0">
-              <button id="timeline_play_btn" class="btn btn-primary btn-sm">▶</button>
-            </div>
-
-            <!-- Middle: flexible slider -->
-            <div class="flex-grow-1 px-2">
-              <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100"/></div>
-
-            <!-- Right: fixed-width year label (4 chars) -->
-            <div class="flex-shrink-0 text-end " style="width: 6ch;">
-              <output for="timeline_year_slider" id="year_title" class="fw-bold d-flex align-items-center">1969</output>
-            </div>
+        <!-- Timeline fixed to bottom -->
+        <div id="timeline-container" class="d-flex align-items-center gap-2 px-4">
+          <!-- Left: fixed-size play button -->
+          <div class="flex-shrink-0">
+            <button id="timeline_play_btn" class="btn btn-primary btn-sm">▶</button>
           </div>
 
+          <!-- Middle: flexible slider -->
+          <div class="flex-grow-1 px-2">
+            <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100"/>
+          </div>
+
+          <!-- Right: fixed-width year label (4 chars) -->
+          <div class="flex-shrink-0 text-end" style="width: 6ch;">
+            <output for="timeline_year_slider" id="year_title" class="fw-bold d-flex align-items-center">1969</output>
+          </div>
         </div>
       </div>
     </section>

@@ -57,27 +57,30 @@ main_plots_data = null;
 function updateMainCanvases(data) {
   const leftCol = document.getElementById('canvas-left');
   const rightCol = document.getElementById('canvas-right');
+  const leftWrapper = leftCol?.querySelector('.canvas-wrapper');
 
-  if (!leftCol || !rightCol) return;
+  if (!leftCol || !rightCol || !leftWrapper) return;
 
-  // Show/hide right canvas based on category selection
+  // Determine if right canvas should be visible (in-view)
   const showRight = !!currentCategory;
 
   if (showRight) {
-    // Both canvases visible: side by side on large screens (col-xl-6 each)
-    rightCol.style.display = '';
-    leftCol.classList.remove('col-xl-12');
-    leftCol.classList.add('col-xl-6');
+    // SHOWING right canvas: 
+    // 1. First add the class (this changes what setCanvasSizes will compute)
+    document.body.classList.add('right-canvas-active');
+    // 2. Force browser to recognize current dimensions before we change them
   } else {
-    // Only left canvas: full width (col-xl-12)
-    rightCol.style.display = 'none';
-    leftCol.classList.remove('col-xl-6');
-    leftCol.classList.add('col-xl-12');
+    // HIDING right canvas:
+    // 1. Remove active class - right canvas slides out via CSS transition
+    document.body.classList.remove('right-canvas-active');
+    // 2. Force reflow before setting new sizes
   }
+  leftWrapper.offsetHeight;
+    // 3. Set sizes - left canvas will transition to full size
+  setCanvasSizes();
 
-  // Recalculate sizes after DOM changes
+  // Draw canvases after transitions complete
   requestAnimationFrame(() => {
-    setCanvasSizes();
     const categoryInfo = {
       current: currentCategory,
       previous: previousCategory
@@ -95,117 +98,137 @@ function updateMainCanvases(data) {
 function setCanvasSizes() {
   const navbar = document.querySelector('.navbar');
   const categoryHeader = document.querySelector('.category-header');
-  const footer = document.querySelector('footer');
   const timelineContainer = document.getElementById('timeline-container');
+  const footer = document.querySelector('footer');
   const mainContent = document.getElementById('main-content');
+  const canvasRow = mainContent?.querySelector('.canvas-row');
   const containerFluid = mainContent?.querySelector('.container-fluid');
 
-  if (!navbar || !categoryHeader || !mainContent || !containerFluid) return;
+  if (!navbar || !mainContent || !containerFluid) return;
   // Don't calculate if main content is hidden
   if (mainContent.style.display === 'none') return;
 
+  // Get heights of fixed elements
   const navbarHeight = navbar.offsetHeight;
-  const categoryHeight = categoryHeader.offsetHeight;
-  const footerHeight = (footer ? footer.offsetHeight : 0) + 10;
+  const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
+  const footerHeight = footer ? footer.offsetHeight : 0;
 
-  const availableHeight = window.innerHeight - navbarHeight - categoryHeight - footerHeight - timelineHeight;
-  const availableWidth = containerFluid.clientWidth;
+  // Position category header directly below navbar
+  if (categoryHeader) {
+    categoryHeader.style.position = 'fixed';
+    categoryHeader.style.top = `${navbarHeight}px`;
+    categoryHeader.style.left = '0';
+    categoryHeader.style.right = '0';
+  }
+
+  // Position footer at bottom
+  if (footer) {
+    footer.style.position = 'fixed';
+    footer.style.bottom = '0';
+    footer.style.left = '0';
+    footer.style.right = '0';
+  }
+
+  // Position timeline directly above footer
+  if (timelineContainer) {
+    timelineContainer.style.position = 'fixed';
+    timelineContainer.style.bottom = `${footerHeight}px`;
+    timelineContainer.style.left = '0';
+    timelineContainer.style.right = '0';
+  }
+
+  // Position and size main content between category header and timeline
+  const mainContentTop = navbarHeight + categoryHeight;
+  const mainContentBottom = footerHeight + timelineHeight;
+  const availableHeight = window.innerHeight - mainContentTop - mainContentBottom;
+  const availableWidth = window.innerWidth;
+
+  mainContent.style.position = 'fixed';
+  mainContent.style.top = `${mainContentTop}px`;
+  mainContent.style.bottom = `${mainContentBottom}px`;
+  mainContent.style.left = '0';
+  mainContent.style.right = '0';
+  mainContent.style.height = `${availableHeight}px`;
+  mainContent.style.width = '100%';
+
+  // Size canvas-row to fill main content
+  if (canvasRow) {
+    canvasRow.style.width = `${availableWidth}px`;
+    canvasRow.style.height = `${availableHeight}px`;
+  }
 
   const leftCol = document.getElementById('canvas-left');
   const rightCol = document.getElementById('canvas-right');
   const leftWrapper = leftCol?.querySelector('.canvas-wrapper');
   const rightWrapper = rightCol?.querySelector('.canvas-wrapper');
 
-  if (!leftWrapper) return;
+  if (!leftWrapper || !rightWrapper) return;
 
-  const rightVisible = rightCol && rightCol.style.display !== 'none';
+  const rightActive = document.body.classList.contains('right-canvas-active');
 
   // Store previous dimensions before updating
   PREV_LEFT_CHART_WIDTH = LEFT_CHART_WIDTH;
   PREV_LEFT_CHART_HEIGHT = LEFT_CHART_HEIGHT;
 
-  if (!rightVisible) {
-    // Only left canvas: fill 100% of available space
+  // Always calculate both layouts to determine which is preferred
+  // Layout 1: Stacked (left on top, right on bottom)
+  const stackedLeftW = availableWidth;
+  const stackedLeftH = (availableHeight * 2) / 3;
+  const stackedRightW = availableWidth;
+  const stackedRightH = availableHeight / 3;
+  const stackedLeftMin = Math.min(stackedLeftW, stackedLeftH);
+
+  // Layout 2: Side by side
+  const sideBySideLeftW = availableWidth / 2;
+  const sideBySideLeftH = availableHeight;
+  const sideBySideRightW = availableWidth / 2;
+  const sideBySideRightH = availableHeight;
+  const sideBySideLeftMin = Math.min(sideBySideLeftW, sideBySideLeftH);
+
+  STACKED_LAYOUT_PREFERRED = (stackedLeftMin >= sideBySideLeftMin);
+
+  // Update layout classes based on stacked preference
+  if (STACKED_LAYOUT_PREFERRED) {
+    document.body.classList.add('stacked-layout');
+    document.body.classList.remove('side-by-side-layout');
+  } else {
+    document.body.classList.add('side-by-side-layout');
+    document.body.classList.remove('stacked-layout');
+  }
+
+  // Right canvas always has its target size (ready to slide in)
+  if (STACKED_LAYOUT_PREFERRED) {
+    rightWrapper.style.width = `${stackedRightW}px`;
+    rightWrapper.style.height = `${stackedRightH}px`;
+    RIGHT_CHART_WIDTH = stackedRightW;
+    RIGHT_CHART_HEIGHT = stackedRightH;
+  } else {
+    rightWrapper.style.width = `${sideBySideRightW}px`;
+    rightWrapper.style.height = `${sideBySideRightH}px`;
+    RIGHT_CHART_WIDTH = sideBySideRightW;
+    RIGHT_CHART_HEIGHT = sideBySideRightH;
+  }
+
+  // Left canvas size depends on whether right canvas is active
+  if (!rightActive) {
+    // Right canvas hidden: left takes full space
     leftWrapper.style.width = `${availableWidth}px`;
     leftWrapper.style.height = `${availableHeight}px`;
-    leftCol.classList.remove('col-xl-6');
-    leftCol.classList.add('col-xl-12');
-
-    // Update global dimensions
     LEFT_CHART_WIDTH = availableWidth;
     LEFT_CHART_HEIGHT = availableHeight;
-    RIGHT_CHART_WIDTH = 0;
-    RIGHT_CHART_HEIGHT = 0;
-
-    // Precompute STACKED_LAYOUT_PREFERRED for when both canvases will be visible
-    // This is needed for legend orientation before the right canvas appears
-    const stackedLeftW = availableWidth;
-    const stackedLeftH = (availableHeight * 2) / 3;
-    const stackedLeftMin = Math.min(stackedLeftW, stackedLeftH);
-
-    const sideBySideLeftW = availableWidth / 2;
-    const sideBySideLeftH = availableHeight;
-    const sideBySideLeftMin = Math.min(sideBySideLeftW, sideBySideLeftH);
-
-    STACKED_LAYOUT_PREFERRED = (stackedLeftMin >= sideBySideLeftMin);
   } else {
-    // Both canvases present - calculate both layouts and choose the best one
-
-    // Layout 1: Stacked (left on top, right on bottom)
-    // Left height = 2/3 of available, Right height = 1/3 of available
-    // Both span 100% width
-    const stackedLeftW = availableWidth;
-    const stackedLeftH = (availableHeight * 2) / 3;
-    const stackedRightW = availableWidth;
-    const stackedRightH = availableHeight / 3;
-    const stackedLeftMin = Math.min(stackedLeftW, stackedLeftH);
-
-    // Layout 2: Side by side
-    // Each canvas gets 50% of width, 100% of height
-    const sideBySideLeftW = availableWidth / 2;
-    const sideBySideLeftH = availableHeight;
-    const sideBySideRightW = availableWidth / 2;
-    const sideBySideRightH = availableHeight;
-    const sideBySideLeftMin = Math.min(sideBySideLeftW, sideBySideLeftH);
-
-    STACKED_LAYOUT_PREFERRED = (stackedLeftMin >= sideBySideLeftMin);
-    
-    // Choose layout that maximizes min(width, height) of left canvas
+    // Right canvas visible: left resizes based on layout
     if (STACKED_LAYOUT_PREFERRED) {
-      // Use stacked layout
-      leftCol.classList.remove('col-xl-6');
-      leftCol.classList.add('col-xl-12');
-      rightCol.classList.remove('col-xl-6');
-      rightCol.classList.add('col-xl-12');
-
       leftWrapper.style.width = `${stackedLeftW}px`;
       leftWrapper.style.height = `${stackedLeftH}px`;
-      rightWrapper.style.width = `${stackedRightW}px`;
-      rightWrapper.style.height = `${stackedRightH}px`;
-
-      // Update global dimensions
       LEFT_CHART_WIDTH = stackedLeftW;
       LEFT_CHART_HEIGHT = stackedLeftH;
-      RIGHT_CHART_WIDTH = stackedRightW;
-      RIGHT_CHART_HEIGHT = stackedRightH;
     } else {
-      // Use side by side layout
-      leftCol.classList.remove('col-xl-12');
-      leftCol.classList.add('col-xl-6');
-      rightCol.classList.remove('col-xl-12');
-      rightCol.classList.add('col-xl-6');
-
       leftWrapper.style.width = `${sideBySideLeftW}px`;
       leftWrapper.style.height = `${sideBySideLeftH}px`;
-      rightWrapper.style.width = `${sideBySideRightW}px`;
-      rightWrapper.style.height = `${sideBySideRightH}px`;
-
-      // Update global dimensions
       LEFT_CHART_WIDTH = sideBySideLeftW;
       LEFT_CHART_HEIGHT = sideBySideLeftH;
-      RIGHT_CHART_WIDTH = sideBySideRightW;
-      RIGHT_CHART_HEIGHT = sideBySideRightH;
     }
   }
 
@@ -228,39 +251,52 @@ function rescaleGlobe() {
   const newMinDim = Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT);
   const scaleFactor = newMinDim / prevMinDim;
 
-  // Update projection scale
-  const currentScale = projection.scale();
-  const newScale = currentScale * scaleFactor;
-  projection.scale(newScale);
+  // Store start and end values for animation
+  const startScale = projection.scale();
+  const endScale = startScale * scaleFactor;
+  const startTranslate = projection.translate();
+  const endTranslate = [LEFT_CHART_WIDTH / 2, LEFT_CHART_HEIGHT / 2];
 
-  baseScale = computeBaseGlobeScale();
-
-  // Update projection translate to center of new canvas
-  projection.translate([LEFT_CHART_WIDTH / 2, LEFT_CHART_HEIGHT / 2]);
-
-  // Update the SVG viewBox
+  // Update the SVG viewBox immediately
   const container = d3.select('#canvas-left');
   const svg = container.select('.canvas-wrapper svg');
   svg.attr('viewBox', `0 0 ${LEFT_CHART_WIDTH} ${LEFT_CHART_HEIGHT}`);
-
-
-  // Reuse the globe zoom instance if it exists (avoid duplicate implementations)
-  if (window.globeZoom && !svg.empty()) {
-    svg.call(window.globeZoom);
-  }
-
-  // Update ocean background circle
+  
   if (typeof g !== 'undefined' && g) {
-    const t = projection.translate();
-    g.select('circle.ocean-bg')
-      .attr('r', projection.scale())
-      .attr('cx', t[0])
-      .attr('cy', t[1]);
-
-    // Update country paths
-    if (typeof path !== 'undefined' && path) {
-      g.selectAll('path').attr('d', path);
-    }
+    d3.transition()
+      .duration(playIntervalMs)
+      .ease(d3.easeCubicInOut)
+      .tween('projection', function() {
+        const scaleInterp = d3.interpolate(startScale, endScale);
+        const translateInterp = d3.interpolate(startTranslate, endTranslate);
+        
+        return function(t) {
+          // Update projection at each step
+          projection.scale(scaleInterp(t));
+          projection.translate(translateInterp(t));
+          
+          // Redraw ocean circle
+          const currentT = projection.translate();
+          g.select('circle.ocean-bg')
+            .attr('r', projection.scale())
+            .attr('cx', currentT[0])
+            .attr('cy', currentT[1]);
+          
+          // Redraw all paths with updated projection
+          g.selectAll('path').attr('d', path);
+        };
+      })
+      .on('end', function() {
+        // Ensure final values are set
+        projection.scale(endScale);
+        projection.translate(endTranslate);
+        baseScale = computeBaseGlobeScale();
+      });
+  } else {
+    // No g element, just update projection directly
+    projection.scale(endScale);
+    projection.translate(endTranslate);
+    baseScale = computeBaseGlobeScale();
   }
 }
 
