@@ -301,8 +301,8 @@ function rescaleGlobe() {
 }
 
 function rescaleRightChart() {
+  console.log('Rescaling right chart DISABLED');
   return;
-
   if (RIGHT_CHART_WIDTH === 0 || RIGHT_CHART_HEIGHT === 0) return;
   // Update the SVG viewBox
   const container = d3.select('#canvas-right');

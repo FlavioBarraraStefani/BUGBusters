@@ -1,131 +1,313 @@
-// Precompute per-group yearly counts into a compact structure for fast runtime use.
-function precompute_group() {
-  const data = window.globe_group_data || {};
-  const groups = CATEGORIES.group;
-  const minYear = 1969;
-
-  // find max year present in data
-  let dataMax = minYear;
-  groups.forEach(g => {
-    const gobj = data[g] || {};
-    Object.keys(gobj).forEach(ky => {
-      const y = +ky;
-      if (!Number.isNaN(y) && y > dataMax) dataMax = y;
-    });
-  });
-
-  // build years array
-  const yearsArr = d3.range(minYear, dataMax + 1);
-
-  const seriesByGroup = {};
-  groups.forEach(gname => {
-    const arr = yearsArr.map(y => {
-      const v = data[gname] && data[gname][String(y)] ? +data[gname][String(y)].total_count : 0;
-      return v;
-    });
-    seriesByGroup[gname] = arr;
-  });
-
-  window._precomputed_group = {
-    minYear: minYear,
-    maxYear: dataMax,
-    years: yearsArr,
-    seriesByGroup: seriesByGroup
-  };
-}
-
-
-// Create and update a ridgeline plot for groups
 function right_chart_group(svg) {
+  // --- Constants & Config ---
   const groups = CATEGORIES.group;
-  const maxYear = +slider.property('value') || years[years.length - 1];
   const minYear = 1969;
-
+  const smallGap = 10;
   const pre = window._precomputed_group;
+  
+  // --- State for Tooltip Persistence ---
+  let lastMouseOverlayX = null; 
+  let lastMousePageCoords = null; 
 
-  // compute x scale (same as axis)
-  const x = d3.scaleLinear()
-    .domain([minYear, maxYear])
-    .range([RIGHT_CHART_MARGIN, RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN]);
-
-  // prepare series
-  const groupSeries = groups.map((gname, gi) => {
-    const len = Math.max(0, Math.min(pre.seriesByGroup[gname].length, maxYear - pre.minYear + 1));
-    const counts = pre.seriesByGroup[gname].slice(0, len);
-    const sum = counts.reduce((a,b)=>a+b,0) || 1;
-    const pdf = counts.map(c => c / sum);
-    const series = pdf.map((v,i) => ({ year: minYear + i, value: v }));
-    return { name: gname, series, index: gi };
-  });
-
-  // container for groups (create if missing)
+  // Ensure container exists
   let container = svg.select('.groups-container');
   if (container.empty()) {
-    container = svg.append('g').attr('class','groups-container');
+    container = svg.append('g').attr('class', 'groups-container');
   }
 
-  // layout params
-  const gap = 10;
-  const groupHeight = (RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN - gap * (groupSeries.length - 1)) / groupSeries.length;
-  const axisY = RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN;
+  // --- Helper: Data Processing ---
+  const getSeriesData = (currentMaxYear) => {
+    const count = Math.max(0, currentMaxYear - minYear + 1);
 
-  // data join for individual group g elements
-  const sel = container.selectAll('g.groups').data(groupSeries, d=>d.name);
-  const enter = sel.enter().append('g')
-  .attr('class','groups')
-  .attr('transform', `translate(0, ${axisY})`);
+    return groups.map((gname, i) => {
+      const fullSeries = pre.seriesByGroup[i];
+      const counts = fullSeries.slice(0, count);
+      
+      const sum = counts.reduce((a, b) => a + b, 0) || 1;
+      
+      const series = counts.map((val, idx) => ({
+        year: minYear + idx,
+        value: val / sum, 
+        count: val        
+      }));
 
-  // append a horizontal line to each entering group
-  enter.append('line')
-    .attr('class','ridge-line')
-    .attr('x1', d => x(minYear))
-    .attr('x2', d => x(maxYear))
-    .attr('y1', axisY)
-    .attr('y2', axisY)
-    .attr('stroke', (d,i) => COLORS.groupColors[i])
-    .attr('stroke-width', 3)
-    .style('opacity', 0);
-
-  // remove old
-  sel.exit().transition().duration(200).style('opacity',0).remove();
-
-  const groupsSel = enter.merge(sel);
-
-  // animate lines into place
-  const xStart = x(minYear);
-  const xEnd = x(maxYear);
-  groupsSel.each(function(d){
-    const grp = d3.select(this);
-    const i = d.index;
-    const baseline = axisY - i * (groupHeight + gap);
-    grp.select('.ridge-line')
-      .transition().duration(playIntervalMs)
-      .attr('x1', xStart)
-      .attr('x2', xEnd)
-      .attr('y1', baseline)
-      .attr('y2', baseline)
-      .style('opacity', 1);
-  });
-
-  // expose a small updater to allow stepAnimationRight to refresh axis and lines
-  container._updateRidges = () => {
-    groupsSel.each(function(d){
-      const grp = d3.select(this);
-      const i = d.index;
-      const baseline = axisY - i * (groupHeight + gap);
-      grp.select('.ridge-line')
-        .transition().duration(playIntervalMs)
-        .attr('y1', baseline)
-        .attr('y2', baseline);
+      return { 
+        name: gname, 
+        series, 
+        maxVal: d3.max(series, s => s.value) || 0,
+        index: i,
+        totalCount: sum 
+      };
     });
   };
 
-  // redefine stepAnimationRight to update axis and ridges
-  stepAnimationRight = () => {
-    xAxis._updateAxis();
-    container._updateRidges();
+  // --- Core Render Function ---
+  container._updateRidges = (duration = 0) => {
+    // 1. Get current state
+    const maxYearNow = +slider.property('value') || years[years.length - 1];
+    const data = getSeriesData(maxYearNow);
+
+    // 2. Setup Scales & Dimensions
+    const xStart = leftPadAxis;
+    const xEnd = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+    const axisY = RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN;
+    
+    // Scale
+    const x = d3.scaleLinear()
+      .domain([minYear, maxYearNow])
+      .range([xStart, xEnd]);
+
+    // Handle collapsed axis edge case
+    const axisCollapsed = maxYearNow == minYear;
+    const lineX1 = axisCollapsed ? xStart : x(minYear);
+    const lineX2 = axisCollapsed ? xEnd : x(maxYearNow);
+    const bgWidth = Math.max(0, lineX2 - lineX1);
+
+    // Layout
+    const isStacked = STACKED_LAYOUT_PREFERRED;
+    const gap = isStacked ? smallGap : 70;
+    const totalGaps = (data.length * gap) + (2 * smallGap);
+    const rectHeight = Math.max(0, (axisY - totalGaps) / data.length);
+
+    // 3. Bind Data & Render Groups
+    container.selectAll('g.groups')
+      .data(data, d => d.name)
+      .join(
+        enter => {
+          const g = enter.append('g').attr('class', 'groups');
+          g.append('rect').attr('class', 'group-bg').attr('fill', 'transparent');
+          g.append('path').attr('class', 'group-area').attr('stroke', 'none');
+          g.append('line').attr('class', 'group-empty-line');
+          g.append('text').attr('class', 'group-label').style('font-family', 'sans-serif');
+          
+          // Enter Animation
+          g.style('opacity', 0)
+           .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT})`);
+
+          g.transition()
+           .duration(1000)
+           .ease(d3.easeCubicOut)
+           .style('opacity', 1)
+           .attr('transform', 'translate(0, 0)');
+
+          return g;
+        },
+        update => update,
+        exit => exit.remove()
+      )
+      .each(function(d) {
+        const g = d3.select(this);
+        const i = d.index;
+        const color = COLORS.groupColors[i];
+        const darkerColor = d3.color(color) ? d3.color(color).darker(0.8) : color;
+
+        const yTop = smallGap + gap + i * (rectHeight + gap);
+        const yBottom = yTop + rectHeight;
+
+        // Draw Background
+        g.select('.group-bg')
+          .transition().duration(duration)
+          .attr('x', lineX1).attr('y', yTop)
+          .attr('width', bgWidth).attr('height', rectHeight)
+          .style('opacity', 1);
+
+        // Draw Bottom Line
+        g.select('.group-empty-line')
+          .transition().duration(duration)
+          .attr('x1', lineX1).attr('x2', lineX2)
+          .attr('y1', yBottom).attr('y2', yBottom)
+          .attr('stroke', darkerColor).attr('stroke-width', 3)
+          .style('opacity', 1);
+
+        // Draw Label
+        const labelName = d.name.charAt(0).toUpperCase() + d.name.slice(1);
+        const labelText = g.select('.group-label')
+          .text(labelName)
+          .attr('fill', color)
+          .style('font-weight', 'bold')
+          .style('font-size', `${labelFontSize * 1.5}px`)
+          .style('cursor', 'pointer'); // Ensure cursor indicates clickability
+
+        // DIRECT LABEL CLICK HANDLER (Crucial for Stacked Layout)
+        labelText.on('click', function(event) {
+             if (typeof stopAnimation === 'function') stopAnimation();
+             if (typeof showModal === 'function') showModal("group", d.name);
+             event.stopPropagation();
+        });
+
+        if (isStacked) {
+          labelText.transition().duration(duration)
+            .attr('x', xStart - 10).attr('y', yBottom).attr('dy', 0)
+            .attr('text-anchor', 'end').style('opacity', 1);
+        } else {
+          labelText.transition().duration(duration)
+            .attr('x', lineX1 + bgWidth / 2).attr('y', yTop).attr('dy', '-0.5em')
+            .attr('text-anchor', 'middle').style('opacity', 1);
+        }
+
+        // Draw Area
+        const pathEl = g.select('.group-area');
+        if (d.maxVal <= 0) {
+          pathEl.transition().duration(duration).style('opacity', 0).attr('d', null);
+        } else {
+          let pathString;
+          if (d.series.length >= 2) {
+            const areaGen = d3.area()
+              .x(s => x(s.year)).y0(yBottom)
+              .y1(s => {
+                const raw = yBottom - (s.value / d.maxVal) * rectHeight;
+                return Math.max(yBottom - rectHeight, Math.min(yBottom, raw));
+              })
+              .curve(d3.curveMonotoneX);
+            pathString = areaGen(d.series);
+          } else {
+            const s = d.series[0];
+            const xMid = x(s.year);
+            const w = Math.max(4, (xEnd - xStart) * 0.01);
+            const h = (s.value / d.maxVal) * rectHeight;
+            const yTopRect = yBottom - h;
+            pathString = `M ${xMid-w/2},${yBottom} L ${xMid-w/2},${yTopRect} L ${xMid+w/2},${yTopRect} L ${xMid+w/2},${yBottom} Z`;
+          }
+          pathEl
+            .attr('fill', color).attr('fill-opacity', 0.75)
+            .attr('stroke', darkerColor).attr('stroke-width', 3)
+            .transition().duration(duration).attr('d', pathString).style('opacity', 1);
+        }
+      });
+
+    // --- TOOLTIP & INTERACTION LOGIC ---
+
+    if (container.select('.hover-line').empty()) {
+      container.append('line')
+        .attr('class', 'hover-line')
+        .attr('stroke', 'gray')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '4 4')
+        .style('opacity', 0)
+        .style('pointer-events', 'none');
+    }
+
+    let overlay = container.select('.interaction-overlay');
+    if (overlay.empty()) {
+      overlay = container.append('rect')
+        .attr('class', 'interaction-overlay')
+        .attr('fill', 'transparent')
+        .style('pointer-events', 'all') 
+        .style('cursor', 'pointer'); 
+      
+      if (d3.select('#ridgeline-tooltip').empty()) {
+        d3.select('body').append('div')
+          .attr('id', 'ridgeline-tooltip')
+          .style('position', 'absolute')
+          .style('background', 'rgba(0, 0, 0, 0.9)')
+          .style('color', '#fff')
+          .style('padding', '10px')
+          .style('border-radius', '4px')
+          .style('pointer-events', 'none')
+          .style('opacity', 0)
+          .style('z-index', 9999);
+      }
+    }
+
+    // Ensure Overlay is on top of lines/areas (BUT labels might be outside or under)
+    overlay.raise();
+
+    // Helper: Update Tooltip
+    const updateTooltip = () => {
+      if (lastMouseOverlayX === null) return;
+      const yearRaw = x.invert(lastMouseOverlayX);
+      const year = Math.round(yearRaw);
+
+      if (year < minYear || year > maxYearNow) {
+        container.select('.hover-line').style('opacity', 0);
+        d3.select('#ridgeline-tooltip').style('opacity', 0);
+        return;
+      }
+
+      const xPos = x(year);
+
+      container.select('.hover-line')
+        .attr('x1', xPos).attr('x2', xPos)
+        .attr('y1', 0).attr('y2', axisY)
+        .style('opacity', 1);
+
+      let html = `<strong style="font-size:${labelFontSize}px">Year: ${year}</strong><br/>`;
+      data.forEach((g) => {
+        const point = g.series.find(s => s.year === year);
+        const count = point ? point.count : 0;
+        const percent = (g.totalCount > 0) ? ((count / g.totalCount) * 100).toFixed(1) : "0.0";
+        const color = COLORS.groupColors[g.index];
+        html += `<div style="display:flex; align-items:center; margin-top:4px; font-size:${labelFontSize}px">
+                  <span style="width:8px; height:8px; background:${color}; border-radius:50%; margin-right:6px; display:inline-block;"></span>
+                  <span>${g.name}: ${count} (${percent}%) attacks</span>
+                 </div>`;
+      });
+
+      const tooltip = d3.select('#ridgeline-tooltip');
+      tooltip.html(html).style('font-size', `${labelFontSize}px`).style('opacity', 1);
+
+      if (lastMousePageCoords) {
+        const pageX = lastMousePageCoords[0];
+        const pageY = lastMousePageCoords[1];
+        const tooltipNode = tooltip.node();
+        const tooltipWidth = tooltipNode ? tooltipNode.getBoundingClientRect().width : 150;
+        const windowWidth = window.innerWidth;
+        
+        const offset = 15;
+        let leftPos = pageX + offset;
+        
+        if (leftPos + tooltipWidth > windowWidth - 10) {
+          leftPos = pageX - tooltipWidth - offset;
+        }
+
+        tooltip.style('left', leftPos + 'px').style('top', (pageY - 15) + 'px');
+      }
+    };
+
+    overlay
+      .attr('x', xStart)
+      .attr('y', 0)
+      .attr('width', Math.max(0, xEnd - xStart))
+      .attr('height', axisY)
+      .on('mousemove', function(event) {
+        const [mx] = d3.pointer(event);
+        lastMouseOverlayX = mx;
+        lastMousePageCoords = [event.pageX, event.pageY];
+        updateTooltip();
+      })
+      .on('mouseleave', function() {
+        lastMouseOverlayX = null;
+        lastMousePageCoords = null;
+        container.select('.hover-line').style('opacity', 0);
+        d3.select('#ridgeline-tooltip').style('opacity', 0);
+      })
+      .on('click', function(event) {
+        // Calculate which vertical band was clicked
+        const [mx, my] = d3.pointer(event);
+        const clickedGroup = data.find((d, i) => {
+             const yTop = smallGap + gap + i * (rectHeight + gap);
+             const yBottom = yTop + rectHeight;
+             return my >= (yTop - 25) && my <= yBottom;
+        });
+
+        if (clickedGroup) {
+          stopAnimation();
+          showModal("group", clickedGroup.name);
+        }
+      });
+
+    if (lastMouseOverlayX !== null) {
+      updateTooltip();
+    }
   };
 
-  // initial step
-  stepAnimationRight();
+  // Global override
+  stepAnimationRight = (transition = true) => {
+    const duration = transition ? playIntervalMs : 0;
+    xAxis._updateAxis();
+    container._updateRidges(duration);
+  };
+
+  // --- Initial Draw ---
+  container._updateRidges(0);
 }

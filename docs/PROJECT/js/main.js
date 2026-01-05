@@ -6,7 +6,7 @@ const authSectionEl = document.getElementById("api-auth");
 
 // Category definitions
 const CATEGORIES = {
-  group: ['ISIL', 'taliban', 'SL'],
+  group: ['SL', 'taliban', 'ISIL'],
   attack: ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack'],
   target: ['military_police', 'government', 'business', 'citizens', 'transportations']
 };
@@ -35,7 +35,7 @@ const COLORS = {
   },
 
   //EACH CATEGORY COLOR SET
-  groupColors: ['red', 'green', 'blue'],
+  groupColors: ['#42A5F5', '#66BB6A', '#EF5350'],
   attackColors: [
   '#4E79A7', // blue
   '#F28E2B', // orange

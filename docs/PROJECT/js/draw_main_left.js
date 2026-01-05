@@ -159,7 +159,7 @@ function draw_main_left(categoryInfo, containerId) {
 
       const year = +this.value;
       title.property('value', year);
-      stepAnimation(); stepAnimationRight();
+      stepAnimation(); stepAnimationRight(false);
     });
 ;
     playBtn.on('click', function () {
