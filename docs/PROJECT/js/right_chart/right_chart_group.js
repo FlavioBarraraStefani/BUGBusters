@@ -86,6 +86,13 @@ function right_chart_group(svg) {
     return pre.snapshots[y] || [];
   };
 
+  // choose left padding based on stacked layout preference
+  leftPadAxis = STACKED_LAYOUT_PREFERRED
+        ? RIGHT_CHART_MARGIN + 90
+        : RIGHT_CHART_MARGIN;
+
+  rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+
   // --- Core Render Function ---
   container._updateRidges = (duration = 0) => {
     // 1. Get current state
@@ -127,10 +134,10 @@ function right_chart_group(svg) {
           
           // Enter Animation
           g.style('opacity', 0)
-           .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT})`);
+           .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
 
           g.transition()
-           .duration(1000)
+           .duration(transitionDurationMs)
            .ease(d3.easeCubicOut)
            .style('opacity', 1)
            .attr('transform', 'translate(0, 0)');
@@ -346,13 +353,19 @@ function right_chart_group(svg) {
     }
   };
 
+
+  // choose left padding based on stacked layout preference
+  leftPadAxis = STACKED_LAYOUT_PREFERRED
+        ? RIGHT_CHART_MARGIN + 90
+        : RIGHT_CHART_MARGIN;
+
+  rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+
   // Global override
   stepAnimationRight = (transition = true) => {
     const duration = transition ? playIntervalMs : 0;
-    xAxis._updateAxis();
+    xAxis._updateAxis(duration);
     container._updateRidges(duration);
   };
 
-  // --- Initial Draw ---
-  container._updateRidges(0);
 }

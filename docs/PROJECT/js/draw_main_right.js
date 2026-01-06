@@ -4,6 +4,7 @@ let xAxis;
 const timeAxisBinning = 5; //years per tick
 const RIGHT_CHART_MARGIN = 30; //margin to bottom,left and right of the axis
 let leftPadAxis = RIGHT_CHART_MARGIN; //+70 is stacked layout preferred
+let rightPadAxis;
 const RIGHT_AXIS_FORCE_LAST_TICK = false;
 
 // Draw function for main page right canvas
@@ -31,61 +32,59 @@ function draw_main_right(categoryInfo, containerId) {
       .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN})`);
 
     // helper: recalc and render the axis (called on every draw)
-    xAxis._updateAxis = () => {
+    xAxis._updateAxis = (duration) => {
       const maxYear = +slider.property('value') || years[years.length - 1];
       const minYear = 1969;
 
-      // choose left padding based on stacked layout preference
-      leftPadAxis = (typeof STACKED_LAYOUT_PREFERRED !== 'undefined' && STACKED_LAYOUT_PREFERRED)
-        ? RIGHT_CHART_MARGIN + 90
-        : RIGHT_CHART_MARGIN;
-
       const x = d3.scaleLinear()
         .domain([minYear, maxYear])
-        .range([leftPadAxis, RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN]);
+        .range([leftPadAxis, rightPadAxis]);
 
-      const width = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - leftPadAxis;
+      const width = rightPadAxis - leftPadAxis;
       
       // --- DYNAMIC TICK CALCULATION ---
-      // 1. Define safe width per label (e.g. 50px is safe for "1999" + padding)
       const pxPerTick = 50; 
-      
-      // 2. Calculate max ticks that fit in current width
       const maxTicksPossible = Math.floor(width / pxPerTick);
 
-      // 3. Start with default binning and double it (halve ticks) until they fit
       let step = timeAxisBinning;
       while (((maxYear - minYear) / step) > maxTicksPossible) {
          step *= 2;
       }
 
       const tickVals = d3.range(minYear, maxYear + 1, step);      
-      // --- END DYNAMIC TICK CALCULATION ---
-
-      // optionally ensure the last tick lands exactly on maxYear when maxYear > minYear
+      
       if (RIGHT_AXIS_FORCE_LAST_TICK && maxYear > minYear) {
         const last = tickVals[tickVals.length - 1];
         if (last !== maxYear) tickVals.push(maxYear);
       }
+      
       const axis = d3.axisBottom(x)
         .tickValues(tickVals)
         .tickFormat(d3.format('d'));
 
-      xAxis.call(axis);
+      // --- ANIMATED UPDATE ---
+      // Apply transition to the axis group
+      const t = xAxis.transition().duration(duration).ease(d3.easeLinear);
+      
+      t.call(axis);
 
-      // Styling: tick font-size and axis color from top-level constants
-      xAxis.selectAll('.tick text')
+      // Styling: tick font-size and axis color
+      // We apply these to the transition selection 't' to ensure they animate if values change
+      // However, axis.call creates/destroys elements, so we often style after.
+      // For static styles (color/font), we can set them on the group or selectAll.
+      
+      // Ensure styling persists/updates during transition
+      t.selectAll('.tick text')
         .style('font-size', `${labelFontSize}px`)
         .attr('fill', COLORS.RIGHT_CHART.textPrimary);
 
-      //axis line and ticks color
-      xAxis.selectAll('path')
-      .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-      .attr('stroke-width', 2);
+      t.selectAll('path')
+        .attr('stroke', COLORS.RIGHT_CHART.axisLine)
+        .attr('stroke-width', 2);
 
-      xAxis.selectAll('line')
-      .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-      .attr('stroke-width', 2);
+      t.selectAll('line')
+        .attr('stroke', COLORS.RIGHT_CHART.axisLine)
+        .attr('stroke-width', 2);
     }
   } 
   window._draw_main_right_lastCall = [categoryInfo, containerId];
@@ -93,29 +92,34 @@ function draw_main_right(categoryInfo, containerId) {
 
   //if the category changed, reset the globe to default
   if (currentCat !== previousCat) {
-    if (previousCat === 'group') { 
-      // Select the container
-      const exitingContainer = svg.select('.groups-container');
+    const containerClasses = {
+      'group':  'groups-container',
+      'attack': 'attacks-container',
+      'target': 'targets-container'
+    };
+    const targetClass = containerClasses[previousCat];
+
+    if (targetClass) {
+      const exitingContainer = svg.select(`.${targetClass}`);
+
       if (!exitingContainer.empty()) {
         exitingContainer
-          .attr('class', 'groups-container-exiting')
+          .attr('class', `${targetClass}-exiting`)
           .transition()
-          .duration(playIntervalMs)
+          .duration(transitionDurationMs)
           .ease(d3.easeCubicIn)
           .style('opacity', 0)
           .attr('transform', `translate(0, ${RIGHT_CHART_HEIGHT})`) 
           .remove();
       }
-    } else if (previousCat === 'attack') {
-    } else if (previousCat === 'target') {
     }
   }
 
   setTimeout(() => {
-    if (currentCat === 'group') right_chart_group(svg);
-    //else if (currentCat === 'attack')
+    if (currentCat === 'group')       right_chart_group(svg);
+    else if (currentCat === 'attack') right_chart_attack(svg);
     //else if (currentCat === 'target')
     
-      stepAnimationRight();
-    },playIntervalMs);
+    stepAnimationRight();
+    },transitionDurationMs);
 }

@@ -36,13 +36,7 @@ const COLORS = {
 
   //EACH CATEGORY COLOR SET
   groupColors: ['#42A5F5', '#66BB6A', '#EF5350'],
-  attackColors: [
-  '#4E79A7', // blue
-  '#F28E2B', // orange
-  '#E15759', // red
-  '#76B7B2', // teal
-  '#59A14F'  // green
-  ], 
+  attackColors: ['#4E79A7', '#F28E2B', '#59A14F','#E15759', '#76B7B2'], 
   targetColors: ['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
   defaultComparison: '#78909C',
 
@@ -341,6 +335,10 @@ async function initChartsAfterAuth() {
       computeGroupCumulativeCountry();
       precompute_group() 
     }, choice: null, container: "body" },
+    { file: "PROJECT/CATEGORIES/attacks_cumulative.csv", func: (data) => { 
+      window.attack_data = data; 
+      precompute_attack() 
+    }, choice: null, container: "body" },
   ];
 
   try {
@@ -406,3 +404,39 @@ async function initChartsAfterAuth() {
 }
 
 
+
+
+
+
+//////////////////////////////////////////
+//move to right_chart_attack.js
+function precompute_attack() {
+  const rawData = window.attack_data;
+  const attackTypes = CATEGORIES.attack;
+  const minYear = 1969;
+
+  // Convert strings to numbers once and sort by year
+  const cleanData = rawData.map(d => {
+    const year = +d.date;
+    const obj = { year: year };
+    
+    // Pre-calculate max value for this specific year row (optimization for Y-scale)
+    let rowMax = 0;
+    attackTypes.forEach(type => {
+      const val = +d[type] || 0; // Handle missing/NaN
+      obj[type] = val;
+      if (val > rowMax) rowMax = val;
+    });
+    obj.rowMax = rowMax;
+    
+    return obj;
+  }).sort((a, b) => a.year - b.year);
+
+  // Store globally
+  window._precomputed_attack = {
+    data: cleanData,
+    minYear: minYear,
+    maxYear: cleanData.length > 0 ? cleanData[cleanData.length - 1].year : minYear
+  };
+}
+//////////////////////////////////////////

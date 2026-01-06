@@ -29,6 +29,8 @@ const years = d3.range(1969, 2021);
 let playIntervalMs = 500;
 let animationFrame = null;
 
+let transitionDurationMs = 500;
+
 let stepAnimation = null; //function to step animation (optional year param)
 let stepAnimationRight = () => {}; //function to step right animation (optional year param)
 
@@ -237,7 +239,7 @@ function draw_main_left(categoryInfo, containerId) {
 
     if (previousCat === null) { //remove hexbins
       g.selectAll('g.hex-bins')
-        .transition().duration(playIntervalMs)
+        .transition().duration(transitionDurationMs)
         .attr('opacity', 0)
         .on('end', function () { d3.select(this).remove(); });
 
@@ -245,7 +247,7 @@ function draw_main_left(categoryInfo, containerId) {
 
     } else if (previousCat === 'group') { //remove group coloring
       g.selectAll('path.country').attr('d', path)
-        .transition().duration(playIntervalMs)
+        .transition().duration(transitionDurationMs)
         .style('fill', COLORS.GLOBE.country.fill);
 
     } else if (previousCat === 'attack') {
@@ -253,15 +255,13 @@ function draw_main_left(categoryInfo, containerId) {
     }
   }
 
+  //draw according to current category after a delay
   setTimeout(() => {
-
     //draw according to current category
-    if (currentCat === null) {
-      globe_default();
-    } else if (currentCat === 'group') {
-      globe_group();
-    } else if (currentCat === 'attack') {
-    } else if (currentCat === 'target') {
+    if (currentCat === null)          globe_default();
+    else if (currentCat === 'group')  globe_group();
+    else if (currentCat === 'attack') globe_attack();
+    else if (currentCat === 'target') {
     }
-  }, playIntervalMs);
+  }, transitionDurationMs);
 }

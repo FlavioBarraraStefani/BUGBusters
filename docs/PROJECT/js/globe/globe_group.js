@@ -1,5 +1,4 @@
 function globe_group() {
-
   const groupData = window.group_cumulate_country;
 
   const MAX_CUMULATIVE = d3.max(
