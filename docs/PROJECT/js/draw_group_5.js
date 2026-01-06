@@ -12,23 +12,27 @@ function draw_group_5(data, choice, containerId) {
   svg.selectAll('*').remove();
 
   // 1. SETUP DIMENSIONS
-  // Aumentiamo leggermente il margine superiore per ospitare la legenda
-  const localMargin = { top: 45, right: 30, bottom: 40, left: 50 };
-  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
-  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
+  // Use global CHART_MARGIN
+  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
 
   svg
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
   
-  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
 
   // 2. DATA CHECK
   const groupData = data[choice];
   
   if (!groupData || groupData.length === 0) {
-     g.append("text").text("No Data").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle");
+     g.append("text")
+      .text("No Data")
+      .attr("x", innerWidth/2)
+      .attr("y", innerHeight/2)
+      .style("text-anchor", "middle")
+      .style("font-size", `${labelFontSize}px`);
      return;
   }
 
@@ -79,8 +83,9 @@ function draw_group_5(data, choice, containerId) {
     .attr("x", d => x1(d.key) + x1.bandwidth() / 2)
     .attr("y", d => y(d.value) - 4)
     .attr("text-anchor", "middle")
-    .style("font-size", "7px")
-    .style("fill", "#555")
+    // Slightly smaller than standard labelFontSize
+    .style("font-size", `${Math.max(8, labelFontSize - 3)}px`) 
+    .style("fill", COLORS.textPrimary) 
     .style("font-weight", "bold")
     .text(d => d.value > 0 ? d.value : "");
 
@@ -123,13 +128,12 @@ function draw_group_5(data, choice, containerId) {
   bars
     .on("mouseover", function(event, d) {
         highlightCategory(d.key);
-
         d3.select(this).attr("stroke", "#333").attr("stroke-width", 1);
         
-        // MODIFICA TOOLTIP: Solo Etichetta
+        // Tooltip: Label only
         tooltipGroup.style("display", null);
         const label = d.key === "killed_count" ? "Fatalities" : "Injuries";
-        tooltipText.text(label); // Rimossi i due punti e il valore
+        tooltipText.text(label);
         
         const bbox = tooltipText.node().getBBox();
         tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
@@ -146,46 +150,50 @@ function draw_group_5(data, choice, containerId) {
     });
 
   // 6. AXES
+  // X Axis
   g.append("g")
     .attr("transform", `translate(0,${innerHeight})`)
     .call(d3.axisBottom(x0))
+    .attr("color", COLORS.axisLine) // Color of the line and ticks
     .selectAll("text")
-      .style("font-size", "10px")
+      .style("font-size", `${labelFontSize}px`)
       .style("fill", COLORS.textPrimary);
 
+  // X Title
   g.append("text")
     .attr("x", innerWidth / 2)
     .attr("y", innerHeight + 35)
     .attr("text-anchor", "middle")
-    .style("font-size", "10px")
-    .style("fill", "#666")
+    .style("font-size", `${labelFontSize}px`)
+    .style("fill", COLORS.textPrimary)
     .text("Casualties per Attack (Bin)");
 
+  // Y Axis
   g.append("g")
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")))
+    .attr("color", COLORS.axisLine) // Color of the line and ticks
     .selectAll("text")
-      .style("font-size", "9px")
-      .style("fill", "#888");
+      .style("font-size", `${labelFontSize - 1}px`)
+      .style("fill", COLORS.textPrimary);
 
+  // Y Title
   g.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", -35)
     .attr("x", -innerHeight / 2)
     .attr("text-anchor", "middle")
-    .style("font-size", "10px")
-    .style("fill", "#666")
+    .style("font-size", `${labelFontSize}px`)
+    .style("fill", COLORS.textPrimary)
     .text("Number of Attacks");
 
   // 7. LEGEND (CENTERED & HORIZONTAL)
-  // Posizioniamo il gruppo al centro orizzontale, e nel margine superiore (y negativo)
   const legendGroup = g.append("g")
-    .attr("transform", `translate(${innerWidth / 2}, -20)`);
+    .attr("transform", `translate(${innerWidth / 2}, -10)`); // Inside top margin
 
   const createLegendItem = (key, label, colorHex, xOffset) => {
       const item = legendGroup.append("g")
           .datum(key) 
           .attr("class", "legend-item")
-          // Usiamo xOffset per lo spostamento orizzontale
           .attr("transform", `translate(${xOffset}, 0)`) 
           .style("cursor", "pointer")
           .on("mouseover", () => highlightCategory(key))
@@ -198,20 +206,25 @@ function draw_group_5(data, choice, containerId) {
       item.append("text")
           .attr("x", 12).attr("y", 7)
           .text(label)
-          .style("font-size", "9px")
+          .style("font-size", `${labelFontSize}px`)
           .style("fill", COLORS.textPrimary);
   };
 
-  // Calcolo posizioni per centrare due elementi:
-  // Fatalities (Icon + Text) ~ 60px
-  // Gap ~ 15px
-  // Injuries (Icon + Text) ~ 50px
-  // Totale ~ 125px. Iniziamo a circa -65px dal centro.
   createLegendItem("killed_count", "Fatalities", "#d32f2f", -65);
   createLegendItem("wounded_count", "Injuries", "#fbc02d", 10);
 
   // 8. TOOLTIP
   const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
-  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
-  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", "10px").style("font-weight", "bold").style("fill", "#333");
+  const tooltipRect = tooltipGroup.append("rect")
+    .attr("fill", "rgba(255, 255, 255, 0.95)")
+    .attr("stroke", "#333")
+    .attr("stroke-width", 0.5)
+    .attr("rx", 2);
+    
+  const tooltipText = tooltipGroup.append("text")
+    .attr("x", 5)
+    .attr("y", 12)
+    .style("font-size", `${labelFontSize}px`)
+    .style("font-weight", "bold")
+    .style("fill", "#333");
 }
