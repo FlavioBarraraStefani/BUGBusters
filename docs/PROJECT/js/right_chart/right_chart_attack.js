@@ -4,13 +4,13 @@ function right_chart_attack(svg) {
   const data = pre.data;
   const attackTypes = CATEGORIES.attack;
   const attackColors = COLORS.attackColors;
-  const minYear = 1969; 
+  const minYear = sliderRange[0]; 
 
   // --- 1. Layout Calculations ---
   leftPadAxis = RIGHT_CHART_MARGIN + 50;
 
   const showLegend = isSmallScreen()  || !STACKED_LAYOUT_PREFERRED;
-  const MARGIN_TOP = showLegend ? 20 : 0;
+  const MARGIN_TOP = showLegend ? 30 : 0;
 
   rightPadAxis = !showLegend ? 
       RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 180 : 
@@ -43,7 +43,7 @@ function right_chart_attack(svg) {
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(-90)')
       .attr('x', -((RIGHT_CHART_HEIGHT+MARGIN_TOP) / 2))
-      .attr('y', -75)
+      .attr('y', -70)
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
       .style('font-size', `${finalFontSize}px`) // Use calculated size
@@ -79,6 +79,7 @@ function right_chart_attack(svg) {
   // --- 2. Update Function ---
   container._updateLines = (duration = 0) => {
     const maxYearNow = +slider.property('value');
+    const minYear = sliderRange[0];
     const isStart = maxYearNow === minYear;
 
     const visibleData = data.filter(d => d.year >= minYear && d.year <= maxYearNow);
@@ -139,7 +140,9 @@ function right_chart_attack(svg) {
       .attr('fill', COLORS.RIGHT_CHART.textPrimary);
     
     yAxisGroup.selectAll('path, line')
-      .attr('stroke', COLORS.RIGHT_CHART.axisLine);
+      .attr('stroke', COLORS.RIGHT_CHART.axisLine)
+      .attr('stroke-width', 2);
+
 
     // Line Generator
     const lineGen = d3.line()
@@ -375,8 +378,8 @@ function right_chart_attack(svg) {
               .style('cursor', 'pointer')
               .attr('opacity', 0) // Start invisible
               .on('click', function(event, d) {
-                 if (typeof stopAnimation === 'function') stopAnimation();
-                 if (typeof showModal === 'function') showModal("attack", d.type);
+                 stopAnimation();
+                 showModal("attack", d.type);
                  event.stopPropagation();
               });
 
@@ -468,7 +471,41 @@ function right_chart_attack(svg) {
   // Global override
   stepAnimationRight = (transition = true) => {
     const duration = transition ? playIntervalMs : 0;
-    xAxis._updateAxis(duration); 
+    xAxis._updateAxis(0); 
     container._updateLines(duration);
+  };
+
+  xAxis._updateAxis(playIntervalMs/2); 
+  container._updateLines(playIntervalMs);
+}
+
+//avoid  duplicated operations by precomputing data
+function precompute_attack() {
+  const rawData = window.attack_data;
+  const attackTypes = CATEGORIES.attack;
+  const minYear = sliderRange[0];
+
+  // Convert strings to numbers once and sort by year
+  const cleanData = rawData.map(d => {
+    const year = +d.date;
+    const obj = { year: year };
+    
+    // Pre-calculate max value for this specific year row (optimization for Y-scale)
+    let rowMax = 0;
+    attackTypes.forEach(type => {
+      const val = +d[type] || 0; // Handle missing/NaN
+      obj[type] = val;
+      if (val > rowMax) rowMax = val;
+    });
+    obj.rowMax = rowMax;
+    
+    return obj;
+  }).sort((a, b) => a.year - b.year);
+
+  // Store globally
+  window._precomputed_attack = {
+    data: cleanData,
+    minYear: minYear,
+    maxYear: cleanData.length > 0 ? cleanData[cleanData.length - 1].year : minYear
   };
 }

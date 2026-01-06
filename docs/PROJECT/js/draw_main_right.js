@@ -1,7 +1,6 @@
 window.addEventListener('resize', () => { if (window._draw_main_right_lastCall) draw_main_right(...window._draw_main_right_lastCall); });
 
 let xAxis;
-const timeAxisBinning = 5; //years per tick
 const RIGHT_CHART_MARGIN = 30; //margin to bottom,left and right of the axis
 let leftPadAxis;
 let rightPadAxis;
@@ -34,7 +33,7 @@ function draw_main_right(categoryInfo, containerId) {
     // helper: recalc and render the axis (called on every draw)
     xAxis._updateAxis = (duration) => {
       const maxYear = +slider.property('value') || years[years.length - 1];
-      const minYear = 1969;
+      const minYear = sliderRange[0];
 
       const x = d3.scaleLinear()
         .domain([minYear, maxYear])
@@ -64,7 +63,8 @@ function draw_main_right(categoryInfo, containerId) {
 
       // --- ANIMATED UPDATE ---
       // Apply transition to the axis group
-      const t = xAxis.transition().duration(duration).ease(d3.easeLinear);
+      const t = xAxis
+      .transition().duration(duration).ease(d3.easeLinear);
       
       t.call(axis);
       t.selectAll('.tick text')
@@ -111,8 +111,6 @@ function draw_main_right(categoryInfo, containerId) {
   setTimeout(() => {
     if (currentCat === 'group')       right_chart_group(svg);
     else if (currentCat === 'attack') right_chart_attack(svg);
-    //else if (currentCat === 'target')
-    
-    stepAnimationRight();
+    else if (currentCat === 'target') right_chart_target(svg);
     },transitionDurationMs);
 }

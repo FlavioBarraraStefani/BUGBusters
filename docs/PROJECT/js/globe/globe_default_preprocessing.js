@@ -34,10 +34,6 @@ const yearCumulativeData = {};
 
 function precomputeGlobeData() {
   const data = window.globe_default_data;
-  if (!data || data.length === 0) {
-    console.warn('globe_default_data not available for precomputation');
-    return;
-  }
   
   // Get all years from data and fill in gaps to create continuous range
   const dataYears = [...new Set(data.map(d => +d.year))].sort((a, b) => a - b);

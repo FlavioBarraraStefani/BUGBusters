@@ -10,6 +10,8 @@ let playBtn = null;
 let slider = null;
 let title = null;
 
+let sliderRange = [1969, 2020];
+
 //ALLOW drag to rotate globe
 let needsUpdate = false;
 let updateGlobe = null;   // function to update globe rendering
@@ -70,16 +72,20 @@ function stopAnimation() {
   }
 }
 
+let timeAxisBinning = 1; //years per tick
 function updateSlider() {
-  currentIndex++;
+  currentIndex+=timeAxisBinning;
+
+  const y = currentIndex<years.length ? years[currentIndex] : years[years.length - 1];
+  title.property('value', y);
+  slider.property('value', y);
   if (currentIndex >= years.length) {
     stopAnimation();
     return;
   }
-  const y = years[currentIndex];
-  title.property('value', y);
-  slider.property('value', y);
   return y;
+
+  
 }
 
 window.addEventListener('resize', () => { if (window._draw_main_left_lastCall) draw_main_left(...window._draw_main_left_lastCall); });
@@ -251,17 +257,47 @@ function draw_main_left(categoryInfo, containerId) {
         .style('fill', COLORS.GLOBE.country.fill);
 
     } else if (previousCat === 'attack') {
+      //clean attack coloring
     } else if (previousCat === 'target') {
+      //clean target coloring
     }
   }
 
-  //draw according to current category after a delay
   setTimeout(() => {
-    //draw according to current category
-    if (currentCat === null)          globe_default();
-    else if (currentCat === 'group')  globe_group();
-    else if (currentCat === 'attack') globe_attack();
-    else if (currentCat === 'target') {
-    }
-  }, transitionDurationMs);
+  let nextFn = globe_default;
+  
+  timeAxisBinning = 1;
+  sliderRange = [1969, 2020];
+
+  switch (currentCat) {
+    case 'group':
+      sliderRange = [1977, 2020];
+      nextFn = globe_group;
+      break;
+      case 'attack':
+        nextFn = globe_attack;
+        sliderRange = [1969, 2020];
+      break;
+    case 'target':
+      nextFn = globe_target;
+      timeAxisBinning = 5;
+      sliderRange = [1974, 2019];
+      break;
+  }
+
+  slider.property('min', sliderRange[0]);
+  slider.property('max', sliderRange[1]);
+  slider.property('step', timeAxisBinning);
+
+  const currentVal = +title.property('value');  
+  const offset = currentVal - sliderRange[0];
+  const snapped = sliderRange[0] + Math.floor(offset / timeAxisBinning) * timeAxisBinning;
+  
+  const finalValue = Math.max(sliderRange[0], Math.min(snapped, sliderRange[1]));
+  
+  title.property('value', finalValue);
+  slider.property('value', finalValue);
+  nextFn();
+
+}, transitionDurationMs);
 }

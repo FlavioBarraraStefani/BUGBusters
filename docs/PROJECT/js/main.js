@@ -35,14 +35,25 @@ const COLORS = {
   },
 
   //EACH CATEGORY COLOR SET
-  groupColors: ['#42A5F5', '#66BB6A', '#EF5350'],
-attackColors: [
-  '#E15759',
-  '#F28E2B',
-  '#9467BD',
-  '#59A14F',
-  '#D37295' 
-],  targetColors: ['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
+  groupColors: [
+    '#42A5F5',
+    '#66BB6A', 
+    '#EF5350'
+  ],
+  attackColors: [
+    '#E15759',
+    '#F28E2B',
+    '#9467BD',
+    '#59A14F',
+    '#D37295' 
+  ],  
+  targetColors: [
+    '#FF8A80', 
+    '#90CAF9', 
+    '#80DEEA', 
+    '#FFCC80', 
+    '#CE93D8'
+  ],
   defaultComparison: '#78909C',
 
   //COMMON COLORS
@@ -345,6 +356,10 @@ async function initChartsAfterAuth() {
       window.attack_data = data; 
       precompute_attack() 
     }, choice: null, container: "body" },
+    { file: "PROJECT/CATEGORIES/target_bump_5.json", func: (data) => { 
+      window.target_data = data; 
+      precompute_target() 
+    }, choice: null, container: "body" },
   ];
 
   try {
@@ -409,40 +424,31 @@ async function initChartsAfterAuth() {
   }
 }
 
+////////////////////
+/**
+ * Precomputes Target Bump Data.
+ * Expects window.globe_target_data to be the JSON loaded from Python.
+ */
+function precompute_target() {
+  const raw = window.target_data; // The JSON object loaded
+  
+  if (!raw || !raw.timeline) {
+    console.error("Target data missing");
+    window._precomputed_target = { timeline: [], lookup: {} };
+    return;
+  }
 
+  // Create a quick lookup map by year for O(1) access
+  const lookup = {};
+  raw.timeline.forEach((item, index) => {
+    lookup[item.year] = index;
+  });
 
-
-
-
-//////////////////////////////////////////
-//move to right_chart_attack.js
-function precompute_attack() {
-  const rawData = window.attack_data;
-  const attackTypes = CATEGORIES.attack;
-  const minYear = 1969;
-
-  // Convert strings to numbers once and sort by year
-  const cleanData = rawData.map(d => {
-    const year = +d.date;
-    const obj = { year: year };
-    
-    // Pre-calculate max value for this specific year row (optimization for Y-scale)
-    let rowMax = 0;
-    attackTypes.forEach(type => {
-      const val = +d[type] || 0; // Handle missing/NaN
-      obj[type] = val;
-      if (val > rowMax) rowMax = val;
-    });
-    obj.rowMax = rowMax;
-    
-    return obj;
-  }).sort((a, b) => a.year - b.year);
-
-  // Store globally
-  window._precomputed_attack = {
-    data: cleanData,
-    minYear: minYear,
-    maxYear: cleanData.length > 0 ? cleanData[cleanData.length - 1].year : minYear
+  window._precomputed_target = {
+    config: raw.config,
+    keys: raw.target_keys, // ['military_police', 'government', ...]
+    timeline: raw.timeline,
+    lookup: lookup
   };
 }
-//////////////////////////////////////////
+///////////////////

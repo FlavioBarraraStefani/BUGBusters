@@ -2,7 +2,7 @@
 function precompute_group() {
   const data = window.globe_group_data;
   const groups = CATEGORIES.group;
-  const minYear = 1969;
+  const minYear = 1977;
 
   let dataMax = minYear;
   groups.forEach(g => {
@@ -63,7 +63,7 @@ function precompute_group() {
 
 function right_chart_group(svg) {
   // --- Constants & Config ---
-  const minYear = 1969;
+  const minYear = sliderRange[0];
   const pre = window._precomputed_group;
   
   // --- State for Tooltip Persistence ---
@@ -88,6 +88,7 @@ function right_chart_group(svg) {
   container._updateRidges = (duration = 0) => {
     // 1. Get current state
     const maxYearNow = +slider.property('value') || years[years.length - 1];
+    const minYear = sliderRange[0]; 
     const data = getSeriesData(maxYearNow);
     
     // 2. Setup Scales & Dimensions
@@ -173,8 +174,8 @@ function right_chart_group(svg) {
 
         // DIRECT LABEL CLICK HANDLER (Crucial for Stacked Layout)
         labelText.on('click', function(event) {
-             if (typeof stopAnimation === 'function') stopAnimation();
-             if (typeof showModal === 'function') showModal("group", d.name);
+             stopAnimation();
+             showModal("group", d.name);
              event.stopPropagation();
         });
 
@@ -214,7 +215,7 @@ function right_chart_group(svg) {
           pathEl
             .attr('fill', color).attr('fill-opacity', 0.75)
             .attr('stroke', darkerColor).attr('stroke-width', 3)
-            .transition().duration(duration).attr('d', pathString).style('opacity', 1);
+            .attr('d', pathString).style('opacity', 1);
         }
       });
 
@@ -344,7 +345,6 @@ function right_chart_group(svg) {
     }
   };
 
-
   // choose left padding based on stacked layout preference
   leftPadAxis = STACKED_LAYOUT_PREFERRED
   ? RIGHT_CHART_MARGIN + (isSmallScreen() ? 45 : 90)
@@ -355,8 +355,10 @@ function right_chart_group(svg) {
   // Global override
   stepAnimationRight = (transition = true) => {
     const duration = transition ? playIntervalMs : 0;
-    xAxis._updateAxis(duration);
+    xAxis._updateAxis(0); 
     container._updateRidges(duration);
   };
 
+  xAxis._updateAxis(playIntervalMs/2); 
+  container._updateRidges(playIntervalMs);
 }
