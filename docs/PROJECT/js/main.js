@@ -423,32 +423,3 @@ async function initChartsAfterAuth() {
     if (errorMessage) errorMessage.textContent = err.message;
   }
 }
-
-////////////////////
-/**
- * Precomputes Target Bump Data.
- * Expects window.globe_target_data to be the JSON loaded from Python.
- */
-function precompute_target() {
-  const raw = window.target_data; // The JSON object loaded
-  
-  if (!raw || !raw.timeline) {
-    console.error("Target data missing");
-    window._precomputed_target = { timeline: [], lookup: {} };
-    return;
-  }
-
-  // Create a quick lookup map by year for O(1) access
-  const lookup = {};
-  raw.timeline.forEach((item, index) => {
-    lookup[item.year] = index;
-  });
-
-  window._precomputed_target = {
-    config: raw.config,
-    keys: raw.target_keys, // ['military_police', 'government', ...]
-    timeline: raw.timeline,
-    lookup: lookup
-  };
-}
-///////////////////
