@@ -1,140 +1,172 @@
 function globe_default() {
-  // Base hexbin radius (will be divided by zoom level)
-  const baseHexRadius = Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) * 0.015;
-
   
-  // Get current zoom scale from projection
-  function getZoomScale() {
-    return projection.scale() / baseScale;
+  let tasselSelection = null;
+  
+  // Create Tooltip DIV
+  let tooltip = d3.select("body").select(".tassel-tooltip");
+  if (tooltip.empty()) {
+    tooltip = d3.select("body").append("div")
+      .attr("class", "tassel-tooltip")
+      .style("position", "absolute")
+      .style("background", "rgba(0,0,0,0.85)")
+      .style("color", "white")
+      .style("padding", "8px 12px")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none") 
+      // Safe check for global variable
+      .style("font-size", typeof LabelFontSize !== 'undefined' ? LabelFontSize : "12px") 
+      .style("z-index", "9999")
+      .style("display", "none");
   }
 
-  // Compute hexbin radius based on zoom level (recursive splitting)
-  function getHexRadius() {
-    const zoomK = getZoomScale();
-    // Split hexbins as zoom increases: radius decreases
-    return baseHexRadius / Math.pow(zoomK, 0.01);
-  }
+  function getIntersectingCountries(tasselGeometry) {
+    const countrySelection = g.selectAll('path.country');
+    if (countrySelection.empty()) return "Ocean / Unclaimed";
 
-  // Get precomputed cumulative data and project it for current globe state
-  function getProjectedData(year) {
-    const precomputed = yearCumulativeData[year] || [];
-    return precomputed
-      .map(d => {
-        const coords = projection([d.long, d.lat]);
-        if (!coords) return null;
-        const front = isFront(d.long, d.lat);
-        if (!front) return null;
-        return { x: coords[0], y: coords[1], count: d.count };
-      })
-      .filter(d => d !== null);
-  }
-
-  // Build hexbins from projected data
-  function buildHexbins(data, hexRadius) {
-    const hexbin = d3.hexbin()
-      .x(d => d.x)
-      .y(d => d.y)
-      .radius(hexRadius)
-      .extent([[0, 0], [LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT]]);
-
-    const bins = hexbin(data);
-    // Sum counts in each bin
-    bins.forEach(bin => {
-      bin.totalCount = d3.sum(bin, d => d.count);
+    const features = countrySelection.data(); 
+    const intersecting = [];
+    
+    features.forEach(country => {
+       if (d3.geoContains(country, tasselGeometry.properties.center)) {
+         intersecting.push(country.properties.name || "Unknown");
+       }
     });
-    return { hexbin, bins };
+
+    return intersecting.length > 0 ? intersecting.join(", ") : "Ocean / Unclaimed";
   }
 
-  // Draw hexbins
-  function drawHexbins(year, { transition = false, duration = 0 } = {}) {
-    const hexRadius = getHexRadius();
-    const data = getProjectedData(year);
-    const { hexbin, bins } = buildHexbins(data, hexRadius);
+  function initTassels() {
+    let binGroup = g.select('g.tassel-bins');
+    if (binGroup.empty()) {
+      binGroup = g.append('g').attr('class', 'tassel-bins');
+    }
 
-    // Fixed min/max cumulative counts for this year (not dynamic based on visible bins)
-    const fixedMin = yearMinCounts[year] || 0;
-    const fixedMax = yearMaxCounts[year] || 1;
+    tasselSelection = binGroup.selectAll('path.tassel-bin')
+      .data(allTassels, d => d.id)
+      .enter().append('path')
+      .attr('class', 'tassel-bin')
+      .attr('d', path)
+      .attr('stroke', 'black') 
+      .attr('stroke-width', 1) 
+      .attr('fill', '#000') 
+      
+      // --- START INVISIBLE ---
+      .attr('opacity', 0) 
+      .attr('stroke-opacity', 0) 
+      .style('cursor', 'default')
 
-    // Simple linear scale: count -> index
-    // The power distribution is already baked into INTERPOLATED_COLORMAP
+      // --- MOUSEOVER INTERACTION ---
+      .on('mouseover', function(event, d) {
+        const year = +slider.property('value');
+        const count = yearLookup[year][d.id];
+        
+        if (!count || !isFront(d.properties.center[0], d.properties.center[1])) return;
+
+        const countryNames = getIntersectingCountries(d);
+
+        tooltip
+          .style("display", "block")
+          .html(`
+            <strong>Attacks: ${count}</strong><br/>
+            <span style="color:#ccc; font-size: 0.9em;">${countryNames}</span>
+          `)
+          .style("left", (event.pageX + 15) + "px")
+          .style("top", (event.pageY - 15) + "px");
+
+        d3.select(this).attr('stroke-width', 2).attr('stroke', 'white');
+      })
+
+      // --- MOUSEOUT INTERACTION ---
+      .on('mouseout', function() {
+        tooltip.style("display", "none");
+        d3.select(this).attr('stroke-width', 1).attr('stroke', 'black');
+      });
+  }
+
+  function updateTassels(year, { transition = false, duration = 0 } = {}) {
+    if (!tasselSelection) return;
+
+    const currentYearCounts = yearLookup[year] || {};
+    const max = yearMaxCounts[year] || 1;
+    const min = yearMinCounts[year] || 1;
+
     const colorScale = d3.scaleLinear()
-      .domain([fixedMin, fixedMax])
+      .domain([min, max]) 
       .range([0, COLORMAP_STEPS - 1])
       .clamp(true);
-    
-    // Direct linear lookup into precomputed colormap
+
     const getColor = (count) => INTERPOLATED_COLORMAP[Math.round(colorScale(count))];
 
-    let hexGroup = g.select('g.hex-bins');
-    if (hexGroup.empty()) {
-      hexGroup = g.append('g').attr('class', 'hex-bins');
-    }
-
-    const hexPaths = hexGroup.selectAll('path.hex-bin')
-      .data(bins, d => `${d.x.toFixed(1)}|${d.y.toFixed(1)}`);
-
-    const enter = hexPaths.enter().append('path')
-      .attr('class', 'hex-bin')
-      .attr('d', hexbin.hexagon())
-      .attr('transform', d => `translate(${d.x},${d.y})`)
-      .attr('fill', d => getColor(d.totalCount))
-      //.attr('stroke', 'black')
-      //.attr('stroke-width', 1.5)
-      .attr('opacity', 0.5);
-
-    const merged = enter.merge(hexPaths);
+    const updateFn = (sel) => {
+      sel
+        .attr('fill', d => {
+           const count = currentYearCounts[d.id];
+           return count ? getColor(count) : 'none'; 
+        })
+        .attr('opacity', d => {
+           const count = currentYearCounts[d.id];
+           if (!count) return 0; 
+           if (!isFront(d.properties.center[0], d.properties.center[1])) return 0;
+           return 0.9; 
+        })
+        .attr('stroke-opacity', d => {
+           const count = currentYearCounts[d.id];
+           if (!count) return 0; 
+           if (!isFront(d.properties.center[0], d.properties.center[1])) return 0;
+           return 1; 
+        })
+        .style('cursor', d => {
+           const count = currentYearCounts[d.id];
+           const visible = isFront(d.properties.center[0], d.properties.center[1]);
+           return (count && visible) ? 'pointer' : 'default';
+        })
+        .style('pointer-events', d => {
+           const count = currentYearCounts[d.id];
+           const visible = isFront(d.properties.center[0], d.properties.center[1]);
+           return (count && visible) ? 'all' : 'none';
+        });
+    };
 
     if (transition) {
-      merged.transition().duration(duration)
-        .attr('d', hexbin.hexagon())
-        .attr('transform', d => `translate(${d.x},${d.y})`)
-        .attr('fill', d => getColor(d.totalCount))
-        .attr('opacity', 1);
+       tasselSelection.transition().duration(duration).call(updateFn);
     } else {
-      merged
-        .attr('d', hexbin.hexagon())
-        .attr('transform', d => `translate(${d.x},${d.y})`)
-        .attr('fill', d => getColor(d.totalCount))
-        .attr('opacity', 1);
+       tasselSelection.call(updateFn);
     }
-
-    hexPaths.exit().remove();
   }
 
-  //----------//
-  //INITIAL DRAW SETUP
-  //----------//
+  // ==========================================
+  // SETUP & HOOKS
+  // ==========================================
+  
+  initTassels();
 
-  // Get current year from slider
   const currentYear = +slider.property('value');
-
-  // Initial draw
-  drawHexbins(currentYear, { transition: true, duration: playIntervalMs *2});
+  
+  // --- CHANGE: STARTUP ANIMATION ---
+  // Transition from Opacity 0 -> 0.9 over 1000ms
+  updateTassels(currentYear, { transition: true, duration: transitionDurationMs }); 
+  
   updateLegendVisibility(currentYear);
 
-  //----------//
-  //RUNTIME ANIMATION SETUP
-  //----------//
   stepAnimation = () => {
     const year = +slider.property('value');
-    drawHexbins(year, { transition: true, duration: playIntervalMs });
+    updateTassels(year, { transition: true, duration: playIntervalMs });
     updateLegendVisibility(year);
   };
 
-  // WHAT TO DO ON EACH FRAME UPDATE
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
 
-    // Move countries
     g.selectAll('path.country').attr('d', path);
 
-    // Redraw hexbins (reproject + possibly new radius due to zoom)
-    const year = +slider.property('value');
-    drawHexbins(year, { transition: false });
+    if (tasselSelection) {
+      tasselSelection.attr('d', path);
+      const year = +slider.property('value');
+      updateTassels(year, { transition: false });
+    }
   };
 
-  // DO NOT AUTOROTATE the globe
   rotateOnStart = false;
   playIntervalMs = 250;
 }

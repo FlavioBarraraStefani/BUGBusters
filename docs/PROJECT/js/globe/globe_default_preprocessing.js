@@ -25,69 +25,122 @@ function precomputeColormap() {
   }
 }
 
-// Precompute fixed max count for each year (cumulative) for consistent colormap
-const yearMaxCounts = {};
-const yearMinCounts = {};
+const BIN_RESOLUTION = 3.0; 
 
-// Precompute cumulative data for each year (before projection)
-const yearCumulativeData = {};
+let allTassels = []; 
+const yearLookup = {}; 
+const yearMaxCounts = {};
+const yearMinCounts = {}; 
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+function getResampledEdge(lat, longStart, longEnd, steps = 4) {
+  const points = [];
+  const stepSize = (longEnd - longStart) / steps;
+  for (let i = 0; i <= steps; i++) {
+    points.push([longStart + (i * stepSize), lat]);
+  }
+  return points;
+}
+
+// ==========================================
+// 1. PRECOMPUTE LOGIC
+// ==========================================
 
 function precomputeGlobeData() {
   const data = window.globe_default_data;
-  
-  // Get all years from data and fill in gaps to create continuous range
+
   const dataYears = [...new Set(data.map(d => +d.year))].sort((a, b) => a - b);
   const minYear = dataYears[0];
   const maxYear = dataYears[dataYears.length - 1];
   
-  // Create array of all years in range (including years with 0 counts)
   const years = [];
-  for (let y = minYear; y <= maxYear; y++) {
-    years.push(y);
-  }
-  
-  // Group data by location
-  const locationData = {};
+  for (let y = minYear; y <= maxYear; y++) years.push(y);
+
+  const gridMap = {}; 
+
   data.forEach(d => {
-    const key = `${d.lat},${d.long}`;
-    if (!locationData[key]) {
-      locationData[key] = { lat: +d.lat, long: +d.long, yearCounts: {} };
+    if (isNaN(d.lat) || isNaN(d.long)) return;
+
+    let rawLat = Math.max(-90, Math.min(90, +d.lat));
+    let rawLong = Math.max(-180, Math.min(180, +d.long));
+
+    const lat0 = Math.floor(rawLat / BIN_RESOLUTION) * BIN_RESOLUTION;
+    const long0 = Math.floor(rawLong / BIN_RESOLUTION) * BIN_RESOLUTION;
+
+    const safeLong0 = (long0 >= 180) ? (180 - BIN_RESOLUTION) : long0;
+    const safeLat0 = (lat0 >= 90) ? (90 - BIN_RESOLUTION) : lat0;
+
+    const key = `${safeLat0}_${safeLong0}`;
+
+    if (!gridMap[key]) {
+      const lat1 = Math.min(safeLat0 + BIN_RESOLUTION, 90);
+      const long1 = Math.min(safeLong0 + BIN_RESOLUTION, 180);
+
+      if (lat1 <= safeLat0 || long1 <= safeLong0) return;
+
+      const bottomEdge = getResampledEdge(safeLat0, safeLong0, long1); 
+      const topEdge = getResampledEdge(lat1, long1, safeLong0); 
+      
+      let coordinates = [
+        ...bottomEdge, 
+        [long1, lat1], 
+        ...topEdge, 
+        [safeLong0, safeLat0]
+      ];
+
+      const geometry = {
+        type: "Polygon",
+        coordinates: [coordinates]
+      };
+
+      if (d3.geoArea(geometry) > 6) {
+        geometry.coordinates[0].reverse();
+      }
+
+      gridMap[key] = { 
+        id: key,
+        center: [safeLong0 + BIN_RESOLUTION/2, safeLat0 + BIN_RESOLUTION/2],
+        geometry: geometry,
+        yearCounts: {}
+      };
     }
-    const year = +d.year;
-    locationData[key].yearCounts[year] = (locationData[key].yearCounts[year] || 0) + (+d.count);
-  });
-  
-  // For each year, compute cumulative counts per location
-  years.forEach(year => {
-    const cumulativeLocations = [];
-    let maxCountThisYear = 0;
-    let minCountThisYear = Infinity;
     
-    Object.values(locationData).forEach(loc => {
+    gridMap[key].yearCounts[+d.year] = (gridMap[key].yearCounts[+d.year] || 0) + (+d.count);
+  });
+
+  allTassels = Object.values(gridMap).map(cell => ({
+    type: "Feature",
+    id: cell.id,
+    geometry: cell.geometry,
+    properties: { center: cell.center } 
+  }));
+
+  years.forEach(year => {
+    yearLookup[year] = {};
+    let maxCount = 0;
+    let minCount = Infinity; 
+
+    Object.values(gridMap).forEach(cell => {
       let cumCount = 0;
-      // Sum all counts up to this year
-      Object.keys(loc.yearCounts).forEach(y => {
-        if (+y <= year) {
-          cumCount += loc.yearCounts[y];
-        }
-      });
+      for (const [y, count] of Object.entries(cell.yearCounts)) {
+        if (+y <= year) cumCount += count;
+      }
       
       if (cumCount > 0) {
-        cumulativeLocations.push({ lat: loc.lat, long: loc.long, count: cumCount });
-        if (cumCount > maxCountThisYear) {
-          maxCountThisYear = cumCount;
-        }
-        if (cumCount < minCountThisYear) {
-          minCountThisYear = cumCount;
-        }
+        yearLookup[year][cell.id] = cumCount;
+        if (cumCount > maxCount) maxCount = cumCount;
+        if (cumCount < minCount) minCount = cumCount;
       }
     });
     
-    yearCumulativeData[year] = cumulativeLocations;
-    yearMaxCounts[year] = maxCountThisYear || 1;
-    yearMinCounts[year] = minCountThisYear === Infinity ? 0 : minCountThisYear;
+    yearMaxCounts[year] = maxCount || 1;
+    yearMinCounts[year] = minCount === Infinity ? 1 : minCount; 
   });
 }
+
 
 // Global functions to show/hide colormap legend
 let showColormapLegend = null;
@@ -331,7 +384,7 @@ function updateLegendTicks(year) {
 
   // Function to update legend visibility based on year
 function updateLegendVisibility(year) {
-    if (year === 1969) {
+    if (year === sliderRange[0]) {
       hideColormapLegend(true);
     } else {
       showColormapLegend(true);

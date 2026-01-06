@@ -244,7 +244,7 @@ function draw_main_left(categoryInfo, containerId) {
     stopAnimation();
 
     if (previousCat === null) { //remove hexbins
-      g.selectAll('g.hex-bins')
+      g.selectAll('.tassel-bin')
         .transition().duration(transitionDurationMs)
         .attr('opacity', 0)
         .on('end', function () { d3.select(this).remove(); });
