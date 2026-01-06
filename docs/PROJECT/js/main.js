@@ -217,7 +217,7 @@ const loadChart = (function () {
       }
 
       const rawData = cache.get(cacheKey);
-      chartFunc(rawData, choice, containerId);
+      await chartFunc(rawData, choice, containerId);
 
     } catch (err) {
       console.error(`Error loading chart for ${containerId}:`, err);
@@ -342,23 +342,29 @@ async function initChartsAfterAuth() {
         "PROJECT/CATEGORIES/default_float_3.csv",
       ],
       func: (data) => {
-        window.globe_default_data = data;
-        precomputeGlobeData();
+        precomputeGlobeData(data);
         precomputeColormap();
       }, choice: null, container: "body"
     },
+    {
+      file: 
+        "PROJECT/CATEGORIES/globe_categories.json",
+      func: (data) => {
+        precomputeTargetData(data);
+      }, choice: null, container: "body"
+    },
+
+
+    //RIGHT CHART FILES
     { file: "PROJECT/CATEGORIES/groups.json", func: (data) => { 
-      window.globe_group_data = data; 
-      computeGroupCumulativeCountry();
-      precompute_group() 
+      computeGroupCumulativeCountry(data);
+      precompute_group(data) 
     }, choice: null, container: "body" },
     { file: "PROJECT/CATEGORIES/attacks_cumulative.csv", func: (data) => { 
-      window.attack_data = data; 
-      precompute_attack() 
+      precompute_attack(data) 
     }, choice: null, container: "body" },
     { file: "PROJECT/CATEGORIES/target_bump_5.json", func: (data) => { 
-      window.target_data = data; 
-      precompute_target() 
+      precompute_target(data) 
     }, choice: null, container: "body" },
   ];
 

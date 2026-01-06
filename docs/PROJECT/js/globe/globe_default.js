@@ -1,7 +1,9 @@
 function globe_default() {
   
   let tasselSelection = null;
-  
+  // State to track what the user is currently hovering over
+  let hoveredTasselData = null; 
+
   // Create Tooltip DIV
   let tooltip = d3.select("body").select(".tassel-tooltip");
   if (tooltip.empty()) {
@@ -13,26 +15,45 @@ function globe_default() {
       .style("padding", "8px 12px")
       .style("border-radius", "4px")
       .style("pointer-events", "none") 
-      // Safe check for global variable
       .style("font-size", typeof LabelFontSize !== 'undefined' ? LabelFontSize : "12px") 
       .style("z-index", "9999")
       .style("display", "none");
   }
 
+  // --- HELPER: UPDATE TOOLTIP CONTENT ---
+  // We extract this to a function so we can call it from MouseOver AND the Animation Loop
+  function updateTooltipContent(d, year) {
+    const count = yearLookup[year][d.id] || 0;
+    
+    // 1. Get Countries
+    const countryNames = getIntersectingCountries(d);
+
+    // 2. Update HTML
+    tooltip.html(`
+      <strong>Attacks: ${count}</strong><br/>
+      <span style="color:#ccc; font-size: 0.9em;">${countryNames}</span>
+    `);
+  }
+
   function getIntersectingCountries(tasselGeometry) {
     const countrySelection = g.selectAll('path.country');
-    if (countrySelection.empty()) return "Ocean / Unclaimed";
+    // Default to empty string instead of "Ocean" fallback
+    if (countrySelection.empty()) return "Unclaimed Region";
 
     const features = countrySelection.data(); 
     const intersecting = [];
     
     features.forEach(country => {
        if (d3.geoContains(country, tasselGeometry.properties.center)) {
-         intersecting.push(country.properties.name || "Unknown");
+         const name = country.properties.name || "Unknown";
+         // --- FIX: Filter out "Ocean" ---
+         if (name !== "Ocean") {
+            intersecting.push(name);
+         }
        }
     });
 
-    return intersecting.length > 0 ? intersecting.join(", ") : "Ocean / Unclaimed";
+    return intersecting.length > 0 ? intersecting.join(", ") : "Unclaimed Region";
   }
 
   function initTassels() {
@@ -50,41 +71,59 @@ function globe_default() {
       .attr('stroke-width', 1) 
       .attr('fill', '#000') 
       
-      // --- START INVISIBLE ---
       .attr('opacity', 0) 
       .attr('stroke-opacity', 0) 
       .style('cursor', 'default')
 
-      // --- MOUSEOVER INTERACTION ---
+      // --- MOUSEOVER ---
       .on('mouseover', function(event, d) {
         const year = +slider.property('value');
         const count = yearLookup[year][d.id];
         
+        // Safety check
         if (!count || !isFront(d.properties.center[0], d.properties.center[1])) return;
 
-        const countryNames = getIntersectingCountries(d);
+        // 1. Set Global State
+        hoveredTasselData = d;
 
-        tooltip
-          .style("display", "block")
-          .html(`
-            <strong>Attacks: ${count}</strong><br/>
-            <span style="color:#ccc; font-size: 0.9em;">${countryNames}</span>
-          `)
-          .style("left", (event.pageX + 15) + "px")
-          .style("top", (event.pageY - 15) + "px");
+        // 2. Initial Render
+        tooltip.style("display", "block")
+               .style("left", (event.pageX + 15) + "px")
+               .style("top", (event.pageY - 15) + "px");
+        
+        updateTooltipContent(d, year);
 
-        d3.select(this).attr('stroke-width', 2).attr('stroke', 'white');
+        // 3. Visual Highlight
+        d3.select(this).attr('stroke-width', 3).attr('stroke', 'white');
       })
 
-      // --- MOUSEOUT INTERACTION ---
+      // --- MOUSEOUT ---
       .on('mouseout', function() {
+        // 1. Clear State
+        hoveredTasselData = null;
+
+        // 2. Hide Tooltip
         tooltip.style("display", "none");
+
+        // 3. Reset Visuals
         d3.select(this).attr('stroke-width', 1).attr('stroke', 'black');
+      })
+      
+      // Update position if mouse moves within the tile
+      .on('mousemove', function(event) {
+        tooltip.style("left", (event.pageX + 15) + "px")
+               .style("top", (event.pageY - 15) + "px");
       });
   }
 
   function updateTassels(year, { transition = false, duration = 0 } = {}) {
     if (!tasselSelection) return;
+
+    // --- FIX: LIVE TOOLTIP UPDATE ---
+    // If we are currently hovering over a tile, force the tooltip to update its number
+    if (hoveredTasselData) {
+       updateTooltipContent(hoveredTasselData, year);
+    }
 
     const currentYearCounts = yearLookup[year] || {};
     const max = yearMaxCounts[year] || 1;
@@ -142,9 +181,8 @@ function globe_default() {
 
   const currentYear = +slider.property('value');
   
-  // --- CHANGE: STARTUP ANIMATION ---
-  // Transition from Opacity 0 -> 0.9 over 1000ms
-  updateTassels(currentYear, { transition: true, duration: transitionDurationMs }); 
+  // Start up animation
+  updateTassels(currentYear, { transition: true, duration: 1000 }); 
   
   updateLegendVisibility(currentYear);
 

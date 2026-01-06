@@ -519,8 +519,7 @@ function right_chart_attack(svg) {
 }
 
 //avoid  duplicated operations by precomputing data
-function precompute_attack() {
-  const rawData = window.attack_data;
+function precompute_attack(rawData) {
   const attackTypes = CATEGORIES.attack;
   const minYear = sliderRange[0];
 

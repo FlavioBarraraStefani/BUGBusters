@@ -1,6 +1,5 @@
 
-function precompute_group() {
-  const data = window.globe_group_data;
+function precompute_group(data) {
   const groups = CATEGORIES.group;
   const minYear = 1977;
 

@@ -63,6 +63,7 @@ function globe_group() {
         // Still nothing active yet
         if (!dominantGroup) {
           sel.on('click', null);
+          sel.attr('cursor', 'default')
           sel.transition().duration(playIntervalMs)
             .style('fill', COLORS.GLOBE.country.fill)
             .attr('data-group', null)
@@ -77,6 +78,7 @@ function globe_group() {
 
         // set click handler on selection, then animate visual change
         sel.on('click', () => { stopAnimation(); showModal("group", dominantGroup); })
+          .attr('cursor', 'pointer')
           .transition().duration(playIntervalMs)
           .style('fill', d3.interpolateRgb(baseColor, targetColor)(t))
           .attr('data-group', dominantGroup)
@@ -151,9 +153,8 @@ function globe_group() {
 // =============================
 // PRECOMPUTE CUMULATIVE DATA
 // =============================
-function computeGroupCumulativeCountry() {
+function computeGroupCumulativeCountry(data) {
   const result = {};
-    const data = window.globe_group_data;
 
     // Aggregate per country / group / year
     Object.entries(data).forEach(([group, years]) => {

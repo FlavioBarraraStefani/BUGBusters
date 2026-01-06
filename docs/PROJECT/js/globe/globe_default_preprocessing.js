@@ -49,8 +49,7 @@ function getResampledEdge(lat, longStart, longEnd, steps = 4) {
 // 1. PRECOMPUTE LOGIC
 // ==========================================
 
-function precomputeGlobeData() {
-  const data = window.globe_default_data;
+function precomputeGlobeData(data) {
 
   const dataYears = [...new Set(data.map(d => +d.year))].sort((a, b) => a - b);
   const minYear = dataYears[0];

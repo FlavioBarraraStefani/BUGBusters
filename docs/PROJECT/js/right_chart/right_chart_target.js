@@ -63,6 +63,10 @@ function right_chart_target(svg) {
     const availableHeight = RIGHT_CHART_HEIGHT - 2 * RIGHT_CHART_MARGIN;
     const finalFontSize = Math.max(10, Math.min(preferredSize, availableHeight / 6));
 
+    const titleText = (finalFontSize >= preferredSize) ?
+      `Attack count (${pre.config.binSize} year bins)` :
+      'Attack count';
+
     yAxisGroup.append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(-90)')
@@ -72,7 +76,7 @@ function right_chart_target(svg) {
       .style('text-anchor', 'middle')
       .style('font-size', `${finalFontSize}px`)
       .attr('fill', COLORS.RIGHT_CHART.textPrimary)
-      .text(`Attack count (${pre.config.binSize} year bins)`);
+      .text(titleText);
   }
 
   // --- FORCE Z-INDEX ORDER ---
@@ -461,9 +465,7 @@ function right_chart_target(svg) {
   container._updateBump(playIntervalMs);
 }
 
-function precompute_target() {
-  const raw = window.target_data; // The JSON object loaded
-  
+function precompute_target(raw) {  
   if (!raw || !raw.timeline) {
     console.error("Target data missing");
     window._precomputed_target = { timeline: [], lookup: {} };

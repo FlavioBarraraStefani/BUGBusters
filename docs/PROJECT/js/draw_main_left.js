@@ -259,7 +259,11 @@ function draw_main_left(categoryInfo, containerId) {
     } else if (previousCat === 'attack') {
       //clean attack coloring
     } else if (previousCat === 'target') {
-      //clean target coloring
+      g.selectAll('defs.neon-defs').remove();
+      g.select('g.target-balls')
+        .transition().duration(transitionDurationMs)
+        .attr('opacity', 0)
+        .on('end', function () { d3.select(this).remove(); });
     }
   }
 
