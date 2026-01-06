@@ -10,7 +10,7 @@ function right_chart_attack(svg) {
   leftPadAxis = RIGHT_CHART_MARGIN + 50;
 
   const showLegend = isSmallScreen()  || !STACKED_LAYOUT_PREFERRED;
-  const MARGIN_TOP = showLegend ? 50 : 0;
+  const MARGIN_TOP = showLegend ? 20 : 0;
 
   rightPadAxis = !showLegend ? 
       RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 180 : 
@@ -34,6 +34,11 @@ function right_chart_attack(svg) {
       .attr('opacity', 0)
       .attr('transform', `translate(${leftPadAxis}, -${RIGHT_CHART_HEIGHT})`);
 
+    const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
+    const availableHeight = RIGHT_CHART_HEIGHT - 2*RIGHT_CHART_MARGIN; // Total height minus vertical padding
+    const maxFittingSize = availableHeight / 6; // Heuristic: height / approx char-width factor
+    const finalFontSize = Math.max(10, Math.min(preferredSize, maxFittingSize)); // Min 10px
+
     yGroup.append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(-90)')
@@ -41,7 +46,7 @@ function right_chart_attack(svg) {
       .attr('y', -75)
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
-      .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`)
+      .style('font-size', `${finalFontSize}px`) // Use calculated size
       .attr('fill', COLORS.RIGHT_CHART.textPrimary)
       .text("Cumulative Attacks");
 
@@ -92,10 +97,6 @@ function right_chart_attack(svg) {
       .domain([minYear, isStart ? minYear + 1 : maxYearNow])
       .range([leftPadAxis, rightPadAxis]);
 
-    const y = d3.scaleLinear()
-      .domain([0, yMax])
-      .range([RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN, RIGHT_CHART_MARGIN + MARGIN_TOP]);
-
     // Update Overlay Dimensions
     container.select('.interaction-overlay')
         .attr('x', leftPadAxis)
@@ -103,8 +104,22 @@ function right_chart_attack(svg) {
         .attr('width', Math.max(0, rightPadAxis - leftPadAxis))
         .attr('height', RIGHT_CHART_HEIGHT - 2 * RIGHT_CHART_MARGIN - MARGIN_TOP);
 
+        
+
+    const y = d3.scaleLinear()
+      .domain([0, yMax])
+      .range([RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN, RIGHT_CHART_MARGIN + MARGIN_TOP]);
+
+    const availableHeight = (RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN) - (RIGHT_CHART_MARGIN + MARGIN_TOP);
+    const minPxPerTick = labelFontSize+2; // Minimum pixels required between ticks
+    // Ensure at least 2 ticks, max 5 ticks
+    const numTicks = Math.max(2, Math.min(5, Math.floor(availableHeight / minPxPerTick)));
+
     // Update Y-Axis
-    const yAxis = d3.axisLeft(y).ticks(5).tickFormat(d3.format(".2s"));
+    const yAxis = d3.axisLeft(y)
+      .ticks(numTicks) // Use dynamic count
+      .tickFormat(d3.format(".2s"));
+
     const yAxisGroup = container.select('.y-axis-attack');
     
     if (yAxisGroup.attr('opacity') == 0) {

@@ -67,13 +67,6 @@ function draw_main_right(categoryInfo, containerId) {
       const t = xAxis.transition().duration(duration).ease(d3.easeLinear);
       
       t.call(axis);
-
-      // Styling: tick font-size and axis color
-      // We apply these to the transition selection 't' to ensure they animate if values change
-      // However, axis.call creates/destroys elements, so we often style after.
-      // For static styles (color/font), we can set them on the group or selectAll.
-      
-      // Ensure styling persists/updates during transition
       t.selectAll('.tick text')
         .style('font-size', `${labelFontSize}px`)
         .attr('fill', COLORS.RIGHT_CHART.textPrimary);
