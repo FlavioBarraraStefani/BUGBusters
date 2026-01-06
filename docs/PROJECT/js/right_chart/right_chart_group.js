@@ -63,21 +63,19 @@ function precompute_group() {
 
 function right_chart_group(svg) {
   // --- Constants & Config ---
-  const groups = CATEGORIES.group;
   const minYear = 1969;
-  const smallGap = 10;
   const pre = window._precomputed_group;
   
   // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
   let lastMousePageCoords = null; 
-
+  
   // Ensure container exists
   let container = svg.select('.groups-container');
   if (container.empty()) {
     container = svg.append('g').attr('class', 'groups-container');
   }
-
+  
   // --- Helper: Data Processing ---
   const getSeriesData = (currentMaxYear) => {
     let y = Math.round(currentMaxYear);
@@ -85,20 +83,13 @@ function right_chart_group(svg) {
     if (y > pre.maxYear) y = pre.maxYear;
     return pre.snapshots[y] || [];
   };
-
-  // choose left padding based on stacked layout preference
-  leftPadAxis = STACKED_LAYOUT_PREFERRED
-        ? RIGHT_CHART_MARGIN + 90
-        : RIGHT_CHART_MARGIN;
-
-  rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
-
+  
   // --- Core Render Function ---
   container._updateRidges = (duration = 0) => {
     // 1. Get current state
     const maxYearNow = +slider.property('value') || years[years.length - 1];
     const data = getSeriesData(maxYearNow);
-
+    
     // 2. Setup Scales & Dimensions
     const xStart = leftPadAxis;
     const xEnd = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
@@ -106,18 +97,18 @@ function right_chart_group(svg) {
     
     // Scale
     const x = d3.scaleLinear()
-      .domain([minYear, maxYearNow])
-      .range([xStart, xEnd]);
-
+    .domain([minYear, maxYearNow])
+    .range([xStart, xEnd]);
+    
     // Handle collapsed axis edge case
     const axisCollapsed = maxYearNow == minYear;
     const lineX1 = axisCollapsed ? xStart : x(minYear);
     const lineX2 = axisCollapsed ? xEnd : x(maxYearNow);
     const bgWidth = Math.max(0, lineX2 - lineX1);
-
+    
     // Layout
-    const isStacked = STACKED_LAYOUT_PREFERRED;
-    const gap = isStacked ? smallGap : 70;
+    const smallGap = 10;
+    const gap = STACKED_LAYOUT_PREFERRED ? smallGap : 70;
     const totalGaps = (data.length * gap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - totalGaps) / data.length);
 
@@ -177,7 +168,7 @@ function right_chart_group(svg) {
           .text(labelName)
           .attr('fill', color)
           .style('font-weight', 'bold')
-          .style('font-size', `${labelFontSize * 1.5}px`)
+          .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`)
           .style('cursor', 'pointer'); // Ensure cursor indicates clickability
 
         // DIRECT LABEL CLICK HANDLER (Crucial for Stacked Layout)
@@ -187,7 +178,7 @@ function right_chart_group(svg) {
              event.stopPropagation();
         });
 
-        if (isStacked) {
+        if (STACKED_LAYOUT_PREFERRED) {
           labelText.transition().duration(duration)
             .attr('x', xStart - 10).attr('y', yBottom).attr('dy', 0)
             .attr('text-anchor', 'end').style('opacity', 1);
@@ -356,9 +347,9 @@ function right_chart_group(svg) {
 
   // choose left padding based on stacked layout preference
   leftPadAxis = STACKED_LAYOUT_PREFERRED
-        ? RIGHT_CHART_MARGIN + 90
-        : RIGHT_CHART_MARGIN;
-
+  ? RIGHT_CHART_MARGIN + (isSmallScreen() ? 45 : 90)
+  : RIGHT_CHART_MARGIN;
+    
   rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
 
   // Global override

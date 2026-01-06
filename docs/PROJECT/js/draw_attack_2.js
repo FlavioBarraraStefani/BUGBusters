@@ -48,7 +48,7 @@ function draw_attack_2(data, choice, containerId) {
     'avg_damage': gm.avg_damage
   };
 
-  const fontSize = window.screen.width < 600 ? 12 : 24;
+  const fontSize = isSmallScreen() ? 12 : 24;
 
   // 2. UI CONTROLS — create a sibling div before the SVG so controls sit above the canvas
   let controlsWrapper = container.select('.chart-controls');

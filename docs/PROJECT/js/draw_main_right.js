@@ -3,7 +3,7 @@ window.addEventListener('resize', () => { if (window._draw_main_right_lastCall) 
 let xAxis;
 const timeAxisBinning = 5; //years per tick
 const RIGHT_CHART_MARGIN = 30; //margin to bottom,left and right of the axis
-let leftPadAxis = RIGHT_CHART_MARGIN; //+70 is stacked layout preferred
+let leftPadAxis;
 let rightPadAxis;
 const RIGHT_AXIS_FORCE_LAST_TICK = false;
 

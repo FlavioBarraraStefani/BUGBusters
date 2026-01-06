@@ -9,7 +9,10 @@ function right_chart_attack(svg) {
   // --- 1. Layout Calculations ---
   leftPadAxis = RIGHT_CHART_MARGIN + 50;
 
-  rightPadAxis = STACKED_LAYOUT_PREFERRED ? 
+  const showLegend = isSmallScreen()  || !STACKED_LAYOUT_PREFERRED;
+  const MARGIN_TOP = showLegend ? 50 : 0;
+
+  rightPadAxis = !showLegend ? 
       RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 180 : 
       RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
 
@@ -34,11 +37,11 @@ function right_chart_attack(svg) {
     yGroup.append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(-90)')
-      .attr('x', -(RIGHT_CHART_HEIGHT / 2))
+      .attr('x', -((RIGHT_CHART_HEIGHT+MARGIN_TOP) / 2))
       .attr('y', -75)
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
-      .style('font-size', `${labelFontSize * 1.5}px`)
+      .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`)
       .attr('fill', COLORS.RIGHT_CHART.textPrimary)
       .text("Cumulative Attacks");
 
@@ -91,14 +94,14 @@ function right_chart_attack(svg) {
 
     const y = d3.scaleLinear()
       .domain([0, yMax])
-      .range([RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN, RIGHT_CHART_MARGIN]);
+      .range([RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN, RIGHT_CHART_MARGIN + MARGIN_TOP]);
 
     // Update Overlay Dimensions
     container.select('.interaction-overlay')
         .attr('x', leftPadAxis)
-        .attr('y', RIGHT_CHART_MARGIN)
+        .attr('y', RIGHT_CHART_MARGIN + MARGIN_TOP)
         .attr('width', Math.max(0, rightPadAxis - leftPadAxis))
-        .attr('height', RIGHT_CHART_HEIGHT - 2 * RIGHT_CHART_MARGIN);
+        .attr('height', RIGHT_CHART_HEIGHT - 2 * RIGHT_CHART_MARGIN - MARGIN_TOP);
 
     // Update Y-Axis
     const yAxis = d3.axisLeft(y).ticks(5).tickFormat(d3.format(".2s"));
@@ -156,7 +159,7 @@ function right_chart_attack(svg) {
         const xPos = x(year);
         container.select('.hover-line')
             .attr('x1', xPos).attr('x2', xPos)
-            .attr('y1', RIGHT_CHART_MARGIN).attr('y2', RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN)
+            .attr('y1', RIGHT_CHART_MARGIN + MARGIN_TOP).attr('y2', RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN)
             .style('opacity', 1);
 
         let html = `<strong style="font-size:${labelFontSize}px">Year: ${year}</strong><br/>`;
@@ -252,21 +255,20 @@ function right_chart_attack(svg) {
       );
 
      // --- LINE LABELS ---
-    const labelData = (STACKED_LAYOUT_PREFERRED && !isStart) ? series : [];
+    const labelData = (!showLegend && !isStart) ? series : [];
     
-    // 1. Join Data (Only create/remove, do NOT animate here)
+    // Join Labels
     const labels = container.selectAll('.line-label')
       .data(labelData, d => d.type)
       .join(
         enter => enter.append('text')
-            .attr('class', 'line-label new-label') // MARK AS NEW
+            .attr('class', 'line-label new-label') 
             .attr('x', rightPadAxis + 10)
             .attr('dy', '0.35em') 
             .style('font-family', 'sans-serif')
             .style('font-weight', 'bold')
-            .style('font-size', `${labelFontSize * 1.2}px`)
+            .style('font-size', `${labelFontSize * (isSmallScreen() ? 0.75 : 1.2)}px`)
             .attr('fill', d => d.color)
-            // Start from Top
             .attr('opacity', 0)
             .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`)
             .text(d => d.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
@@ -286,7 +288,7 @@ function right_chart_attack(svg) {
         exit => exit.transition().duration(duration).style('opacity', 0).remove()
       );
 
-    // 2. Collision Resolution
+    // Label Collision Logic
     const nodes = [];
     labels.each(function(d) {
         const lastVal = d.values[d.values.length - 1];
@@ -314,27 +316,138 @@ function right_chart_attack(svg) {
         iter++;
     }
 
-    // 3. Apply Positions & Animations (Separately for New vs Old)
+    // Apply Label Positions
     labels.each(function(d) {
         const el = d3.select(this);
         const node = nodes.find(n => n.id === d.type);
         const finalY = node ? node.y : 0;
 
         if (el.classed('new-label')) {
-            // NEW LABELS: Snap Y to correct spot, then slide down from top
             el.attr('y', finalY)
               .transition().duration(transitionDurationMs).ease(d3.easeCubicOut)
               .attr('opacity', 1)
               .attr('transform', 'translate(0, 0)')
               .on('end', () => el.classed('new-label', false));
         } else {
-            // EXISTING LABELS: Animate Y position smoothly
             el.transition().duration(duration).ease(d3.easeLinear)
               .attr('y', finalY)
               .attr('transform', 'translate(0, 0)')
               .style('opacity', 1);
         }
     });
+
+    // --- LEGEND LOGIC (Full Width Centered - FIXED) ---
+    if (showLegend) {
+      const legendFontSize = labelFontSize * (isSmallScreen() ? 0.75 : 1);
+
+      let legendGroup = container.select('.top-legend');
+      if (legendGroup.empty()) {
+        legendGroup = container.append('g').attr('class', 'top-legend');
+      }
+
+      const legendData = attackTypes.map((type, i) => ({
+          type: type,
+          color: attackColors[i % attackColors.length]
+      }));
+
+      // 1. Render Items (Create them immediately)
+      const legendItems = legendGroup.selectAll('.legend-item')
+        .data(legendData, d => d.type)
+        .join(
+          enter => {
+            const g = enter.append('g')
+              .attr('class', 'legend-item new-legend-item')
+              .style('cursor', 'pointer')
+              .attr('opacity', 0) // Start invisible
+              .on('click', function(event, d) {
+                 if (typeof stopAnimation === 'function') stopAnimation();
+                 if (typeof showModal === 'function') showModal("attack", d.type);
+                 event.stopPropagation();
+              });
+
+            g.append('rect')
+              .attr('width', 12).attr('height', 12)
+              .attr('y', -6).attr('rx', 2)
+              .attr('fill', d => d.color);
+
+            g.append('text')
+              .attr('x', 16).attr('y', 0).attr('dy', '0.35em')
+              .style('font-family', 'sans-serif')
+              .style('font-weight', 'bold')
+              .style('font-size', `${legendFontSize}px`) 
+              .attr('fill', COLORS.RIGHT_CHART.textPrimary)
+              .text(d => d.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+
+            return g;
+          },
+          update => update.attr('opacity', 1),
+          exit => exit.remove()
+        );
+
+      // 2. Calculate Layout Synchronously
+      const availableWidth = RIGHT_CHART_WIDTH - 20; 
+      const itemSpacing = 15;
+      const lineHeight = legendFontSize + 8; 
+      
+      let rows = [];
+      let currentRow = { width: 0, items: [] };
+
+      // Force bbox calculation
+      legendItems.each(function() {
+         const g = d3.select(this);
+         const w = this.getBBox().width;
+         
+         if (currentRow.width + w > availableWidth && currentRow.items.length > 0) {
+            rows.push(currentRow);
+            currentRow = { width: 0, items: [] };
+         }
+         currentRow.items.push({ element: g, x: currentRow.width });
+         currentRow.width += w + itemSpacing;
+      });
+      if (currentRow.items.length > 0) rows.push(currentRow);
+
+      // 3. Apply Positions
+      rows.forEach((row, rowIndex) => {
+          const actualRowWidth = row.width - itemSpacing;
+          const startX = (RIGHT_CHART_WIDTH - actualRowWidth) / 2;
+          
+          row.items.forEach(item => {
+              // Apply positioning immediately for new items to avoid crumpling
+              // Then allow transitions for existing ones moving
+              if (item.element.classed('new-legend-item')) {
+                 item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+              } else {
+                 if (duration === 0) {
+                     item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+                 } else {
+                     item.element.transition().duration(duration)
+                        .attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+                 }
+              }
+          });
+      });
+
+      // 4. Center Vertically
+      const totalBlockHeight = rows.length * lineHeight;
+      const areaHeight = RIGHT_CHART_MARGIN + MARGIN_TOP; 
+      const blockStartY = 5 + (areaHeight - totalBlockHeight) / 2;
+      
+      if (duration === 0) {
+          legendGroup.attr('transform', `translate(0, ${blockStartY})`);
+      } else {
+          legendGroup.transition().duration(duration)
+             .attr('transform', `translate(0, ${blockStartY})`);
+      }
+
+      // 5. Fade In New Items (After positioning is set)
+      legendGroup.selectAll('.new-legend-item')
+        .transition().duration(transitionDurationMs)
+        .attr('opacity', 1)
+        .on('end', function() { d3.select(this).classed('new-legend-item', false); });
+
+    } else {
+       container.select('.top-legend').remove();
+    }
   };
 
   // Global override

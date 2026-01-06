@@ -36,8 +36,13 @@ const COLORS = {
 
   //EACH CATEGORY COLOR SET
   groupColors: ['#42A5F5', '#66BB6A', '#EF5350'],
-  attackColors: ['#4E79A7', '#F28E2B', '#59A14F','#E15759', '#76B7B2'], 
-  targetColors: ['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
+attackColors: [
+  '#E15759',
+  '#F28E2B',
+  '#9467BD',
+  '#59A14F',
+  '#D37295' 
+],  targetColors: ['#FF8A80', '#90CAF9', '#80DEEA', '#FFCC80', '#CE93D8'],
   defaultComparison: '#78909C',
 
   //COMMON COLORS
@@ -47,6 +52,7 @@ const COLORS = {
 
 //FONT SIZE OF EACH CHART LABEL
 const labelFontSize = 16//px
+const isSmallScreen = () => window.innerWidth < 576;
 
 // Aspect ratio 3:2 (width:height)
 const CHART_WIDTH = 300;

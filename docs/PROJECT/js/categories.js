@@ -17,12 +17,25 @@ let PREV_LEFT_CHART_WIDTH;
 let PREV_LEFT_CHART_HEIGHT;
 
 
+function toggleButtons(isDisabled) {
+    const buttons = document.querySelectorAll('.category-btn');
+    buttons.forEach(btn => {
+        btn.disabled = isDisabled;
+        if (isDisabled) btn.classList.add('disabled');
+        else            btn.classList.remove('disabled');
+    });
+}
+
 /**
  * Toggle category selection
  * @param {string} category - 'group', 'attack', 'target', or null
  */
 function selectCategory(category) {
   const buttons = document.querySelectorAll('.category-btn');
+
+  //cooldown to avoid problems with rapid clicking
+  toggleButtons(true);
+  setTimeout(() => {toggleButtons(false);}, transitionDurationMs * 2);
   
   // If clicking the same category, deselect it
   if (currentCategory === category) {
