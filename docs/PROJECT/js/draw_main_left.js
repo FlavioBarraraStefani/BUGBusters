@@ -55,7 +55,7 @@ function startAnimation() {
   playing = true;
   playBtn.text('❚❚');
   currentIndex = years.indexOf(+slider.property('value'));
-  if (currentIndex < 0 || currentIndex >= years.length - 1) currentIndex = 0;
+  if (currentIndex < 0 || years[currentIndex] >= sliderRange[1]) currentIndex = 0;
   if (rotateOnStart) isRotating = true;
 
   loopAnimation();
@@ -76,7 +76,7 @@ let timeAxisBinning = 1; //years per tick
 function updateSlider() {
   currentIndex+=timeAxisBinning;
 
-  const y = currentIndex<years.length ? years[currentIndex] : years[years.length - 1];
+  const y = years[currentIndex] <= sliderRange[1] ? years[currentIndex] : sliderRange[1];
   title.property('value', y);
   slider.property('value', y);
   if (currentIndex >= years.length) {

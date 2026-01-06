@@ -48,7 +48,7 @@ function draw_attack_2(data, choice, containerId) {
     'avg_damage': gm.avg_damage
   };
 
-  const fontSize = isSmallScreen() ? 12 : 24;
+  const fontSize = labelFontSize * (isSmallScreen() ? 1 : 2);
 
   // 2. UI CONTROLS — create a sibling div before the SVG so controls sit above the canvas
   let controlsWrapper = container.select('.chart-controls');
@@ -117,7 +117,7 @@ function draw_attack_2(data, choice, containerId) {
   const x = d3.scaleBand()
     .range([0, 2 * Math.PI])
     .align(0)
-    .domain(d3.range(1970, 2021).map(String));
+    .domain(d3.range(1969, 2021).map(String));
 
   const y = d3.scaleLinear()
     .range([innerRadius, radius]);
@@ -128,7 +128,7 @@ function draw_attack_2(data, choice, containerId) {
   const labelLayer = g.append("g");
 
   // Labels - FIXED ROTATION
-  const labelData = x.domain().filter(d => (parseInt(d) - 1970) % 5 === 0 || d === "2020");
+  const labelData = x.domain().filter(d => (parseInt(d) - 1969) % 5 === 0);
   // Draw radial tick lines from innerRadius to just past the label position
   tickLayer.selectAll('line')
     .data(labelData)

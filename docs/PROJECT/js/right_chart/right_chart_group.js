@@ -249,7 +249,7 @@ function right_chart_group(svg) {
           .style('border-radius', '4px')
           .style('pointer-events', 'none')
           .style('opacity', 0)
-          .style('z-index', 100);
+          .style('z-index', 99);
       }
     }
 
