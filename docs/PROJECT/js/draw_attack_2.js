@@ -20,7 +20,7 @@ function draw_attack_2(data, choice, containerId) {
   
   // Dimensions 
   const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
-  const innerHeight = CHART_HEIGHT - 1.5*CHART_MARGIN.top - CHART_MARGIN.bottom;
+  const innerHeight = CHART_HEIGHT - 2*CHART_MARGIN.top - CHART_MARGIN.bottom;
   
   const radius = Math.min(innerWidth, innerHeight) / 2;
   const innerRadius = 20;
@@ -48,7 +48,7 @@ function draw_attack_2(data, choice, containerId) {
     'avg_damage': gm.avg_damage
   };
 
-  const fontSize = labelFontSize * (isSmallScreen() ? 1 : 2);
+  const fontSize =  isSmallScreen() ? 10 : 15;
 
   // 2. UI CONTROLS — create a sibling div before the SVG so controls sit above the canvas
   let controlsWrapper = container.select('.chart-controls');
@@ -158,28 +158,25 @@ function draw_attack_2(data, choice, containerId) {
 
   labelLayer.selectAll("text")
     .data(labelData)
-    .enter().append("text")
-    .each(function(d) {
-        const angle = x(d) + x.bandwidth() / 2;
-        const rotateAngle = angle * 180 / Math.PI - 90;
-        const isLeft = (angle >= Math.PI );
-        // Fixed: Apply rotation correctly
-        if (isLeft) {
-          d3.select(this)
-            .attr("transform", `rotate(${rotateAngle}) translate(${radius + 25},0) rotate(180)`)
-            .attr("text-anchor", "middle");
-        } else {
-          d3.select(this)
-            .attr("transform", `rotate(${rotateAngle}) translate(${radius + 25},0)`)
-            .attr("text-anchor", "middle");
-        }
-        
-        d3.select(this).style("dominant-baseline", "middle");
+    .enter()
+    .append("text")
+    .each(function (d) {
+      const angle = x(d) + x.bandwidth() / 2;
+      const rotateAngle = angle * 180 / Math.PI - 90;
+
+      d3.select(this)
+        .attr(
+          "transform",
+          `rotate(${rotateAngle}) translate(${radius + 10},0) rotate(${-rotateAngle})`
+        )
+        .attr("text-anchor", "middle")          // horizontal center
+        .attr("dominant-baseline", "middle");   // vertical center
     })
     .text(d => d)
-    .style("font-size", `${labelFontSize}px`)
+    .style("font-size", `${labelFontSize / 2}px`)
     .style("fill", COLORS.textPrimary)
     .style("font-weight", "bold");
+
 
   // 5. UPDATE FUNCTION
   function updateChart(metric) {

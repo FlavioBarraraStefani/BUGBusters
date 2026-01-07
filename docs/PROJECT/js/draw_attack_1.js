@@ -43,7 +43,7 @@ function draw_attack_1(data, choice, containerId) {
   };
 
 
-  const fontSize = 12;  
+  const fontSize = 10;  
   // Scaling factors based on fontSize (base size = 12)
   const labelOffset = fontSize * 1.2 + 10;
   const maxValOffset = fontSize * 1.1 + 5;
@@ -51,7 +51,7 @@ function draw_attack_1(data, choice, containerId) {
   const hoverRadius = Math.max(7, fontSize * 0.8);
 
   // Adjust radius to account for labels
-  const labelSpace = fontSize *1.5;
+  const labelSpace = fontSize *5;
   const centerX = CHART_WIDTH / 2;
   const centerY = CHART_HEIGHT / 2;
   const radius = Math.min(centerX, centerY) - labelSpace;
@@ -349,7 +349,7 @@ function draw_attack_1(data, choice, containerId) {
   ]
   
   const legend = g.append('g')
-    .attr('transform', `translate(${fontSize * 0.8},${fontSize * 0.3-CHART_MARGIN.top})`)
+    .attr('transform', `translate(${fontSize * 0.8},${fontSize * 0.3 + CHART_MARGIN.top})`)
     .style('font-family', 'Arial, sans-serif').style('font-size', fontSize + 'px')
     .style('opacity', 0.98).attr('filter', 'url(#dropshadow)');
 
