@@ -13,7 +13,7 @@ function right_chart_target(svg) {
   // --- 1. Layout Calculations ---
   leftPadAxis = RIGHT_CHART_MARGIN + 60;
 
-  const showLegend = isSmallScreen() || !STACKED_LAYOUT_PREFERRED;
+  const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
   const MARGIN_TOP = showLegend ? 30 : 0;
 
   rightPadAxis = !showLegend ?
