@@ -325,6 +325,12 @@ function createLegendGlobe() {
       legendGlobe.style('transition', `top ${duration}ms ease`)
                  .style('top', `${wrapperOffsetTop + LEGEND_MARGIN}px`);
     }
+
+    g.selectAll('path.country, .ocean-bg')
+    .transition().duration(duration)
+    .attr('fill-opacity', 0.25)
+    .attr("stroke-opacity", 0.25);
+
   };
 
   // Global function to hide legend with transition
@@ -342,6 +348,11 @@ function createLegendGlobe() {
       legendGlobe.style('transition', `top ${duration}ms ease`)
                  .style('top', `${wrapperOffsetTop - LEGEND_THICKNESS - LEGEND_PADDING * 2 - TITLE_HEIGHT - 30}px`);
     }
+
+    g.selectAll('path.country, .ocean-bg')
+      .transition().duration(duration)
+      .attr('fill-opacity', 1)
+      .attr("stroke-opacity", 1);
   };
 
 }
