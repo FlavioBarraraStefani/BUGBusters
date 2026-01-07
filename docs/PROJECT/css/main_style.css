@@ -201,7 +201,6 @@ footer {
   z-index: 1020;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background: var(--color-white);
-  /* Position set dynamically by JS */
 }
 
 .category-btn {

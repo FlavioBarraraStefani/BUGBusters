@@ -63,48 +63,47 @@
 <body class="d-flex flex-column min-vh-100" id="body">
 
   <!-- NAVBAR (fixed top) -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-        <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
-        <span class="brand-text">BUGBusters</span>
-      </a>
+<nav class="navbar navbar-expand-lg bg-white py-1">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
+      <span class="brand-text">BUGBusters</span>
+    </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
-        aria-expanded="false" aria-label="Apri menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
+      aria-expanded="false" aria-label="Apri menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div id="nav" class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#projectDescriptionModal">Description</a>
-          </li>
-        </ul>
-      </div>
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#projectDescriptionModal">Description</a>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
   <!-- CATEGORY SELECTION HEADER (shown when authenticated) -->
-  <div id="main-header" class="category-header bg-white shadow-sm py-3 private-section">
-    <div class="container">
-      <div class="d-flex justify-content-center gap-3 gap-lg-4">
-        <button type="button" class="btn btn-outline-primary category-btn flex-fill" data-category="group" onclick="selectCategory('group')">
-          GROUP
+  <div id="main-header" class="category-header bg-white private-section border-bottom shadow-sm rounded-3 mx-1 mx-md-2">
+    <div class="container py-1">
+      <div class="d-flex justify-content-center gap-1 gap-lg-4 gap-md-2">
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3" data-category="group" onclick="selectCategory('group')">
+          GROUPS
         </button>
-        <button type="button" class="btn btn-outline-primary category-btn flex-fill" data-category="attack" onclick="selectCategory('attack')">
-          ATTACK
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3" data-category="attack" onclick="selectCategory('attack')">
+          ATTACKS
         </button>
-        <button type="button" class="btn btn-outline-primary category-btn flex-fill" data-category="target" onclick="selectCategory('target')">
-          TARGET
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3" data-category="target" onclick="selectCategory('target')">
+          TARGETS
         </button>
       </div>
     </div>
   </div>
-
   <!-- MAIN CONTENT AREA -->
   <main class="flex-grow-1 d-flex align-items-center justify-content-center">
     
@@ -171,7 +170,7 @@
         </div>
 
         <!-- Timeline fixed to bottom -->
-        <div id="timeline-container" class="d-flex align-items-center gap-2 px-4">
+        <div id="timeline-container" class="d-flex align-items-center gap-2 px-4 bg-white private-section border-bottom shadow-sm rounded-3 mx-2">
           <!-- Left: fixed-size play button -->
           <div class="flex-shrink-0">
             <button id="timeline_play_btn" class="btn btn-primary btn-sm">▶</button>
@@ -284,47 +283,55 @@
   </div>
 
   <!-- FOOTER (at bottom, not sticky) -->
-  <footer id="footer" class="py-1 border-top bg-white mt-auto">
-    <div class="container">
-      <div class="row align-items-center gy-3">
-        <div class="col-6 col-md-2 text-center text-md-start">
-          <a href="https://unige.it/en" target="_blank" rel="noopener noreferrer"
-            class="d-inline-flex align-items-center text-decoration-none">
-            <img src="https://id.unige.it/sites/id.unige.it/files/2022-02/logo-colore.png?itok=WQlW_KLU"
-              alt="Universita di Genova" height="50" class="me-2" />
+<footer id="footer" class="py-1 border-top bg-white mt-auto">
+  <div class="container">
+    <div class="row align-items-center gy-3">
+      
+      <div class="col-6 col-md-2 text-center text-md-start">
+        <a href="https://unige.it/en" target="_blank" rel="noopener noreferrer"
+           class="d-inline-flex align-items-center text-decoration-none">
+          <img src="https://id.unige.it/sites/id.unige.it/files/2022-02/naming-2.png"
+               alt="Universita di Genova" 
+               style="height: 40px; width: auto;" 
+               class="me-1"/>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-10 text-center text-md-end">
+        <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
+          
+          <a href="https://github.com/Isabibbi" target="_blank" rel="noopener noreferrer"
+             class="text-decoration-none small d-inline-flex align-items-center">
+            <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+              <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+            <span class="d-none d-md-inline">Isabella Tagliafico</span>
+            <span class="d-md-none">IT</span>
           </a>
-        </div>
-        <div class="col-6 col-md-10 text-center text-md-end">
-          <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
-            <a href="https://github.com/Isabibbi" target="_blank" rel="noopener noreferrer"
-              class="text-decoration-none small d-inline-flex align-items-center">
-              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-              </svg>
-              <span class="d-none d-md-inline">Isabella Tagliafico</span>
-              <span class="d-md-none">IT</span>
-            </a>
-            <a href="https://github.com/supernino02" target="_blank" rel="noopener noreferrer"
-              class="text-decoration-none small d-inline-flex align-items-center">
-              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-              </svg>
-              <span class="d-none d-md-inline">Luca Ninivaggi</span>
-              <span class="d-md-none">LN</span>
-            </a>
-            <a href="https://github.com/FlavioBarraraStefani" target="_blank" rel="noopener noreferrer"
-              class="text-decoration-none small d-inline-flex align-items-center">
-              <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-              </svg>
-              <span class="d-none d-md-inline">Flavio Barrara Stefani</span>
-              <span class="d-md-none">FBS</span>
-            </a>
-          </div>
+
+          <a href="https://github.com/supernino02" target="_blank" rel="noopener noreferrer"
+             class="text-decoration-none small d-inline-flex align-items-center">
+             <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+               <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+             </svg>
+            <span class="d-none d-md-inline">Luca Ninivaggi</span>
+            <span class="d-md-none">LN</span>
+          </a>
+
+          <a href="https://github.com/FlavioBarraraStefani" target="_blank" rel="noopener noreferrer"
+             class="text-decoration-none small d-inline-flex align-items-center">
+             <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+               <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+             </svg>
+            <span class="d-none d-md-inline">Flavio Barrara Stefani</span>
+            <span class="d-md-none">FBS</span>
+          </a>
+          
         </div>
       </div>
     </div>
-  </footer>
+  </div>
+</footer>
 
   <!-- GROUP MODAL -->
   <div class="modal fade" id="modalGroup" tabindex="-1" aria-labelledby="modalGroupLabel" aria-hidden="true">

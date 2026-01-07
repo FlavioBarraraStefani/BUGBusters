@@ -1,6 +1,12 @@
 function globe_group() {
   const groupData = window.group_cumulate_country;
 
+  // 1. Define Constants for "Old" and "New" values
+  const ORIGINAL_STROKE = COLORS.GLOBE.country.stroke; // Likely '#999' or similar
+  const ORIGINAL_WIDTH = 0.75;
+  const HOVER_STROKE = "black";
+  const HOVER_WIDTH = 3;
+
   const MAX_CUMULATIVE = d3.max(
     Object.values(groupData),
     country =>
@@ -10,144 +16,191 @@ function globe_group() {
       )
   ) || 1;
 
-  // value → interpolation factor
   const colorInterp = d3.scaleSqrt()
     .domain([0, MAX_CUMULATIVE])
     .range([0.1, 1])
     .clamp(true);
 
-  // =============================
-  // STEP ANIMATION (timeline)
-  // =============================
-  stepAnimation = () => {
-    const year = +slider.property('value');
+  // 2. State Tracking
+  let hoveredCountry = null; // Stores the ID (name) of the currently hovered country
+  let lastMouseX = 0;
+  let lastMouseY = 0;
 
-    g.selectAll('path.country')
-      .attr('d', path)
-      .each(function(d) {
-        const countryName = d.properties.name;
-        const entry = groupData[countryName];
+  // 3. Tooltip Setup
+  let tooltip = d3.select('#globe-tooltip');
+  if (tooltip.empty()) {
+    tooltip = d3.select('body').append('div')
+      .attr('id', 'globe-tooltip')
+      .style('position', 'absolute')
+      .style('background', 'rgba(0, 0, 0, 0.9)')
+      .style('color', '#fff')
+      .style('padding', '10px')
+      .style('border-radius', '4px')
+      .style('pointer-events', 'none')
+      .style('opacity', 0)
+      .style('z-index', 99)
+      .style('font-family', 'sans-serif')
+      .style('font-size', '12px');
+  }
 
-        const sel = d3.select(this);
+  // Helper: Logic to render the HTML content
+  const renderTooltip = (countryName, dominantGroup, dominantCount, year) => {
+    if (!dominantGroup) {
+      tooltip.style('opacity', 0);
+      return;
+    }
 
-        // No data for this country
-        if (!entry) {
-          sel.on('click', null); // remove handler
-          sel.transition().duration(playIntervalMs)
-            .style('fill', COLORS.GLOBE.country.fill)
-            .style('opacity', 1)
-            .attr('data-group', null)
-            .attr('data-count', 0);
-          return;
-        }
+    const color = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
+    
+    const html = `<strong>${countryName} (${year})</strong><br/>
+                  <div style="display:flex; align-items:center; margin-top:4px;">
+                    <span style="width:8px; height:8px; background:${color}; border-radius:50%; margin-right:6px;"></span>
+                    <span>${dominantGroup}: ${dominantCount} Attacks</span>
+                  </div>`;
 
-        let dominantGroup = null;
-        let dominantCount = 0;
+    tooltip.html(html)
+      .style('opacity', 1)
+      .style('left', (lastMouseX + 15) + 'px')
+      .style('top', (lastMouseY - 15) + 'px');
+  };
 
-        Object.entries(entry).forEach(([group, years]) => {
-          const validYears = Object.keys(years)
-            .map(Number)
-            .filter(y => y <= year);
+  // 4. Central Logic for Updating a Country
+  // This handles both Animation updates AND Hover updates
+  const updateCountryShape = (sel, d, year, animate = false) => {
+    const countryName = d.properties.name;
+    const entry = groupData[countryName];
+    
+    // Check if this specific country is the one being hovered
+    const isHovered = (hoveredCountry === countryName);
 
-          if (!validYears.length) return;
+    // --- APPLY STYLES (Declarative) ---
+    // If hovered, use Highlight values; otherwise, use Original values
+    sel.attr("stroke", isHovered ? HOVER_STROKE : ORIGINAL_STROKE)
+       .attr("stroke-width", isHovered ? HOVER_WIDTH : ORIGINAL_WIDTH);
 
+    if (isHovered) sel.raise(); // Ensure thick border isn't covered by neighbors
+
+    // --- CALCULATE DATA ---
+    let dominantGroup = null;
+    let dominantCount = 0;
+
+    if (entry) {
+      Object.entries(entry).forEach(([group, years]) => {
+        const validYears = Object.keys(years).map(Number).filter(y => y <= year);
+        if (validYears.length > 0) {
           const latestYear = d3.max(validYears);
           const val = years[latestYear];
-
           if (val > dominantCount) {
             dominantCount = val;
             dominantGroup = group;
           }
-        });
-
-        // Still nothing active yet
-        if (!dominantGroup) {
-          sel.on('click', null);
-          sel.attr('cursor', 'default')
-          sel.transition().duration(playIntervalMs)
-            .style('fill', COLORS.GLOBE.country.fill)
-            .attr('data-group', null)
-            .attr('data-count', 0);
-          return;
         }
-
-        // --- COLOR INTERPOLATION ---
-        const baseColor = COLORS.GLOBE.country.fill;
-        const targetColor = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
-        const t = colorInterp(dominantCount);
-
-        // set click handler on selection, then animate visual change
-        sel.on('click', () => { stopAnimation(); showModal("group", dominantGroup); })
-          .attr('cursor', 'pointer')
-          .transition().duration(playIntervalMs)
-          .style('fill', d3.interpolateRgb(baseColor, targetColor)(t))
-          .attr('data-group', dominantGroup)
-          .attr('data-count', dominantCount);
       });
+    }
+
+    // --- LIVE TOOLTIP UPDATE ---
+    // If the data changed because the year changed (animation), 
+    // we must re-render the tooltip immediately if this is the hovered country.
+    if (isHovered) {
+       if (dominantGroup) {
+          renderTooltip(countryName, dominantGroup, dominantCount, year);
+       } else {
+          tooltip.style('opacity', 0); // Hide if data disappeared for this year
+       }
+    }
+
+    // --- COLORING & EVENTS ---
+    if (!dominantGroup) {
+      // Grey out if no data
+      const reset = animate ? sel.transition().duration(playIntervalMs) : sel;
+      reset.style('fill', COLORS.GLOBE.country.fill)
+           .attr('data-group', null);
+      
+      // Clean up events but KEEP mouseout to ensure state resets if we leave
+      sel.on('click', null)
+         .on('mousemove', null)
+         .on('mouseout', function() {
+            hoveredCountry = null;
+            tooltip.style('opacity', 0);
+            d3.select(this).attr("stroke", ORIGINAL_STROKE).attr("stroke-width", ORIGINAL_WIDTH);
+         });
+      return;
+    }
+
+    // Calculate Fill
+    const baseColor = COLORS.GLOBE.country.fill;
+    const targetColor = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
+    const t = colorInterp(dominantCount);
+    const finalFill = d3.interpolateRgb(baseColor, targetColor)(t);
+
+    const activeSel = animate ? sel.transition().duration(playIntervalMs) : sel;
+    activeSel.style('fill', finalFill)
+             .attr('data-group', dominantGroup);
+
+    // Attach Interactions
+    sel.on('click', () => { stopAnimation(); showModal("group", dominantGroup); })
+       .on('mousemove', function(event) {
+          // 1. Update Global State
+          lastMouseX = event.pageX;
+          lastMouseY = event.pageY;
+          hoveredCountry = countryName; // "Lock" this country as the active one
+
+          // 2. Immediate Visual Feedback (Waiting for next frame is too slow)
+          d3.select(this)
+            .attr("stroke", HOVER_STROKE)
+            .attr("stroke-width", HOVER_WIDTH)
+            .raise();
+
+          // 3. Render Tooltip
+          renderTooltip(countryName, dominantGroup, dominantCount, year);
+       })
+       .on('mouseout', function() {
+          // 1. Clear Global State
+          hoveredCountry = null;
+          tooltip.style('opacity', 0);
+
+          // 2. Restore "Old" Values immediately
+          d3.select(this)
+            .attr("stroke", ORIGINAL_STROKE)
+            .attr("stroke-width", ORIGINAL_WIDTH);
+       })
+       .attr('cursor', 'pointer');
   };
 
   // =============================
-  // UPDATE GLOBE (CALLED ON FRAME)
+  // 5. OVERWRITE GLOBAL FUNCTIONS
   // =============================
+
+  // This function is called by your main loopAnimation
+  stepAnimation = () => {
+    const year = +slider.property('value');
+    g.selectAll('path.country')
+      .attr('d', path)
+      .each(function(d) {
+        // True = animate color transitions
+        updateCountryShape(d3.select(this), d, year, true); 
+      });
+  };
+
+  // This function is called when dragging/rotating (high performance)
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
-
-    // move countries and re-apply colors (no transition for smooth dragging)
     const year = +slider.property('value');
 
     g.selectAll('path.country')
       .attr('d', path)
       .each(function(d) {
-        const countryName = d.properties.name;
-        const entry = groupData[countryName];
-        const sel = d3.select(this);
-
-        if (!entry) {
-          sel.style('fill', COLORS.GLOBE.country.fill);
-          return;
-        }
-
-        let dominantGroup = null;
-        let dominantCount = 0;
-
-        Object.entries(entry).forEach(([group, years]) => {
-          const validYears = Object.keys(years)
-            .map(Number)
-            .filter(y => y <= year);
-
-          if (!validYears.length) return;
-
-          const latestYear = d3.max(validYears);
-          const val = years[latestYear];
-
-          if (val > dominantCount) {
-            dominantCount = val;
-            dominantGroup = group;
-          }
-        });
-
-        if (!dominantGroup) {
-          sel.style('fill', COLORS.GLOBE.country.fill);
-          return;
-        }
-
-        const baseColor = COLORS.GLOBE.country.fill;
-        const targetColor = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
-        const t = colorInterp(dominantCount);
-        sel.style('fill', d3.interpolateRgb(baseColor, targetColor)(t));
+         // False = instant updates (no transition)
+         updateCountryShape(d3.select(this), d, year, false); 
       });
   };
 
-  // =============================
-  // INITIAL RENDER
-  // =============================
+  // Initial call to set everything up
   rotateOnStart = true;
   playIntervalMs = 300;
   stepAnimation();
 }
-
-
 
 
 // =============================

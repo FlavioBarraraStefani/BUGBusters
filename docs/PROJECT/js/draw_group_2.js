@@ -1,6 +1,3 @@
-// Global cache for map topology
-window._worldTopologyCache = null;
-
 window.addEventListener('resize', () => { if (window._draw_group_2_lastCall) draw_group_2(...window._draw_group_2_lastCall); });
 
 async function draw_group_2(data, choice, containerId) {
@@ -23,17 +20,7 @@ async function draw_group_2(data, choice, containerId) {
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${width} ${height}`);
 
-  // 2. FETCH TOPOLOGY
-  if (!window._worldTopologyCache) {
-    try {
-        const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
-        window._worldTopologyCache = await response.json();
-    } catch (error) {
-        svg.append("text").text("Error loading map").attr("x", width/2).attr("y", height/2);
-        return;
-    }
-  }
-  const world = window._worldTopologyCache;
+  const world = window._countries;
   const countriesFeatures = topojson.feature(world, world.objects.countries).features;
 
   // 3. PREPARE DATA
@@ -61,15 +48,15 @@ async function draw_group_2(data, choice, containerId) {
 
   // 6. COLOR SCALE
   const groupIndex = CATEGORIES.group.indexOf(choice);
-  const baseColor = (groupIndex >= 0 && COLORS.groupColors[groupIndex]) 
-                    ? COLORS.groupColors[groupIndex] 
-                    : COLORS.defaultComparison;
+  const baseColor = COLORS.groupColors[groupIndex];
+
 
   const maxVal = d3.max(groupInfo.data, d => d.count) || 100;
   const colorScale = d3.scaleSequential(d3.interpolateRgb("white", baseColor))
     .domain([0, maxVal]);
 
   const g = svg.append('g');
+
 
   // 7. DRAW COUNTRIES
   g.selectAll("path")

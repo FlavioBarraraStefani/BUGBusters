@@ -15,7 +15,7 @@ function globe_default() {
       .style("padding", "8px 12px")
       .style("border-radius", "4px")
       .style("pointer-events", "none") 
-      .style("font-size", typeof LabelFontSize !== 'undefined' ? LabelFontSize : "12px") 
+      .style("font-size", labelFontSize + "px") 
       .style("z-index", "9999")
       .style("display", "none");
   }
@@ -78,7 +78,8 @@ function globe_default() {
       // --- MOUSEOVER ---
       .on('mouseover', function(event, d) {
         const year = +slider.property('value');
-        const count = yearLookup[year][d.id];
+        if (year == sliderRange[0]) return;
+        const count = yearLookup[year][d.id] ;
         
         // Safety check
         if (!count || !isFront(d.properties.center[0], d.properties.center[1])) return;

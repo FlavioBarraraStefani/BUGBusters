@@ -6,7 +6,7 @@ let maxKillsGlobal = 0;
 // ==========================================
 
 function precomputeTargetData(rawData) {
-  const K = 10; // Limit per category
+  const K = 1; //max:50
   allTargetEvents = [];
   maxKillsGlobal = 0;
 
@@ -46,45 +46,40 @@ function globe_target() {
   if (defs.empty()) {
     defs = g.append('defs').attr('class', 'neon-defs');
     
-    // Define gradients based on CATEGORIES.target
+    // 1. Define Base Color Gradients
     CATEGORIES.target.forEach((cat, i) => {
-      const color = COLORS.targetColors[i] || '#ffffff'; // Fallback to white if color missing
+      const color = COLORS.targetColors[i] || '#ffffff';
       const gradId = `neon-grad-${i}`;
       
       const grad = defs.append('radialGradient')
         .attr('id', gradId)
-        .attr('cx', '35%') // Offset center for 3D look
-        .attr('cy', '35%')
-        .attr('r', '60%');
+        .attr('cx', '50%').attr('cy', '50%').attr('r', '50%'); 
 
-      // Core (Hot/White)
-      grad.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', '#fff') 
+      // Core: Bright Color
+      grad.append('stop').attr('offset', '0%')
+        .attr('stop-color', d3.color(color).brighter(0.5)) 
         .attr('stop-opacity', 1);
 
-      // Mid (True Color)
-      grad.append('stop')
-        .attr('offset', '40%')
-        .attr('stop-color', color)
-        .attr('stop-opacity', 0.9);
-
-      // Edge (Fade)
-      grad.append('stop')
-        .attr('offset', '100%')
-        .attr('stop-color', color)
-        .attr('stop-opacity', 0);
+      // Edge: Darker Color
+      grad.append('stop').attr('offset', '100%')
+        .attr('stop-color', d3.color(color).darker(1.5))
+        .attr('stop-opacity', 1);
     });
-  }
-  // --- SCALES ---
-  // Ensure we don't have a 0 domain
-  const safeMax = maxKillsGlobal || 100;
-  
-  const radiusScale = d3.scaleSqrt()
-    .domain([0, safeMax])
-    .range([10, 50]); // Slightly larger for visibility
 
-  // --- GROUP SELECTION ---
+    // 2. Define Generic Highlight Gradient
+    const hGrad = defs.append('radialGradient')
+      .attr('id', 'highlight-grad')
+      .attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
+
+    hGrad.append('stop').attr('offset', '0%').attr('stop-color', '#fff').attr('stop-opacity', 0.9);
+    hGrad.append('stop').attr('offset', '100%').attr('stop-color', '#fff').attr('stop-opacity', 0);
+  }
+
+  // --- SCALES ---
+  const safeMax = maxKillsGlobal || 100;
+  // NOTE: You might need to adjust this range if bubbles start too big/small
+  const radiusScale = d3.scaleSqrt().domain([0, safeMax]).range([8, 40]); 
+
   let ballGroup = g.select('g.target-balls');
   if (ballGroup.empty()) {
     ballGroup = g.append('g').attr('class', 'target-balls');
@@ -95,59 +90,86 @@ function globe_target() {
     
     const activeData = allTargetEvents.filter(d => d.year <= currentYear);
 
-    const balls = ballGroup.selectAll('circle.target-ball')
+    // --- NEW: Calculate Scale Factor ---
+    // 250 is the default D3 projection scale. 
+    // This ensures bubbles grow when you zoom in (scale > 250)
+    const currentScale = projection.scale();
+    const scaleFactor = currentScale / 250; 
+
+    const groups = ballGroup.selectAll('g.target-group')
       .data(activeData, d => d.id);
 
-    // EXIT
-    balls.exit().remove();
+    groups.exit().remove();
 
-    // ENTER
-    const enter = balls.enter().append('circle')
-      .attr('class', 'target-ball')
-      .attr('r', 0)
+    const enter = groups.enter().append('g')
+      .attr('class', 'target-group')
+      .style('pointer-events', 'none');
+
+    // 1. Main Body
+    enter.append('circle')
+      .attr('class', 'body')
       .attr('fill', d => `url(#neon-grad-${d.catIndex})`)
-      // Use 'normal' blend mode first to ensure visibility. 
-      // 'screen' can be invisible if background is light.
-      .style('mix-blend-mode', 'normal') 
-      .style('pointer-events', 'none'); // Let clicks pass through to globe
+      .attr('stroke', '#000')
+      .attr('stroke-width', 0.5)
+      .attr('stroke-opacity', 0.3);
 
-    // MERGE
-    const merged = enter.merge(balls);
+    // 2. Highlight
+    enter.append('ellipse') 
+      .attr('class', 'reflection')
+      .attr('fill', 'url(#highlight-grad)')
+      .style('mix-blend-mode', 'screen'); 
 
-    // UPDATE POSITION
+    const merged = enter.merge(groups);
+
+    // Get center of globe for parallax calc
+    const [cx, cy] = projection.translate(); 
+
     merged.each(function(d) {
-      const el = d3.select(this);
+      const gEl = d3.select(this);
       
-      // Visibility Check
       const isVisible = isFront(d.long, d.lat);
       if (!isVisible) {
-        el.attr('display', 'none');
+        gEl.attr('display', 'none');
         return;
       }
       
       const p = projection([d.long, d.lat]);
       if (!p) return;
       
-      el.attr('display', 'block')
-        .attr('cx', p[0])
-        .attr('cy', p[1]);
+      gEl.attr('display', 'block')
+        .attr('transform', `translate(${p[0]}, ${p[1]})`);
 
-      const targetR = radiusScale(d.victims);
+      // --- NEW: Apply Scale Factor to Radius ---
+      const r = radiusScale(d.victims) * scaleFactor;
 
-      // Animation
+      // Reflection Calculations (using the Scaled R)
+      const dx = (p[0] - cx) / cx; 
+      const dy = (p[1] - cy) / cy; 
+      
+      const reflectX = (-r * 0.35) - (dx * r * 0.4);
+      const reflectY = (-r * 0.35) - (dy * r * 0.4);
+
+      const body = gEl.select('.body');
+      const reflect = gEl.select('.reflection');
+
       if (transition) {
-          // Only animate if size changed significantly or just entered
-          const currentR = parseFloat(el.attr('r')) || 0;
-          if (Math.abs(currentR - targetR) > 0.5) {
-             el.transition().duration(500).attr('r', targetR);
-          }
+         if (Math.abs((parseFloat(body.attr('r'))||0) - r) > 0.5) {
+            body.transition().duration(500).attr('r', r);
+            reflect.transition().duration(500)
+                   .attr('rx', r * 0.4).attr('ry', r * 0.3)
+                   .attr('cx', reflectX).attr('cy', reflectY);
+         }
       } else {
-          el.attr('r', targetR);
+         body.attr('r', r);
+         reflect
+           .attr('rx', r * 0.4)
+           .attr('ry', r * 0.3)
+           .attr('cx', reflectX)
+           .attr('cy', reflectY);
       }
     });
   }
 
-  // --- LOOPS ---
   stepAnimation = () => {
     const year = +slider.property('value');
     drawBalls(year, { transition: true });
@@ -157,15 +179,12 @@ function globe_target() {
     if (!needsUpdate) return;
     needsUpdate = false;
     g.selectAll('path.country').attr('d', path);
-    
     const year = +slider.property('value');
+    // Ensure we redraw bubbles when the globe updates (zooms/rotates)
     drawBalls(year, { transition: false });
   };
 
-  // --- INIT ---
   rotateOnStart = true;
   playIntervalMs = 1000;
-  
-  // Trigger immediate draw
   stepAnimation();
 }

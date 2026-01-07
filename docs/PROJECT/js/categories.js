@@ -122,7 +122,7 @@ function setCanvasSizes() {
   if (mainContent.style.display === 'none') return;
 
   // Get heights of fixed elements
-  const navbarHeight = navbar.offsetHeight;
+  const navbarHeight = navbar.offsetHeight ;
   const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
   const footerHeight = footer ? footer.offsetHeight : 0;
@@ -186,10 +186,12 @@ function setCanvasSizes() {
 
   // Always calculate both layouts to determine which is preferred
   // Layout 1: Stacked (left on top, right on bottom)
+  const stackedRatio = isSmallScreen() ? 1/2 : 2 / 3;
+
   const stackedLeftW = availableWidth;
-  const stackedLeftH = (availableHeight * 2) / 3;
+  const stackedLeftH = (availableHeight * stackedRatio);
   const stackedRightW = availableWidth;
-  const stackedRightH = availableHeight / 3;
+  const stackedRightH = availableHeight * (1 - stackedRatio);
   const stackedLeftMin = Math.min(stackedLeftW, stackedLeftH);
 
   // Layout 2: Side by side

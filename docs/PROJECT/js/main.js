@@ -219,7 +219,7 @@ const loadChart = (function () {
       }
 
       const rawData = cache.get(cacheKey);
-      await chartFunc(rawData, choice, containerId);
+      chartFunc(rawData, choice, containerId);
 
     } catch (err) {
       console.error(`Error loading chart for ${containerId}:`, err);
@@ -255,6 +255,8 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
 
+    //loading countries data once for all group charts
+    { file: 'PROJECT/GROUPS/countries.json', func: (data) => {window._countries = data}, choice:null, container: 'body' },
     { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'ISIL', container: 'plot_group_ISIL_2' },
     { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'taliban', container: 'plot_group_taliban_2' },
     { file: 'PROJECT/GROUPS/groups_regional_activity.json', func: draw_group_2, choice: 'SL', container: 'plot_group_SL_2' },

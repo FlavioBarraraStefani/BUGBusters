@@ -115,7 +115,7 @@ function draw_main_left(categoryInfo, containerId) {
     g = svg.append('g').attr('class', 'main_group');
 
     //render once the globe
-    window.globeRotation = [-20, -35];
+    window.globeRotation = [-20, -10];
     baseScale = computeBaseGlobeScale();
 
     projection = d3.geoOrthographic()
@@ -169,7 +169,7 @@ function draw_main_left(categoryInfo, containerId) {
       title.property('value', year);
       stepAnimation(); stepAnimationRight(false);
     });
-;
+
     playBtn.on('click', function () {
       playing ? stopAnimation() : startAnimation();
     });
@@ -180,28 +180,34 @@ function draw_main_left(categoryInfo, containerId) {
     // Enable drag to rotate globe
     //----------//
     const drag = d3.drag()
-      .on('drag', function (event) {
-        const rotate = projection.rotate();
-        let k = 50 / projection.scale(); // scale-aware sensitivity
-        window.globeRotation = [rotate[0] + event.dx * k, rotate[1] - event.dy * k];
-        projection.rotate(window.globeRotation);
-        needsUpdate = true;
-        isRotating = false; // stop auto-rotation on manual drag
-        requestAnimationFrame(updateGlobe);
-      });
+    .on('drag', function (event) {
+      const rotate = projection.rotate();
+      let k = 50 / projection.scale();
+      const limitAngle = [-30,30];
+
+      // Calculate next Y rotation
+      let nextY = rotate[1] - event.dy * k;
+      if (nextY > limitAngle[1]) nextY = limitAngle[1];
+      if (nextY < limitAngle[0]) nextY = limitAngle[0];
+
+      window.globeRotation = [rotate[0] + event.dx * k, nextY];
+      
+      projection.rotate(window.globeRotation);
+      needsUpdate = true;
+      isRotating = false;
+      requestAnimationFrame(updateGlobe);
+    });
     svg.call(drag);
 
     //----------//
     //enable zoom to scale globe
     //----------//
-    baseScale = projection.scale(); // store initial scale
+    baseScale = projection.scale(); 
     const zoom = d3.zoom()
-      .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
+      .scaleExtent([0.85, 4]) 
       .on('zoom', function (event) {
-        // event.transform.k is the zoom factor
         projection.scale(baseScale * event.transform.k);
 
-        // update background circle to match new projection scale/translate
         const t = projection.translate();
         g.select('circle.ocean-bg')
           .attr('r', projection.scale())
@@ -211,7 +217,10 @@ function draw_main_left(categoryInfo, containerId) {
         needsUpdate = true;
         requestAnimationFrame(updateGlobe);
       });
-    svg.call(zoom);
+
+    svg.call(zoom)
+    .style("touch-action", "none") 
+    .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
 
     //----------//
     // Auto-rotation loop
@@ -250,22 +259,34 @@ function draw_main_left(categoryInfo, containerId) {
         .on('end', function () { d3.select(this).remove(); });
 
       hideColormapLegend(true); //hide legend
+      d3.select("body").select(".tassel-tooltip").remove()
+
 
     } else if (previousCat === 'group') { //remove group coloring
       g.selectAll('path.country').attr('d', path)
         .transition().duration(transitionDurationMs)
         .style('fill', COLORS.GLOBE.country.fill);
 
+      d3.select("body").select("#globe-tooltip").remove()
+
+
     } else if (previousCat === 'attack') {
       //clean attack coloring
     } else if (previousCat === 'target') {
-      g.selectAll('defs.neon-defs').remove();
-      g.select('g.target-balls')
+      g.selectAll('defs.neon-defs').remove();                    //remove prefabs
+      g.select('g.target-balls')                                 //remove sphere balls
         .transition().duration(transitionDurationMs)
         .attr('opacity', 0)
         .on('end', function () { d3.select(this).remove(); });
     }
   }
+
+  //remove all tooltips and interactions
+  g.selectAll('path.country')
+    .on('click', () => {})
+    .on('mousemove', () => {})
+    .on('mouseout', () => {})
+    .attr('cursor', 'default');
 
   setTimeout(() => {
   let nextFn = globe_default;
@@ -275,7 +296,7 @@ function draw_main_left(categoryInfo, containerId) {
 
   switch (currentCat) {
     case 'group':
-      sliderRange = [1977, 2020];
+      sliderRange = [1975, 2020];
       nextFn = globe_group;
       break;
       case 'attack':

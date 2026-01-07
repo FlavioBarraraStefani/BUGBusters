@@ -64,6 +64,9 @@ function right_chart_group(svg) {
   // --- Constants & Config ---
   const minYear = sliderRange[0];
   const pre = window._precomputed_group;
+
+  // --- NEW: Define Top Margin ---
+  const MARGIN_TOP = labelFontSize * (isSmallScreen() ? 1 : 1.5) ;
   
   // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
@@ -74,6 +77,10 @@ function right_chart_group(svg) {
   if (container.empty()) {
     container = svg.append('g').attr('class', 'groups-container');
   }
+
+  // --- NEW: Add/Update Title ---
+  let title = container.select('.main-chart-title');
+
   
   // --- Helper: Data Processing ---
   const getSeriesData = (currentMaxYear) => {
@@ -85,6 +92,28 @@ function right_chart_group(svg) {
   
   // --- Core Render Function ---
   container._updateRidges = (duration = 0) => {
+    //creatae title if not exists
+    if (title.empty()) {
+    title = container.append('text')
+      .attr('class', 'main-chart-title')
+      .attr('text-anchor', 'middle') // Centers text horizontally
+      .style('font-weight', 'bold')
+      .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
+      .attr('y', MARGIN_TOP / 2*3)    // Center vertically within the top margin
+      .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`) 
+      .text("Probability Distribution of attacks")
+      .style('opacity', 0)
+      .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
+
+    title.transition()
+      .duration(transitionDurationMs)
+      .ease(d3.easeCubicOut)
+      .style('opacity', 1)
+      .attr('transform', 'translate(0, 0)');
+  }
+  
+
+
     // 1. Get current state
     const maxYearNow = +slider.property('value') || years[years.length - 1];
     const minYear = sliderRange[0]; 
@@ -110,7 +139,7 @@ function right_chart_group(svg) {
     const smallGap = 10;
     const gap = STACKED_LAYOUT_PREFERRED ? smallGap : 70;
     const totalGaps = (data.length * gap) + (2 * smallGap);
-    const rectHeight = Math.max(0, (axisY - totalGaps) / data.length);
+    const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
     // 3. Bind Data & Render Groups
     container.selectAll('g.groups')
@@ -144,7 +173,7 @@ function right_chart_group(svg) {
         const color = COLORS.groupColors[i];
         const darkerColor = d3.color(color) ? d3.color(color).darker(0.8) : color;
 
-        const yTop = smallGap + gap + i * (rectHeight + gap);
+        const yTop = MARGIN_TOP + smallGap + gap + i * (rectHeight + gap);
         const yBottom = yTop + rectHeight;
 
         // Draw Background
