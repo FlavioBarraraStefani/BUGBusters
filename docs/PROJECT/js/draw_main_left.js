@@ -23,7 +23,7 @@ function computeBaseGlobeScale() {
 
 let rotateOnStart = true;
 let isRotating = false;
-let rotationSpeed = 0.3; // degrees per frame
+let rotationSpeed = 0.4; // degrees per frame
 
 let playing = false;
 let currentIndex = 0;
@@ -115,7 +115,7 @@ function draw_main_left(categoryInfo, containerId) {
     g = svg.append('g').attr('class', 'main_group');
 
     //render once the globe
-    window.globeRotation = [-20, -10];
+    window.globeRotation = [+10, -10];
     baseScale = computeBaseGlobeScale();
 
     projection = d3.geoOrthographic()
@@ -179,13 +179,15 @@ function draw_main_left(categoryInfo, containerId) {
     //----------//
     // Enable drag to rotate globe
     //----------//
+    //----------//
+    // Enable drag to rotate globe
+    //----------//
     const drag = d3.drag()
     .on('drag', function (event) {
       const rotate = projection.rotate();
       let k = 50 / projection.scale();
       const limitAngle = [-30,30];
 
-      // Calculate next Y rotation
       let nextY = rotate[1] - event.dy * k;
       if (nextY > limitAngle[1]) nextY = limitAngle[1];
       if (nextY < limitAngle[0]) nextY = limitAngle[0];
@@ -197,14 +199,24 @@ function draw_main_left(categoryInfo, containerId) {
       isRotating = false;
       requestAnimationFrame(updateGlobe);
     });
+    
+    // Attach drag to SVG
     svg.call(drag);
 
     //----------//
-    //enable zoom to scale globe
+    // Enable zoom to scale globe
     //----------//
     baseScale = projection.scale(); 
     const zoom = d3.zoom()
-      .scaleExtent([0.85, 4]) 
+      .scaleExtent([0.85, 4])
+      // --- NEW: Add this filter ---
+      .filter(function(event) {
+        // If touch: only allow if 2 fingers (pinch). Ignore single touch (rotation).
+        if (event.touches) return event.touches.length >= 2;
+        // If mouse: only allow wheel (prevents click-drag from interfering with rotation)
+        return event.type === 'wheel';
+      })
+      // ----------------------------
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
 
