@@ -11,233 +11,21 @@ function draw_group_4(data, choice, containerId) {
 
   svg.selectAll('*').remove();
 
-  // 1. SETUP DIMENSIONS & MARGINS
-  const localMargin = { top: 30, right: 30, bottom: 40, left: 50 };
-  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
-  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
+  // Base Font Size from global config or default
+  const BASE_FONT = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
 
-  svg
-    .attr('width', '100%')
-    .attr('height', '100%')
-    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
-  
-  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
-
-  // 2. DATA PREPARATION
+  // 1. DATA PREP
   const inputJSON = data[choice];
   
   if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
-     g.append("text").text("No Data").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle");
-     return;
-  }
-
-  const timeline = inputJSON.timeline;
-  const ribbonPadding = inputJSON.config.ribbonPadding;
-  const topTargets = inputJSON.top_targets; // List of 5 targets
-  const timeLabels = timeline.map(d => d.label);
-
-  // 3. COLOR MAPPING
-  // Map the specific target names to our global color palette
-  const colorMap = {};
-  topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
-  });
-
-  // 4. CALCULATE STACK LAYOUT (GRAVITY LOGIC)
-  
-  // Calculate Max Stack Height (Should be roughly 100 + padding)
-  const maxStack = d3.max(timeline, d => {
-      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
-      const totalPad = (d.order.length - 1) * ribbonPadding;
-      return totalVal + totalPad;
-  });
-
-  // Transform Data for D3 Area
-  const seriesData = topTargets.map(key => {
-      return {
-          key: key,
-          values: timeline.map((step, i) => {
-              // Logic from reference:
-              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
-              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
-              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
-
-              // Offset pushes the stack down (or up) to align
-              // Since we are normalized 100%, maxStack is ~constant, so this effect is subtle
-              // but ensures alignment if rounding errors occur.
-              const gravityOffset = maxStack - currentStackHeight;
-              
-              let yCursor = gravityOffset; // Start cursor
-              let myY0 = 0;
-              let myY1 = 0;
-
-              // Iterate through order (The Ranking Logic)
-              for (let k of step.order) {
-                  const val = step.values[k];
-                  
-                  if (k === key) {
-                      myY0 = yCursor;
-                      myY1 = yCursor + val;
-                  }
-                  // Move cursor down
-                  yCursor += val + ribbonPadding;
-              }
-
-              return {
-                  x: step.label,
-                  xIdx: i,
-                  y0: myY0, 
-                  y1: myY1,
-                  val: step.values[key] // Percentage
-              };
-          })
-      };
-  });
-
-  // 5. SCALES
-  const x = d3.scalePoint()
-      .domain(timeLabels)
-      .range([0, innerWidth]);
-
-  const y = d3.scaleLinear()
-      .domain([0, maxStack])
-      .range([0, innerHeight]); 
-
-  const area = d3.area()
-      .x(d => x(d.x))
-      .y0(d => y(d.y0))
-      .y1(d => y(d.y1))
-      .curve(d3.curveBumpX); // The smooth bump curve
-
-  // 6. DRAW RIBBONS
-  const ribbonGroup = g.append("g");
-  
-  ribbonGroup.selectAll(".ribbon")
-      .data(seriesData)
-      .enter()
-      .append("path")
-      .attr("class", "ribbon")
-      .attr("d", d => area(d.values))
-      .attr("fill", d => colorMap[d.key])
-      .attr("fill-opacity", 0.85)
-      .attr("stroke", "white")
-      .attr("stroke-width", 0.5)
-      .on("mouseover", function(event, d) {
-          d3.select(this).attr("fill-opacity", 1).attr("stroke-width", 1);
-          showTooltip(event, d.key); // Show generic key name on path hover
-      })
-      .on("mousemove", moveTooltip)
-      .on("mouseout", function() {
-          d3.select(this).attr("fill-opacity", 0.85).attr("stroke-width", 0.5);
-          hideTooltip();
-      });
-
-  // 7. AXES & GRID
-  // Vertical Grid Lines
-  g.selectAll(".grid-line")
-      .data(timeLabels)
-      .enter()
-      .append("line")
-      .attr("x1", d => x(d))
-      .attr("x2", d => x(d))
-      .attr("y1", 0)
-      .attr("y2", innerHeight)
-      .attr("stroke", "#eee")
-      .attr("stroke-dasharray", "2 2");
-
-  // X Axis Labels
-  g.selectAll(".axis-label")
-      .data(timeLabels)
-      .enter()
-      .append("text")
-      .attr("class", "axis-label")
-      .attr("x", d => x(d))
-      .attr("y", innerHeight + 15)
+     svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+     svg.append("text")
+      .text("No Data")
+      .attr("x", CHART_WIDTH/2)
+      .attr("y", CHART_HEIGHT/2)
       .style("text-anchor", "middle")
-      .style("font-size", "9px")
-      .style("fill", COLORS.textPrimary)
-      .text(d => d.split("-")[0]); // Show only start year (e.g., "2013") to save space
-
-  // 8. RIBBON LABELS (Placed at widest point)
-  // Instead of annotations, we find the best spot to label the ribbon
-  seriesData.forEach(series => {
-      // Find the point with maximum thickness (val)
-      const maxPoint = series.values.reduce((prev, current) => (prev.val > current.val) ? prev : current);
-      
-      // Only label if it's thick enough (> 10%)
-      if (maxPoint.val > 10) {
-          const yCenter = (maxPoint.y0 + maxPoint.y1) / 2;
-          
-          g.append("text")
-              .attr("x", x(maxPoint.x))
-              .attr("y", y(yCenter))
-              .attr("dy", "0.35em")
-              .style("text-anchor", "middle")
-              .style("font-size", "10px")
-              .style("font-weight", "bold")
-              .style("fill", "white")
-              .style("pointer-events", "none")
-              .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.5)")
-              .text(truncate(series.key, 10));
-      }
-  });
-  
-  function truncate(str, n) {
-      return (str.length > n) ? str.substr(0, n-1) + '.' : str;
-  }
-
-  // 9. TOOLTIP
-  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
-  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
-  const tooltipText = tooltipGroup.append("text").attr("x", 4).attr("y", 9).style("font-size", "8px").style("font-family", "sans-serif");
-
-  function showTooltip(event, text) {
-      tooltipGroup.style("display", null);
-      tooltipText.text(text);
-      const bbox = tooltipText.node().getBBox();
-      tooltipRect.attr("width", bbox.width + 8).attr("height", bbox.height + 5);
-      moveTooltip(event);
-  }
-
-  function moveTooltip(event) {
-      const [x, y] = d3.pointer(event, svg.node());
-      const xOffset = (x > CHART_WIDTH / 2) ? - (tooltipRect.attr("width") * 1) - 10 : 10; 
-      const yOffset = -15;
-      tooltipGroup.attr("transform", `translate(${x + xOffset}, ${y + yOffset})`);
-  }
-
-  function hideTooltip() { tooltipGroup.style("display", "none"); }
-}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
-
-function draw_group_4(data, choice, containerId) {
-  window._draw_group_4_lastCall = [data, choice, containerId];
-  
-  const container = d3.select(`#${containerId}`);
-  if (container.empty()) return;
-  
-  const svg = container.select('svg');
-  if (svg.empty()) return;
-
-  svg.selectAll('*').remove();
-
-  // 1. SETUP DIMENSIONS & MARGINS
-  // Aumentiamo il margine destro per far stare le etichette
-  const localMargin = { top: 30, right: 90, bottom: 40, left: 40 };
-  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
-  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
-
-  svg
-    .attr('width', '100%')
-    .attr('height', '100%')
-    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
-  
-  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
-
-  // 2. DATA PREPARATION
-  const inputJSON = data[choice];
-  
-  if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
-     g.append("text").text("No Data").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle");
+      .style("font-size", `${BASE_FONT}px`)
+      .style("fill", COLORS.textPrimary);
      return;
   }
 
@@ -246,242 +34,301 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
-  // 3. COLOR MAPPING
   const colorMap = {};
   topTargets.forEach((target, i) => {
       colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
   });
 
-  // 4. CALCULATE STACK LAYOUT
-  const maxStack = d3.max(timeline, d => {
-      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
-      const totalPad = (d.order.length - 1) * ribbonPadding;
-      return totalVal + totalPad;
-  });
-
-  const seriesData = topTargets.map(key => {
-      return {
-          key: key,
-          values: timeline.map((step, i) => {
-              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
-              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
-              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
-              const gravityOffset = maxStack - currentStackHeight;
-              
-              let yCursor = gravityOffset;
-              let myY0 = 0;
-              let myY1 = 0;
-
-              for (let k of step.order) {
-                  const val = step.values[k];
-                  if (k === key) {
-                      myY0 = yCursor;
-                      myY1 = yCursor + val;
-                  }
-                  yCursor += val + ribbonPadding;
-              }
-
-              return {
-                  x: step.label,
-                  xIdx: i,
-                  y0: myY0, 
-                  y1: myY1,
-                  val: step.values[key]
-              };
-          })
-      };
-  });
-
-  // 5. SCALES
-  const x = d3.scalePoint()
-      .domain(timeLabels)
-      .range([0, innerWidth]);
-
-  const y = d3.scaleLinear()
-      .domain([0, maxStack])
-      .range([0, innerHeight]); 
-
-  const area = d3.area()
-      .x(d => x(d.x))
-      .y0(d => y(d.y0))
-      .y1(d => y(d.y1))
-      .curve(d3.curveBumpX);
-
-  // 6. DRAW ELEMENTS
-
-  // A. Vertical Axis Line (Hidden by default)
-  const verticalLine = g.append("line")
-    .attr("class", "hover-line")
-    .attr("y1", 0)
-    .attr("y2", innerHeight)
-    .attr("stroke", "#444")
-    .attr("stroke-width", 1)
-    .attr("stroke-dasharray", "3 3")
-    .style("opacity", 0)
-    .style("pointer-events", "none"); // Important so it doesn't steal mouse events
-
-  // B. Ribbons
-  const ribbonGroup = g.append("g");
-  
-  ribbonGroup.selectAll(".ribbon")
-      .data(seriesData)
-      .enter()
-      .append("path")
-      .attr("class", "ribbon")
-      .attr("d", d => area(d.values))
-      .attr("fill", d => colorMap[d.key])
-      .attr("fill-opacity", 0.9)
-      .attr("stroke", "white")
-      .attr("stroke-width", 0.5)
-      // --- INTERACTION ---
-      .on("mouseover", function(event, d) {
-          // 1. Dim others
-          d3.selectAll(".ribbon")
-            .transition().duration(200)
-            .attr("fill", "#ccc") // Make others gray
-            .attr("fill-opacity", 0.3)
-            .attr("stroke", "none");
-
-          // 2. Highlight current
-          d3.select(this)
-            .transition().duration(200)
-            .attr("fill", colorMap[d.key]) // Restore color
-            .attr("fill-opacity", 1)
-            .attr("stroke", "#333")
-            .attr("stroke-width", 1);
-            
-          verticalLine.style("opacity", 1);
-          tooltipGroup.style("display", null);
-      })
-      .on("mousemove", function(event, d) {
-          // 1. Find nearest X (Bin)
-          // Since scalePoint is discrete, we find the closest index based on mouse X
-          const mouseX = d3.pointer(event, g.node())[0];
-          const domain = x.domain();
-          const range = x.range();
-          const step = x.step();
-          
-          // Calculate index: round(mouseX / step)
-          let index = Math.round(mouseX / step);
-          // Clamp index
-          index = Math.max(0, Math.min(index, domain.length - 1));
-          
-          const hoveredLabel = domain[index];
-          const xPos = x(hoveredLabel);
-          const dataPoint = d.values[index]; // The value for this series at this time
-
-          // 2. Move Vertical Line
-          verticalLine
-            .attr("x1", xPos)
-            .attr("x2", xPos);
-
-          // 3. Update Tooltip
-          // Show Year and Percentage
-          const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
-          const tooltipContent = `${hoveredLabel}: ${valText}`;
-          
-          tooltipText.text(tooltipContent);
-          
-          // Resize tooltip bg
-          const bbox = tooltipText.node().getBBox();
-          tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
-          
-          // Move tooltip near mouse but usually a bit up
-          const [mx, my] = d3.pointer(event, svg.node());
-          // Logic to keep tooltip within chart bounds
-          let tx = mx + 10;
-          if (tx + bbox.width > CHART_WIDTH) tx = mx - bbox.width - 10;
-          
-          tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
-      })
-      .on("mouseout", function() {
-          // Reset all ribbons
-          d3.selectAll(".ribbon")
-            .transition().duration(200)
-            .attr("fill", d => colorMap[d.key])
-            .attr("fill-opacity", 0.9)
-            .attr("stroke", "white")
-            .attr("stroke-width", 0.5);
-
-          verticalLine.style("opacity", 0);
-          tooltipGroup.style("display", "none");
-      });
-
-  // 7. LABELS ON THE RIGHT (Final Position)
-  const labelsGroup = g.append("g");
-  
-  seriesData.forEach(series => {
-      // Get the last data point to position the label
-      const lastPoint = series.values[series.values.length - 1];
-      const yCenter = (lastPoint.y0 + lastPoint.y1) / 2;
-      
-      labelsGroup.append("text")
-          .attr("x", innerWidth + 5) // Just outside the chart area
-          .attr("y", y(yCenter))
-          .attr("dy", "0.35em")
-          .style("text-anchor", "start") // Left aligned (reading from chart outwards)
-          .style("font-size", "9px")     // Same style as previous plots
-          .style("fill", COLORS.textPrimary)
-          .style("font-weight", "bold")
-          .style("cursor", "default")
-          .text(series.key);
-  });
-
-  // 8. AXES
-  // X Axis Labels (Years)
-  g.selectAll(".axis-label")
-      .data(timeLabels)
-      .enter()
-      .append("text")
-      .attr("class", "axis-label")
-      .attr("x", d => x(d))
-      .attr("y", innerHeight + 15)
-      .style("text-anchor", "middle")
-      .style("font-size", "9px")
-      .style("fill", COLORS.textPrimary)
-      .text(d => d.split("-")[0]); // Show start year "2015"
-
-  // 9. TOOLTIP GROUP
-  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
-  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
-  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", "10px").style("font-weight", "bold").style("fill", "#333");
-}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
-
-function draw_group_4(data, choice, containerId) {
-  window._draw_group_4_lastCall = [data, choice, containerId];
-  
-  const container = d3.select(`#${containerId}`);
-  if (container.empty()) return;
-  
-  const svg = container.select('svg');
-  if (svg.empty()) return;
-
-  svg.selectAll('*').remove();
-
-  // 1. SETUP DIMENSIONS & MARGINS
-  const localMargin = { top: 30, right: 90, bottom: 40, left: 40 };
-  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
-  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
-
+  // 2. SVG SETUP
   svg
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
-  
-  // Aggiungiamo un rettangolo trasparente per catturare il click di "reset" sullo sfondo
+
   svg.append("rect")
      .attr("width", CHART_WIDTH)
      .attr("height", CHART_HEIGHT)
      .attr("fill", "transparent")
      .on("click", () => resetSelection());
 
-  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
+  // 3. SMART LEGEND CALCULATION
+  const legendGroup = svg.append('g').attr('class', 'legend-group');
+  
+  // Margini laterali per la legenda
+  const legendMarginLeft = CHART_MARGIN.left;
+  const legendMarginRight = CHART_MARGIN.right;
+  const availableWidth = CHART_WIDTH - legendMarginLeft - legendMarginRight;
+  
+  const iconSize = 10;
+  const itemGap = 10; // Spazio minimo tra gli elementi
+  
+  // A. Calculate optimal Font Size & Layout
+  let legendFontSize = BASE_FONT;
+  let legendLayout = [];
+  let finalLegendHeight = 0;
 
-  // 2. DATA PREPARATION
+  // Function to simulate layout with a specific font size
+  function computeLayout(fontSize) {
+      const rows = [];
+      let currentRow = { items: [], width: 0 };
+      let totalW = 0;
+      
+      // Temporary text to measure width
+      const tmpText = svg.append("text").style("font-size", `${fontSize}px`).style("font-weight", "bold").attr("opacity", 0);
+
+      const items = topTargets.map(key => {
+          tmpText.text(key);
+          const w = tmpText.node().getBBox().width + iconSize + 5; // Icon + Gap + Text
+          return { key, width: w };
+      });
+      tmpText.remove();
+
+      // Check if they fit in one line
+      const totalWidthAll = items.reduce((acc, item) => acc + item.width, 0) + (items.length - 1) * itemGap;
+      
+      if (totalWidthAll <= availableWidth) {
+          // FIT IN ONE LINE: Distribute Logic
+          // Calculate gap to spread across full width
+          const extraSpace = availableWidth - items.reduce((acc, item) => acc + item.width, 0);
+          const dynamicGap = items.length > 1 ? extraSpace / (items.length - 1) : 0;
+          
+          let currentX = 0;
+          items.forEach(item => {
+              rows.push({ key: item.key, x: currentX, y: 0, width: item.width });
+              currentX += item.width + dynamicGap;
+          });
+          return { rows: rows, height: fontSize + 8, fit: true };
+      } 
+      else {
+          // WRAP LOGIC
+          let currentX = 0;
+          let currentY = 0;
+          const lineHeight = fontSize + 8;
+          const computedItems = [];
+
+          items.forEach(item => {
+              if (currentX + item.width > availableWidth && currentX > 0) {
+                  currentX = 0;
+                  currentY += lineHeight;
+              }
+              computedItems.push({ key: item.key, x: currentX, y: currentY, width: item.width });
+              currentX += item.width + itemGap;
+          });
+          
+          // Center the wrapped rows
+          // (This is a simplified centering, calculating true row widths is complex but this is robust enough)
+          return { rows: computedItems, height: currentY + lineHeight, fit: false };
+      }
+  }
+
+  // Iterative Font Reduction
+  // Try to fit in one line or at least readable size
+  let layoutResult;
+  for (let s = BASE_FONT; s >= 6; s--) {
+      layoutResult = computeLayout(s);
+      // If fits in one line, stop. If we are at min size, accept whatever wrap we have.
+      if (layoutResult.fit || s === 6) {
+          legendFontSize = s;
+          legendLayout = layoutResult.rows;
+          finalLegendHeight = layoutResult.height;
+          break;
+      }
+  }
+
+  // B. Render Legend
+  const legendTopPadding = 5;
+  legendGroup.attr("transform", `translate(${legendMarginLeft}, ${CHART_MARGIN.top})`); // Start drawing at top margin
+
+  legendLayout.forEach(d => {
+      const gItem = legendGroup.append("g")
+          .datum(d.key)
+          .attr("class", "legend-item")
+          .attr("transform", `translate(${d.x}, ${d.y})`)
+          .style("cursor", "pointer")
+          .on("click", (e) => { e.stopPropagation(); toggleSelection(d.key); })
+          .on("mouseover", () => { if(!activeSeries) updateVisuals(d.key, true); })
+          .on("mouseout", () => { if(!activeSeries) updateVisuals(null); });
+
+      gItem.append("rect")
+          .attr("width", iconSize).attr("height", iconSize)
+          .attr("y", -iconSize/2 - 2)
+          .attr("rx", 2)
+          .attr("fill", colorMap[d.key]);
+
+      gItem.append("text")
+          .attr("x", iconSize + 5)
+          .attr("dy", "0.1em")
+          .style("font-size", `${legendFontSize}px`)
+          .style("font-weight", "bold")
+          .style("fill", COLORS.textPrimary)
+          .text(d.key);
+  });
+
+
+  // 4. CHART LAYOUT CALCULATION
+  const chartTop = CHART_MARGIN.top + finalLegendHeight + 10; // 10px buffer
+  const chartHeight = CHART_HEIGHT - chartTop - CHART_MARGIN.bottom;
+  const chartWidth = availableWidth;
+
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${chartTop})`);
+
+  // 5. STACK LOGIC (Standard)
+  const maxStack = d3.max(timeline, d => {
+      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
+      const totalPad = (d.order.length - 1) * ribbonPadding;
+      return totalVal + totalPad;
+  });
+
+  const seriesData = topTargets.map(key => {
+      return {
+          key: key,
+          values: timeline.map((step, i) => {
+              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
+              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
+              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
+              const gravityOffset = maxStack - currentStackHeight;
+              let yCursor = gravityOffset;
+              let myY0 = 0; let myY1 = 0;
+              for (let k of step.order) {
+                  const val = step.values[k];
+                  if (k === key) { myY0 = yCursor; myY1 = yCursor + val; }
+                  yCursor += val + ribbonPadding;
+              }
+              return { x: step.label, y0: myY0, y1: myY1, val: step.values[key] };
+          })
+      };
+  });
+
+  // 6. SCALES
+  const x = d3.scalePoint().domain(timeLabels).range([0, chartWidth]);
+  const y = d3.scaleLinear().domain([0, maxStack]).range([0, chartHeight]); 
+  const area = d3.area().x(d => x(d.x)).y0(d => y(d.y0)).y1(d => y(d.y1)).curve(d3.curveBumpX);
+
+  // 7. DRAW CHART
+  const verticalLine = g.append("line")
+    .attr("y1", 0).attr("y2", chartHeight)
+    .attr("stroke", COLORS.axisLine).attr("stroke-width", 1).attr("stroke-dasharray", "3 3")
+    .style("opacity", 0).style("pointer-events", "none");
+
+  const ribbonGroup = g.append("g");
+  let activeSeries = null; 
+
+  const ribbons = ribbonGroup.selectAll(".ribbon")
+      .data(seriesData)
+      .enter().append("path")
+      .attr("class", "ribbon")
+      .attr("d", d => area(d.values))
+      .attr("fill", d => colorMap[d.key])
+      .attr("fill-opacity", 0.9)
+      .attr("stroke", "white").attr("stroke-width", 0.5)
+      .style("cursor", "pointer");
+
+  // Interaction
+  function toggleSelection(key) { activeSeries = (activeSeries === key) ? null : key; updateVisuals(activeSeries); }
+  function resetSelection() { activeSeries = null; updateVisuals(null); }
+  function updateVisuals(highlightKey, isHover = false) {
+      if (!highlightKey) {
+          ribbons.transition().duration(200).attr("fill", d => colorMap[d.key]).attr("fill-opacity", 0.9).attr("stroke", "white");
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", 1);
+          if (!isHover) { verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); }
+      } else {
+          ribbons.transition().duration(200)
+            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#e0e0e0")
+            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
+            .attr("stroke", d => d.key === highlightKey ? "#333" : "none");
+          ribbons.filter(d => d.key === highlightKey).raise();
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", function() { return d3.select(this).datum() === highlightKey ? 1 : 0.3; });
+      }
+  }
+
+  ribbons.on("click", (e, d) => { e.stopPropagation(); toggleSelection(d.key); updateTooltip(e, d.key); })
+         .on("mouseover", (e, d) => { if(!activeSeries) { updateVisuals(d.key, true); verticalLine.style("opacity", 1); updateTooltip(e, d.key); } })
+         .on("mousemove", (e, d) => { updateTooltip(e, activeSeries || d.key); })
+         .on("mouseout", () => { if(!activeSeries) { updateVisuals(null); verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); } });
+
+  // 8. SMART AXES (Dynamic Font Size)
+  
+  // Calculate max font size for X axis to fit labels without overlap
+  const numTicks = timeLabels.length;
+  const availableSpacePerTick = chartWidth / numTicks;
+  
+  // Estima larghezza media: 6px per carattere a size 10 (approx)
+  // Formula: FontSize = AvailableWidth / (NumChars * 0.6)
+  const maxLabelLength = d3.max(timeLabels, d => d.split("-")[0].length); // "2015" = 4 chars
+  
+  let axisFontSize = BASE_FONT;
+  // Reduce font if space is tight
+  if (availableSpacePerTick < (maxLabelLength * BASE_FONT * 0.7)) {
+      axisFontSize = Math.max(6, Math.floor(availableSpacePerTick / (maxLabelLength * 0.7)));
+  }
+
+  g.selectAll(".axis-label")
+      .data(timeLabels)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d))
+      .attr("y", chartHeight + 15)
+      .style("text-anchor", "middle")
+      .style("font-size", `${axisFontSize}px`) // Dynamic Size
+      .style("fill", COLORS.textPrimary)
+      .text(d => d.split("-")[0]); 
+
+  // 9. TOOLTIP
+  function updateTooltip(event, key) {
+      if (!key) return;
+      const mouseX = d3.pointer(event, g.node())[0];
+      const step = x.step();
+      let index = Math.round(mouseX / step);
+      index = Math.max(0, Math.min(index, x.domain().length - 1));
+      const hoveredLabel = x.domain()[index];
+      const xPos = x(hoveredLabel);
+      const series = seriesData.find(s => s.key === key);
+      const dataPoint = series.values[index];
+
+      verticalLine.attr("x1", xPos).attr("x2", xPos).style("opacity", 1);
+      const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
+      tooltipText.text(`${hoveredLabel}: ${valText}`);
+      
+      const bbox = tooltipText.node().getBBox();
+      tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
+      
+      const [mx, my] = d3.pointer(event, svg.node());
+      let tx = mx + 10;
+      if (tx + bbox.width > CHART_WIDTH) tx = mx - bbox.width - 10;
+      tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
+  }
+
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
+  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
+  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", `${BASE_FONT}px`).style("font-weight", "bold").style("fill", "#333");
+}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
+
+function draw_group_4(data, choice, containerId) {
+  window._draw_group_4_lastCall = [data, choice, containerId];
+  
+  const container = d3.select(`#${containerId}`);
+  if (container.empty()) return;
+  
+  const svg = container.select('svg');
+  if (svg.empty()) return;
+
+  svg.selectAll('*').remove();
+
+  // Font Size Config
+  const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
+
+  // 1. DATA PREP
   const inputJSON = data[choice];
   
   if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
-     g.append("text").text("No Data").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle");
+     svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+     svg.append("text")
+      .text("No Data")
+      .attr("x", CHART_WIDTH/2)
+      .attr("y", CHART_HEIGHT/2)
+      .style("text-anchor", "middle")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("fill", COLORS.textPrimary);
      return;
   }
 
@@ -490,13 +337,98 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
-  // 3. COLOR MAPPING
   const colorMap = {};
   topTargets.forEach((target, i) => {
       colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
   });
 
-  // 4. CALCULATE STACK LAYOUT
+  // 2. SVG SETUP
+  svg
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+
+  // Background click to reset selection
+  svg.append("rect")
+     .attr("width", CHART_WIDTH)
+     .attr("height", CHART_HEIGHT)
+     .attr("fill", "transparent")
+     .on("click", () => resetSelection());
+
+  // 3. LEGEND (FORCED 2 ROWS LAYOUT)
+  const legendGroup = svg.append('g').attr('class', 'legend-group');
+  
+  const iconSize = 10;
+  const itemGap = 15; // Spazio orizzontale
+  const rowGap = FONT_SIZE + 5; // Spazio verticale
+  const legendTopPadding = 5;
+
+  // Distribuzione: 3 item nella prima riga, 2 nella seconda
+  const row1Items = topTargets.slice(0, 3);
+  const row2Items = topTargets.slice(3, 5);
+  
+  // Funzione helper per disegnare una riga centrata
+  function drawLegendRow(items, rowIndex) {
+      // 1. Calcola larghezza totale della riga
+      let totalWidth = 0;
+      const widths = items.map(key => {
+          // Misura temporanea
+          const txt = svg.append("text").style("font-size", `${FONT_SIZE}px`).style("font-weight", "bold").text(key);
+          const w = txt.node().getBBox().width + iconSize + 5;
+          txt.remove();
+          return w;
+      });
+      totalWidth = widths.reduce((a, b) => a + b, 0) + (items.length - 1) * itemGap;
+
+      // 2. Calcola punto di partenza X per centrare
+      const availableWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+      let startX = CHART_MARGIN.left + (availableWidth - totalWidth) / 2;
+      const y = CHART_MARGIN.top + legendTopPadding + (rowIndex * rowGap);
+
+      // 3. Disegna
+      let currentX = startX;
+      items.forEach((key, i) => {
+          const gItem = legendGroup.append("g")
+              .datum(key)
+              .attr("class", "legend-item")
+              .attr("transform", `translate(${currentX}, ${y})`)
+              .style("cursor", "pointer")
+              .on("click", (e) => { e.stopPropagation(); toggleSelection(key); })
+              .on("mouseover", () => { if(!activeSeries) updateVisuals(key, true); })
+              .on("mouseout", () => { if(!activeSeries) updateVisuals(null); });
+
+          gItem.append("rect")
+              .attr("width", iconSize).attr("height", iconSize)
+              .attr("y", -iconSize/2 - 1)
+              .attr("rx", 2)
+              .attr("fill", colorMap[key]);
+
+          gItem.append("text")
+              .attr("x", iconSize + 5)
+              .attr("dy", "0.2em")
+              .style("font-size", `${FONT_SIZE}px`)
+              .style("font-weight", "bold")
+              .style("fill", COLORS.textPrimary)
+              .text(key);
+
+          currentX += widths[i] + itemGap;
+      });
+  }
+
+  drawLegendRow(row1Items, 0);
+  drawLegendRow(row2Items, 1);
+
+  // Calcola altezza occupata dalla legenda per spostare il grafico
+  const legendHeight = (2 * rowGap) + 10;
+
+  // 4. CHART DIMENSIONS
+  const chartTop = CHART_MARGIN.top + legendHeight;
+  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+  const innerHeight = CHART_HEIGHT - chartTop - CHART_MARGIN.bottom;
+
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${chartTop})`);
+
+  // 5. STACK LOGIC
   const maxStack = d3.max(timeline, d => {
       const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
       const totalPad = (d.order.length - 1) * ribbonPadding;
@@ -513,8 +445,7 @@ function draw_group_4(data, choice, containerId) {
               const gravityOffset = maxStack - currentStackHeight;
               
               let yCursor = gravityOffset;
-              let myY0 = 0;
-              let myY1 = 0;
+              let myY0 = 0; let myY1 = 0;
 
               for (let k of step.order) {
                   const val = step.values[k];
@@ -527,7 +458,6 @@ function draw_group_4(data, choice, containerId) {
 
               return {
                   x: step.label,
-                  xIdx: i,
                   y0: myY0, 
                   y1: myY1,
                   val: step.values[key]
@@ -536,7 +466,7 @@ function draw_group_4(data, choice, containerId) {
       };
   });
 
-  // 5. SCALES
+  // 6. SCALES
   const x = d3.scalePoint()
       .domain(timeLabels)
       .range([0, innerWidth]);
@@ -551,24 +481,21 @@ function draw_group_4(data, choice, containerId) {
       .y1(d => y(d.y1))
       .curve(d3.curveBumpX);
 
-  // 6. DRAW ELEMENTS
+  // 7. DRAW CHART ELEMENTS
 
-  // A. Vertical Axis Line
+  // Vertical Axis Line
   const verticalLine = g.append("line")
-    .attr("class", "hover-line")
     .attr("y1", 0)
     .attr("y2", innerHeight)
-    .attr("stroke", "#444")
+    .attr("stroke", COLORS.axisLine)
     .attr("stroke-width", 1)
     .attr("stroke-dasharray", "3 3")
     .style("opacity", 0)
     .style("pointer-events", "none");
 
-  // B. Ribbon Group
+  // Ribbons
   const ribbonGroup = g.append("g");
-  
-  // STATE VARIABLE
-  let activeSeries = null; // Stores the key of the clicked series
+  let activeSeries = null; 
 
   const ribbons = ribbonGroup.selectAll(".ribbon")
       .data(seriesData)
@@ -582,78 +509,11 @@ function draw_group_4(data, choice, containerId) {
       .attr("stroke-width", 0.5)
       .style("cursor", "pointer");
 
-  // --- INTERACTION LOGIC ---
+  // --- INTERACTION ---
 
-  ribbons.on("click", function(event, d) {
-      event.stopPropagation(); // Prevent bg click
-
-      // Toggle selection
-      if (activeSeries === d.key) {
-          activeSeries = null; // Deselect if clicking same
-      } else {
-          activeSeries = d.key; // Select new
-      }
+  function toggleSelection(key) {
+      activeSeries = (activeSeries === key) ? null : key;
       updateVisuals(activeSeries);
-      
-      // Update tooltip immediately for the click position
-      updateTooltip(event, d.key); 
-  });
-
-  ribbons.on("mouseover", function(event, d) {
-      if (activeSeries) return; // Ignore hover if selection is active
-      updateVisuals(d.key, true); // true = temporary hover
-      verticalLine.style("opacity", 1);
-      updateTooltip(event, d.key);
-  });
-
-  ribbons.on("mousemove", function(event, d) {
-      // If selection active, track that key. If not, track hovered key.
-      const targetKey = activeSeries || d.key;
-      updateTooltip(event, targetKey);
-  });
-
-  ribbons.on("mouseout", function() {
-      if (activeSeries) return; // Don't reset if selection active
-      updateVisuals(null); // Reset to default
-      verticalLine.style("opacity", 0);
-      tooltipGroup.style("display", "none");
-  });
-
-  // Function to handle visual states (Graying out vs Highlighting)
-  function updateVisuals(highlightKey, isHover = false) {
-      if (!highlightKey) {
-          // RESET ALL
-          ribbons
-            .transition().duration(200)
-            .attr("fill", d => colorMap[d.key])
-            .attr("fill-opacity", 0.9)
-            .attr("stroke", "white")
-            .attr("stroke-width", 0.5);
-          
-          // Reset labels opacity
-          labelsGroup.selectAll("text").style("opacity", 1);
-          
-          if (!isHover) {
-            verticalLine.style("opacity", 0);
-            tooltipGroup.style("display", "none");
-          }
-      } else {
-          // DIM OTHERS
-          ribbons
-            .transition().duration(200)
-            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#ccc")
-            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
-            .attr("stroke", d => d.key === highlightKey ? "#333" : "none")
-            .attr("stroke-width", d => d.key === highlightKey ? 1 : 0);
-          
-          // Raise the selected one to top
-          const selectedRibbon = ribbons.filter(d => d.key === highlightKey);
-          selectedRibbon.raise();
-
-          // Dim labels
-          labelsGroup.selectAll("text")
-             .style("opacity", d => d.key === highlightKey ? 1 : 0.3);
-      }
   }
 
   function resetSelection() {
@@ -661,38 +521,95 @@ function draw_group_4(data, choice, containerId) {
       updateVisuals(null);
   }
 
-  // C. Generic Tooltip Logic
+  function updateVisuals(highlightKey, isHover = false) {
+      if (!highlightKey) {
+          // Reset
+          ribbons.transition().duration(200)
+            .attr("fill", d => colorMap[d.key])
+            .attr("fill-opacity", 0.9)
+            .attr("stroke", "white");
+          
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", 1);
+          
+          if (!isHover) {
+            verticalLine.style("opacity", 0);
+            tooltipGroup.style("display", "none");
+          }
+      } else {
+          // Dim Others
+          ribbons.transition().duration(200)
+            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#e0e0e0")
+            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
+            .attr("stroke", d => d.key === highlightKey ? "#333" : "none");
+          
+          ribbons.filter(d => d.key === highlightKey).raise();
+
+          legendGroup.selectAll('.legend-item')
+             .transition().duration(200)
+             .style("opacity", function() {
+                 return d3.select(this).datum() === highlightKey ? 1 : 0.3;
+             });
+      }
+  }
+
+  // Events
+  ribbons
+    .on("click", (e, d) => { e.stopPropagation(); toggleSelection(d.key); updateTooltip(e, d.key); })
+    .on("mouseover", (e, d) => { if(!activeSeries) { updateVisuals(d.key, true); verticalLine.style("opacity", 1); updateTooltip(e, d.key); } })
+    .on("mousemove", (e, d) => { updateTooltip(e, activeSeries || d.key); })
+    .on("mouseout", () => { if(!activeSeries) { updateVisuals(null); verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); } });
+
+  // 8. AXES
+  
+  // Calculate dynamic font size for axis to avoid overlap
+  const numTicks = timeLabels.length;
+  const availableSpacePerTick = innerWidth / numTicks;
+  // Estimate: 4 chars "2015" * font_size * 0.6 width factor
+  let axisFontSize = FONT_SIZE;
+  if (availableSpacePerTick < (4 * FONT_SIZE * 0.7)) {
+      axisFontSize = Math.max(6, Math.floor(availableSpacePerTick / 2.8));
+  }
+
+  g.selectAll(".axis-label")
+      .data(timeLabels)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d))
+      .attr("y", innerHeight + 15)
+      .style("text-anchor", "middle")
+      .style("font-size", `${axisFontSize}px`)
+      .style("fill", COLORS.textPrimary)
+      .text(d => d.split("-")[0]); 
+
+  // 9. TOOLTIP
   function updateTooltip(event, key) {
       if (!key) return;
-
-      // 1. Find nearest X (Bin)
+      
+      // Calculate mouse position relative to Chart Group 'g'
       const mouseX = d3.pointer(event, g.node())[0];
-      const domain = x.domain();
+      
+      // ScalePoint logic to find nearest index
       const step = x.step();
       let index = Math.round(mouseX / step);
+      
+      // Clamp index
+      const domain = x.domain();
       index = Math.max(0, Math.min(index, domain.length - 1));
       
       const hoveredLabel = domain[index];
       const xPos = x(hoveredLabel);
       
-      // Find value for the SPECIFIC key (even if mouse is over another ribbon)
       const series = seriesData.find(s => s.key === key);
-      const dataPoint = series.values[index];
+      const dataPoint = series.values[index]; // Value at this time index
 
-      // 2. Move Vertical Line
-      verticalLine
-        .attr("x1", xPos)
-        .attr("x2", xPos)
-        .style("opacity", 1);
+      verticalLine.attr("x1", xPos).attr("x2", xPos).style("opacity", 1);
 
-      // 3. Update Tooltip Text
       const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
       const tooltipContent = `${hoveredLabel}: ${valText}`;
       
       tooltipGroup.style("display", null);
       tooltipText.text(tooltipContent);
       
-      // 4. Position Tooltip
       const bbox = tooltipText.node().getBBox();
       tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
       
@@ -703,47 +620,1015 @@ function draw_group_4(data, choice, containerId) {
       tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
   }
 
-  // 7. LABELS ON THE RIGHT
-  const labelsGroup = g.append("g");
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
+  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
+  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", `${FONT_SIZE}px`).style("font-weight", "bold").style("fill", "#333");
+}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
+
+function draw_group_4(data, choice, containerId) {
+  window._draw_group_4_lastCall = [data, choice, containerId];
   
-  seriesData.forEach(series => {
-      const lastPoint = series.values[series.values.length - 1];
-      const yCenter = (lastPoint.y0 + lastPoint.y1) / 2;
-      
-      labelsGroup.append("text")
-          .datum(series) // Bind data so we can access key for filtering
-          .attr("x", innerWidth + 5)
-          .attr("y", y(yCenter))
-          .attr("dy", "0.35em")
-          .style("text-anchor", "start")
-          .style("font-size", "6px")
-          .style("fill", COLORS.textPrimary)
-          .style("cursor", "pointer") // Make labels clickable too!
-          .text(series.key)
-          .on("click", function(event, d) {
-              event.stopPropagation();
-              if (activeSeries === d.key) activeSeries = null;
-              else activeSeries = d.key;
-              updateVisuals(activeSeries);
-              // For label click, we don't show tooltip immediately as mouse might be far
-          });
+  const container = d3.select(`#${containerId}`);
+  if (container.empty()) return;
+  
+  const svg = container.select('svg');
+  if (svg.empty()) return;
+
+  svg.selectAll('*').remove();
+
+  // Font Config
+  const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
+
+  // 1. DATA PREP
+  const inputJSON = data[choice];
+  
+  if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
+     svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+     svg.append("text")
+      .text("No Data")
+      .attr("x", CHART_WIDTH/2)
+      .attr("y", CHART_HEIGHT/2)
+      .style("text-anchor", "middle")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("fill", COLORS.textPrimary);
+     return;
+  }
+
+  const timeline = inputJSON.timeline;
+  const ribbonPadding = inputJSON.config.ribbonPadding;
+  const topTargets = inputJSON.top_targets; 
+  const timeLabels = timeline.map(d => d.label);
+
+  const colorMap = {};
+  topTargets.forEach((target, i) => {
+      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
   });
+
+  // 2. SVG SETUP
+  svg
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+
+  // Background click to reset selection
+  svg.append("rect")
+     .attr("width", CHART_WIDTH)
+     .attr("height", CHART_HEIGHT)
+     .attr("fill", "transparent")
+     .on("click", () => resetSelection());
+
+  // 3. DYNAMIC WRAPPING LEGEND
+  const legendGroup = svg.append('g').attr('class', 'legend-group');
+  
+  const iconSize = 10;
+  const itemGap = 12; // Spazio orizzontale tra item
+  const rowGap = FONT_SIZE + 6; // Altezza riga
+  const availableWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+  
+  let rows = [];
+  let currentRow = { width: 0, items: [] };
+
+  // A. Creazione temporanea per misurare larghezze
+  topTargets.forEach(key => {
+      // Gruppo temporaneo per misurare
+      const tempG = legendGroup.append("g").attr("class", "temp-measure").style("opacity", 0);
+      
+      tempG.append("rect").attr("width", iconSize).attr("height", iconSize);
+      const textNode = tempG.append("text")
+          .attr("x", iconSize + 4)
+          .style("font-size", `${FONT_SIZE}px`)
+          .style("font-weight", "bold")
+          .text(key);
+      
+      // Larghezza effettiva dell'elemento
+      const itemWidth = textNode.node().getComputedTextLength() + iconSize + 4;
+      tempG.remove(); // Pulizia
+
+      // B. Logica di Wrapping
+      // Se l'elemento non ci sta nella riga attuale, vai a capo
+      if (currentRow.width + itemWidth > availableWidth && currentRow.items.length > 0) {
+          rows.push(currentRow);
+          currentRow = { width: 0, items: [] };
+      }
+
+      currentRow.items.push({ key: key, width: itemWidth });
+      currentRow.width += itemWidth + itemGap;
+  });
+  // Aggiungi l'ultima riga
+  if (currentRow.items.length > 0) rows.push(currentRow);
+
+  // C. Rendering Definitivo Legenda (Centrata)
+  let legendY = CHART_MARGIN.top; // Inizio rendering verticale
+
+  rows.forEach(row => {
+      // Larghezza reale della riga (senza l'ultimo gap inutile)
+      const actualRowWidth = row.width - itemGap;
+      // Calcola X per centrare la riga
+      let currentX = CHART_MARGIN.left + (availableWidth - actualRowWidth) / 2;
+
+      row.items.forEach(item => {
+          const gItem = legendGroup.append("g")
+              .datum(item.key)
+              .attr("class", "legend-item")
+              .attr("transform", `translate(${currentX}, ${legendY})`)
+              .style("cursor", "pointer")
+              .on("click", (e) => { e.stopPropagation(); toggleSelection(item.key); })
+              .on("mouseover", () => { if(!activeSeries) updateVisuals(item.key, true); })
+              .on("mouseout", () => { if(!activeSeries) updateVisuals(null); });
+
+          gItem.append("rect")
+              .attr("width", iconSize).attr("height", iconSize)
+              .attr("y", -iconSize/2 - 1)
+              .attr("rx", 2)
+              .attr("fill", colorMap[item.key]);
+
+          gItem.append("text")
+              .attr("x", iconSize + 4)
+              .attr("dy", "0.2em")
+              .style("font-size", `${FONT_SIZE}px`)
+              .style("font-weight", "bold")
+              .style("fill", COLORS.textPrimary)
+              .text(item.key);
+
+          currentX += item.width + itemGap;
+      });
+      
+      legendY += rowGap; // Scendi alla prossima riga
+  });
+
+  // Calcola altezza totale occupata dalla legenda per spostare il grafico
+  const totalLegendHeight = (rows.length * rowGap) + 5;
+
+  // 4. CHART DIMENSIONS
+  const chartTop = CHART_MARGIN.top + totalLegendHeight;
+  const chartHeight = CHART_HEIGHT - chartTop - CHART_MARGIN.bottom;
+  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${chartTop})`);
+
+  // 5. STACK LOGIC
+  const maxStack = d3.max(timeline, d => {
+      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
+      const totalPad = (d.order.length - 1) * ribbonPadding;
+      return totalVal + totalPad;
+  });
+
+  const seriesData = topTargets.map(key => {
+      return {
+          key: key,
+          values: timeline.map((step, i) => {
+              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
+              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
+              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
+              const gravityOffset = maxStack - currentStackHeight;
+              
+              let yCursor = gravityOffset;
+              let myY0 = 0; let myY1 = 0;
+
+              for (let k of step.order) {
+                  const val = step.values[k];
+                  if (k === key) {
+                      myY0 = yCursor;
+                      myY1 = yCursor + val;
+                  }
+                  yCursor += val + ribbonPadding;
+              }
+
+              return {
+                  x: step.label,
+                  y0: myY0, 
+                  y1: myY1,
+                  val: step.values[key]
+              };
+          })
+      };
+  });
+
+  // 6. SCALES
+  const x = d3.scalePoint()
+      .domain(timeLabels)
+      .range([0, innerWidth]);
+
+  const y = d3.scaleLinear()
+      .domain([0, maxStack])
+      .range([0, chartHeight]); 
+
+  const area = d3.area()
+      .x(d => x(d.x))
+      .y0(d => y(d.y0))
+      .y1(d => y(d.y1))
+      .curve(d3.curveBumpX);
+
+  // 7. DRAW CHART ELEMENTS
+
+  // Vertical Axis Line
+  const verticalLine = g.append("line")
+    .attr("y1", 0)
+    .attr("y2", chartHeight)
+    .attr("stroke", COLORS.axisLine)
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "3 3")
+    .style("opacity", 0)
+    .style("pointer-events", "none");
+
+  // Ribbons
+  const ribbonGroup = g.append("g");
+  let activeSeries = null; 
+
+  const ribbons = ribbonGroup.selectAll(".ribbon")
+      .data(seriesData)
+      .enter()
+      .append("path")
+      .attr("class", "ribbon")
+      .attr("d", d => area(d.values))
+      .attr("fill", d => colorMap[d.key])
+      .attr("fill-opacity", 0.9)
+      .attr("stroke", "white")
+      .attr("stroke-width", 0.5)
+      .style("cursor", "pointer");
+
+  // --- INTERACTION ---
+
+  function toggleSelection(key) {
+      activeSeries = (activeSeries === key) ? null : key;
+      updateVisuals(activeSeries);
+  }
+
+  function resetSelection() {
+      activeSeries = null;
+      updateVisuals(null);
+  }
+
+  function updateVisuals(highlightKey, isHover = false) {
+      if (!highlightKey) {
+          // Reset
+          ribbons.transition().duration(200)
+            .attr("fill", d => colorMap[d.key])
+            .attr("fill-opacity", 0.9)
+            .attr("stroke", "white");
+          
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", 1);
+          
+          if (!isHover) {
+            verticalLine.style("opacity", 0);
+            tooltipGroup.style("display", "none");
+          }
+      } else {
+          // Dim Others
+          ribbons.transition().duration(200)
+            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#e0e0e0")
+            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
+            .attr("stroke", d => d.key === highlightKey ? "#333" : "none");
+          
+          ribbons.filter(d => d.key === highlightKey).raise();
+
+          legendGroup.selectAll('.legend-item')
+             .transition().duration(200)
+             .style("opacity", function() {
+                 return d3.select(this).datum() === highlightKey ? 1 : 0.3;
+             });
+      }
+  }
+
+  // Events
+  ribbons
+    .on("click", (e, d) => { e.stopPropagation(); toggleSelection(d.key); updateTooltip(e, d.key); })
+    .on("mouseover", (e, d) => { if(!activeSeries) { updateVisuals(d.key, true); verticalLine.style("opacity", 1); updateTooltip(e, d.key); } })
+    .on("mousemove", (e, d) => { updateTooltip(e, activeSeries || d.key); })
+    .on("mouseout", () => { if(!activeSeries) { updateVisuals(null); verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); } });
 
   // 8. AXES
   g.selectAll(".axis-label")
       .data(timeLabels)
       .enter()
       .append("text")
-      .attr("class", "axis-label")
       .attr("x", d => x(d))
-      .attr("y", innerHeight + 15)
+      .attr("y", chartHeight + 15)
       .style("text-anchor", "middle")
-      .style("font-size", "9px")
+      .style("font-size", `${FONT_SIZE}px`)
       .style("fill", COLORS.textPrimary)
       .text(d => d.split("-")[0]); 
 
-  // 9. TOOLTIP GROUP
+  // 9. TOOLTIP FIXED
+  function updateTooltip(event, key) {
+      if (!key) return;
+      
+      const mouseX = d3.pointer(event, g.node())[0];
+      
+      // Manual "invert" for scalePoint
+      const domain = x.domain();
+      const range = x.range();
+      const step = x.step();
+      
+      // Calculate closest index
+      let index = Math.round(mouseX / step);
+      // Clamp to valid bounds
+      index = Math.max(0, Math.min(index, domain.length - 1));
+      
+      const hoveredLabel = domain[index];
+      const xPos = x(hoveredLabel);
+      
+      const series = seriesData.find(s => s.key === key);
+      const dataPoint = series.values[index];
+
+      verticalLine.attr("x1", xPos).attr("x2", xPos).style("opacity", 1);
+
+      const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
+      tooltipText.text(`${hoveredLabel}: ${valText}`);
+      
+      const bbox = tooltipText.node().getBBox();
+      tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
+      
+      const [mx, my] = d3.pointer(event, svg.node());
+      let tx = mx + 10;
+      if (tx + bbox.width > CHART_WIDTH) tx = mx - bbox.width - 10;
+      
+      tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
+      tooltipGroup.style("display", null);
+  }
+
   const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
   const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
-  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", "10px").style("font-weight", "bold").style("fill", "#333");
+  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", `${FONT_SIZE}px`).style("font-weight", "bold").style("fill", "#333");
+}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
+
+function draw_group_4(data, choice, containerId) {
+  window._draw_group_4_lastCall = [data, choice, containerId];
+  
+  const container = d3.select(`#${containerId}`);
+  if (container.empty()) return;
+  
+  const svg = container.select('svg');
+  if (svg.empty()) return;
+
+  svg.selectAll('*').remove();
+
+  // Configurazione Font
+  const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
+
+  // 1. DATA PREP
+  const inputJSON = data[choice];
+  
+  if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
+     svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+     svg.append("text")
+      .text("No Data")
+      .attr("x", CHART_WIDTH/2)
+      .attr("y", CHART_HEIGHT/2)
+      .style("text-anchor", "middle")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("fill", COLORS.textPrimary);
+     return;
+  }
+
+  const timeline = inputJSON.timeline;
+  const ribbonPadding = inputJSON.config.ribbonPadding;
+  const topTargets = inputJSON.top_targets; 
+  const timeLabels = timeline.map(d => d.label);
+
+  const colorMap = {};
+  topTargets.forEach((target, i) => {
+      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+  });
+
+  // 2. SVG SETUP
+  svg
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+
+  // Sfondo trasparente per il reset della selezione
+  svg.append("rect")
+     .attr("width", CHART_WIDTH)
+     .attr("height", CHART_HEIGHT)
+     .attr("fill", "transparent")
+     .on("click", () => resetSelection());
+
+  // 3. LEGENDA "FLOW LAYOUT" (Anti-Sovrapposizione)
+  const legendGroup = svg.append('g').attr('class', 'legend-group');
+  
+  const iconSize = 10;
+  const itemGap = 10; // Spazio orizzontale tra item
+  const rowGap = 5;   // Spazio verticale tra righe
+  const textPadding = 4; // Spazio tra icona e testo
+  
+  // Larghezza disponibile per la legenda (tutta la larghezza meno i margini laterali)
+  const availableLegendWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+
+  let currentX = 0;
+  let currentY = 0;
+  let lineHeight = 0;
+
+  // Array per memorizzare le posizioni calcolate
+  const legendItemsPositions = [];
+
+  // A. Calcolo delle posizioni (Misurazione preventiva)
+  // Creiamo un testo invisibile per misurare la larghezza reale delle stringhe
+  const measureText = svg.append("text")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("font-weight", "bold")
+      .style("visibility", "hidden");
+
+  topTargets.forEach(key => {
+      measureText.text(key);
+      const textWidth = measureText.node().getComputedTextLength();
+      const itemWidth = iconSize + textPadding + textWidth;
+      const itemHeight = Math.max(iconSize, FONT_SIZE); // Altezza riga basata sul font
+
+      // Se l'elemento supera la larghezza disponibile, vai a capo (reset X, incrementa Y)
+      if (currentX + itemWidth > availableLegendWidth && currentX > 0) {
+          currentX = 0;
+          currentY += itemHeight + rowGap;
+      }
+
+      legendItemsPositions.push({
+          key: key,
+          x: currentX,
+          y: currentY,
+          width: itemWidth,
+          height: itemHeight
+      });
+
+      // Aggiorna altezza riga corrente e posizione X per il prossimo elemento
+      lineHeight = Math.max(lineHeight, itemHeight);
+      currentX += itemWidth + itemGap;
+  });
+  
+  measureText.remove(); // Pulizia
+  
+  // Altezza totale finale della legenda
+  const totalLegendHeight = currentY + lineHeight + 10; // +10 buffer
+
+  // B. Disegno della legenda
+  // Spostiamo il gruppo legenda nel margine superiore + chart margin left
+  legendGroup.attr("transform", `translate(${CHART_MARGIN.left}, ${CHART_MARGIN.top})`);
+
+  legendItemsPositions.forEach(pos => {
+      const gItem = legendGroup.append("g")
+          .datum(pos.key)
+          .attr("class", "legend-item")
+          .attr("transform", `translate(${pos.x}, ${pos.y})`)
+          .style("cursor", "pointer")
+          .on("click", (e) => { e.stopPropagation(); toggleSelection(pos.key); })
+          .on("mouseover", () => { if(!activeSeries) updateVisuals(pos.key, true); })
+          .on("mouseout", () => { if(!activeSeries) updateVisuals(null); });
+
+      // Icona colore
+      gItem.append("rect")
+          .attr("width", iconSize).attr("height", iconSize)
+          .attr("y", 0) 
+          .attr("rx", 2)
+          .attr("fill", colorMap[pos.key]);
+
+      // Testo
+      gItem.append("text")
+          .attr("x", iconSize + textPadding)
+          .attr("y", iconSize / 2) // Centro verticale rispetto all'icona
+          .attr("dy", "0.35em")
+          .style("font-size", `${FONT_SIZE}px`)
+          .style("font-weight", "bold")
+          .style("fill", COLORS.textPrimary)
+          .text(pos.key);
+  });
+
+  // 4. CHART DIMENSIONS (Adattive)
+  // Il grafico inizia DOPO la legenda
+  const chartTopY = CHART_MARGIN.top + totalLegendHeight;
+  const chartHeight = CHART_HEIGHT - chartTopY - CHART_MARGIN.bottom;
+  const chartWidth = availableLegendWidth; // Usa la stessa larghezza calcolata
+
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${chartTopY})`);
+
+  // 5. STACK LOGIC
+  const maxStack = d3.max(timeline, d => {
+      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
+      const totalPad = (d.order.length - 1) * ribbonPadding;
+      return totalVal + totalPad;
+  });
+
+  const seriesData = topTargets.map(key => {
+      return {
+          key: key,
+          values: timeline.map((step, i) => {
+              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
+              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
+              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
+              const gravityOffset = maxStack - currentStackHeight;
+              
+              let yCursor = gravityOffset;
+              let myY0 = 0; let myY1 = 0;
+
+              for (let k of step.order) {
+                  const val = step.values[k];
+                  if (k === key) {
+                      myY0 = yCursor;
+                      myY1 = yCursor + val;
+                  }
+                  yCursor += val + ribbonPadding;
+              }
+
+              return {
+                  x: step.label,
+                  y0: myY0, 
+                  y1: myY1,
+                  val: step.values[key]
+              };
+          })
+      };
+  });
+
+  // 6. SCALES
+  const x = d3.scalePoint()
+      .domain(timeLabels)
+      .range([0, chartWidth]);
+
+  const y = d3.scaleLinear()
+      .domain([0, maxStack])
+      .range([0, chartHeight]); 
+
+  const area = d3.area()
+      .x(d => x(d.x))
+      .y0(d => y(d.y0))
+      .y1(d => y(d.y1))
+      .curve(d3.curveBumpX);
+
+  // 7. DRAW CHART ELEMENTS
+
+  // Vertical Axis Line
+  const verticalLine = g.append("line")
+    .attr("y1", 0)
+    .attr("y2", chartHeight)
+    .attr("stroke", COLORS.axisLine)
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "3 3")
+    .style("opacity", 0)
+    .style("pointer-events", "none");
+
+  // Ribbons
+  const ribbonGroup = g.append("g");
+  let activeSeries = null; 
+
+  const ribbons = ribbonGroup.selectAll(".ribbon")
+      .data(seriesData)
+      .enter()
+      .append("path")
+      .attr("class", "ribbon")
+      .attr("d", d => area(d.values))
+      .attr("fill", d => colorMap[d.key])
+      .attr("fill-opacity", 0.9)
+      .attr("stroke", "white")
+      .attr("stroke-width", 0.5)
+      .style("cursor", "pointer");
+
+  // --- INTERACTION ---
+
+  function toggleSelection(key) {
+      activeSeries = (activeSeries === key) ? null : key;
+      updateVisuals(activeSeries);
+  }
+
+  function resetSelection() {
+      activeSeries = null;
+      updateVisuals(null);
+  }
+
+  function updateVisuals(highlightKey, isHover = false) {
+      if (!highlightKey) {
+          // Reset
+          ribbons.transition().duration(200)
+            .attr("fill", d => colorMap[d.key])
+            .attr("fill-opacity", 0.9)
+            .attr("stroke", "white");
+          
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", 1);
+          
+          if (!isHover) {
+            verticalLine.style("opacity", 0);
+            tooltipGroup.style("display", "none");
+          }
+      } else {
+          // Dim Others
+          ribbons.transition().duration(200)
+            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#e0e0e0")
+            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
+            .attr("stroke", d => d.key === highlightKey ? "#333" : "none");
+          
+          ribbons.filter(d => d.key === highlightKey).raise();
+
+          legendGroup.selectAll('.legend-item')
+             .transition().duration(200)
+             .style("opacity", function() {
+                 return d3.select(this).datum() === highlightKey ? 1 : 0.3;
+             });
+      }
+  }
+
+  // Events
+  ribbons
+    .on("click", (e, d) => { e.stopPropagation(); toggleSelection(d.key); updateTooltip(e, d.key); })
+    .on("mouseover", (e, d) => { if(!activeSeries) { updateVisuals(d.key, true); verticalLine.style("opacity", 1); updateTooltip(e, d.key); } })
+    .on("mousemove", (e, d) => { updateTooltip(e, activeSeries || d.key); })
+    .on("mouseout", () => { if(!activeSeries) { updateVisuals(null); verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); } });
+
+  // 8. AXES
+  
+  // Calculate dynamic font size for axis to avoid overlap
+  const numTicks = timeLabels.length;
+  const availableSpacePerTick = chartWidth / numTicks;
+  
+  let axisFontSize = FONT_SIZE;
+  // Se lo spazio è poco (es. < 30px per tick), riduci il font
+  if (availableSpacePerTick < 30) {
+      axisFontSize = Math.max(8, FONT_SIZE - 2);
+  }
+
+  g.selectAll(".axis-label")
+      .data(timeLabels)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d))
+      .attr("y", chartHeight + 15)
+      .style("text-anchor", "middle")
+      .style("font-size", `${axisFontSize}px`)
+      .style("fill", COLORS.textPrimary)
+      .text(d => d.split("-")[0]); 
+
+  // 9. TOOLTIP FIXED
+  function updateTooltip(event, key) {
+      if (!key) return;
+      
+      const mouseX = d3.pointer(event, g.node())[0];
+      
+      // FIX: scalePoint invert logic
+      const domain = x.domain();
+      const step = x.step();
+      
+      // Calculate closest index based on mouse X relative to step size
+      // Math.round(mouseX / step) works if range starts at 0
+      let index = Math.round(mouseX / step);
+      
+      // Clamp index within valid bounds
+      index = Math.max(0, Math.min(index, domain.length - 1));
+      
+      const hoveredLabel = domain[index];
+      const xPos = x(hoveredLabel);
+      
+      const series = seriesData.find(s => s.key === key);
+      const dataPoint = series.values[index];
+
+      verticalLine.attr("x1", xPos).attr("x2", xPos).style("opacity", 1);
+
+      const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
+      tooltipText.text(`${hoveredLabel}: ${valText}`);
+      
+      const bbox = tooltipText.node().getBBox();
+      tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
+      
+      const [mx, my] = d3.pointer(event, svg.node());
+      let tx = mx + 10;
+      if (tx + bbox.width > CHART_WIDTH) tx = mx - bbox.width - 10;
+      
+      tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
+      tooltipGroup.style("display", null);
+  }
+
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
+  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
+  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", `${FONT_SIZE}px`).style("font-weight", "bold").style("fill", "#333");
+}window.addEventListener('resize', () => { if (window._draw_group_4_lastCall) draw_group_4(...window._draw_group_4_lastCall); });
+
+function draw_group_4(data, choice, containerId) {
+  window._draw_group_4_lastCall = [data, choice, containerId];
+  
+  const container = d3.select(`#${containerId}`);
+  if (container.empty()) return;
+  
+  const svg = container.select('svg');
+  if (svg.empty()) return;
+
+  svg.selectAll('*').remove();
+
+  // Configurazione Font
+  const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
+
+  // 1. DATA PREP
+  const inputJSON = data[choice];
+  
+  if (!inputJSON || !inputJSON.timeline || inputJSON.timeline.length === 0) {
+     svg.attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+     svg.append("text")
+      .text("No Data")
+      .attr("x", CHART_WIDTH/2)
+      .attr("y", CHART_HEIGHT/2)
+      .style("text-anchor", "middle")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("fill", COLORS.textPrimary);
+     return;
+  }
+
+  const timeline = inputJSON.timeline;
+  const ribbonPadding = inputJSON.config.ribbonPadding;
+  const topTargets = inputJSON.top_targets; 
+  const timeLabels = timeline.map(d => d.label);
+
+  const colorMap = {};
+  topTargets.forEach((target, i) => {
+      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+  });
+
+  // 2. SVG SETUP
+  svg
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+
+  svg.append("rect")
+     .attr("width", CHART_WIDTH)
+     .attr("height", CHART_HEIGHT)
+     .attr("fill", "transparent")
+     .on("click", () => resetSelection());
+
+  // 3. SAFE LEGEND CALCULATION (Fix Sovrapposizione)
+  const legendGroup = svg.append('g').attr('class', 'legend-group');
+  
+  const iconSize = 10;
+  const itemGap = 25; // Aumentato lo spazio tra gli elementi
+  const rowGap = 5;
+  const textPadding = 6;
+  
+  // Larghezza disponibile
+  const availableLegendWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+
+  let currentX = 0;
+  let currentY = 0;
+  let lineHeight = Math.max(iconSize, FONT_SIZE) + rowGap;
+
+  // Elemento invisibile per misurare
+  const measureText = svg.append("text")
+      .style("font-size", `${FONT_SIZE}px`)
+      .style("font-weight", "bold")
+      .style("visibility", "hidden");
+
+  const legendItemsPositions = [];
+
+  topTargets.forEach(key => {
+      measureText.text(key);
+      
+      // FIX CRITICO: Fallback se la misurazione fallisce (ritorna 0 in modali nascosti)
+      let textWidth = measureText.node().getComputedTextLength();
+      if (textWidth <= 1) {
+          // Stima: circa 60% della dimensione del font per ogni carattere
+          textWidth = key.length * (FONT_SIZE * 0.65);
+      }
+
+      // Larghezza totale dell'item: Icona + Padding + Testo
+      const itemWidth = iconSize + textPadding + textWidth;
+
+      // Wrapping: Se supera la larghezza, vai a capo
+      if (currentX + itemWidth > availableLegendWidth && currentX > 0) {
+          currentX = 0;
+          currentY += lineHeight;
+      }
+
+      legendItemsPositions.push({
+          key: key,
+          x: currentX,
+          y: currentY,
+          width: itemWidth
+      });
+
+      // Avanza X
+      currentX += itemWidth + itemGap;
+  });
+  
+  measureText.remove(); 
+  
+  // Altezza totale finale
+  const totalLegendHeight = currentY + lineHeight + 5; 
+
+  // B. Rendering Legenda
+  // Spostiamo la legenda nel margine superiore, centrando le righe se necessario
+  // Qui usiamo un allineamento a sinistra standard per robustezza
+  legendGroup.attr("transform", `translate(${CHART_MARGIN.left}, ${CHART_MARGIN.top})`);
+
+  legendItemsPositions.forEach(pos => {
+      const gItem = legendGroup.append("g")
+          .datum(pos.key)
+          .attr("class", "legend-item")
+          .attr("transform", `translate(${pos.x}, ${pos.y})`)
+          .style("cursor", "pointer")
+          .on("click", (e) => { e.stopPropagation(); toggleSelection(pos.key); })
+          .on("mouseover", () => { if(!activeSeries) updateVisuals(pos.key, true); })
+          .on("mouseout", () => { if(!activeSeries) updateVisuals(null); });
+
+      gItem.append("rect")
+          .attr("width", iconSize).attr("height", iconSize)
+          .attr("y", -1) 
+          .attr("rx", 2)
+          .attr("fill", colorMap[pos.key]);
+
+      gItem.append("text")
+          .attr("x", iconSize + textPadding)
+          .attr("y", iconSize / 2)
+          .attr("dy", "0.35em")
+          .style("font-size", `${FONT_SIZE}px`)
+          .style("font-weight", "bold")
+          .style("fill", COLORS.textPrimary)
+          .text(pos.key);
+  });
+
+  // 4. CHART DIMENSIONS (Adattive)
+  const chartTopY = CHART_MARGIN.top + totalLegendHeight;
+  const chartHeight = CHART_HEIGHT - chartTopY - CHART_MARGIN.bottom;
+  // Usiamo la larghezza piena disponibile
+  const chartWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+
+  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${chartTopY})`);
+
+  // 5. STACK LOGIC
+  const maxStack = d3.max(timeline, d => {
+      const totalVal = Object.values(d.values).reduce((a, b) => a + b, 0);
+      const totalPad = (d.order.length - 1) * ribbonPadding;
+      return totalVal + totalPad;
+  });
+
+  const seriesData = topTargets.map(key => {
+      return {
+          key: key,
+          values: timeline.map((step, i) => {
+              const currentStepValueSum = Object.values(step.values).reduce((a,b) => a+b, 0);
+              const currentStepPaddingSum = (step.order.length - 1) * ribbonPadding;
+              const currentStackHeight = currentStepValueSum + currentStepPaddingSum;
+              const gravityOffset = maxStack - currentStackHeight;
+              
+              let yCursor = gravityOffset;
+              let myY0 = 0; let myY1 = 0;
+
+              for (let k of step.order) {
+                  const val = step.values[k];
+                  if (k === key) {
+                      myY0 = yCursor;
+                      myY1 = yCursor + val;
+                  }
+                  yCursor += val + ribbonPadding;
+              }
+
+              return {
+                  x: step.label,
+                  y0: myY0, 
+                  y1: myY1,
+                  val: step.values[key]
+              };
+          })
+      };
+  });
+
+  // 6. SCALES
+  const x = d3.scalePoint()
+      .domain(timeLabels)
+      .range([0, chartWidth]);
+
+  const y = d3.scaleLinear()
+      .domain([0, maxStack])
+      .range([0, chartHeight]); 
+
+  const area = d3.area()
+      .x(d => x(d.x))
+      .y0(d => y(d.y0))
+      .y1(d => y(d.y1))
+      .curve(d3.curveBumpX);
+
+  // 7. DRAW CHART ELEMENTS
+
+  // Vertical Axis Line
+  const verticalLine = g.append("line")
+    .attr("y1", 0)
+    .attr("y2", chartHeight)
+    .attr("stroke", COLORS.axisLine)
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "3 3")
+    .style("opacity", 0)
+    .style("pointer-events", "none");
+
+  // Ribbons
+  const ribbonGroup = g.append("g");
+  let activeSeries = null; 
+
+  const ribbons = ribbonGroup.selectAll(".ribbon")
+      .data(seriesData)
+      .enter()
+      .append("path")
+      .attr("class", "ribbon")
+      .attr("d", d => area(d.values))
+      .attr("fill", d => colorMap[d.key])
+      .attr("fill-opacity", 0.9)
+      .attr("stroke", "white")
+      .attr("stroke-width", 0.5)
+      .style("cursor", "pointer");
+
+  // --- INTERACTION ---
+
+  function toggleSelection(key) {
+      activeSeries = (activeSeries === key) ? null : key;
+      updateVisuals(activeSeries);
+  }
+
+  function resetSelection() {
+      activeSeries = null;
+      updateVisuals(null);
+  }
+
+  function updateVisuals(highlightKey, isHover = false) {
+      if (!highlightKey) {
+          // Reset
+          ribbons.transition().duration(200)
+            .attr("fill", d => colorMap[d.key])
+            .attr("fill-opacity", 0.9)
+            .attr("stroke", "white");
+          
+          legendGroup.selectAll('.legend-item').transition().duration(200).style("opacity", 1);
+          
+          if (!isHover) {
+            verticalLine.style("opacity", 0);
+            tooltipGroup.style("display", "none");
+          }
+      } else {
+          // Dim Others
+          ribbons.transition().duration(200)
+            .attr("fill", d => d.key === highlightKey ? colorMap[d.key] : "#e0e0e0")
+            .attr("fill-opacity", d => d.key === highlightKey ? 1 : 0.3)
+            .attr("stroke", d => d.key === highlightKey ? "#333" : "none");
+          
+          ribbons.filter(d => d.key === highlightKey).raise();
+
+          legendGroup.selectAll('.legend-item')
+             .transition().duration(200)
+             .style("opacity", function() {
+                 return d3.select(this).datum() === highlightKey ? 1 : 0.3;
+             });
+      }
+  }
+
+  // Events
+  ribbons
+    .on("click", (e, d) => { e.stopPropagation(); toggleSelection(d.key); updateTooltip(e, d.key); })
+    .on("mouseover", (e, d) => { if(!activeSeries) { updateVisuals(d.key, true); verticalLine.style("opacity", 1); updateTooltip(e, d.key); } })
+    .on("mousemove", (e, d) => { updateTooltip(e, activeSeries || d.key); })
+    .on("mouseout", () => { if(!activeSeries) { updateVisuals(null); verticalLine.style("opacity", 0); tooltipGroup.style("display", "none"); } });
+
+  // 8. AXES
+  
+  // Smart Axis Font Size
+  const numTicks = timeLabels.length;
+  const availableSpacePerTick = chartWidth / numTicks;
+  let axisFontSize = FONT_SIZE;
+  if (availableSpacePerTick < 25) axisFontSize = Math.max(8, FONT_SIZE - 2);
+
+  g.selectAll(".axis-label")
+      .data(timeLabels)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d))
+      .attr("y", chartHeight + 15)
+      .style("text-anchor", "middle")
+      .style("font-size", `${axisFontSize}px`)
+      .style("fill", COLORS.textPrimary)
+      .text(d => d.split("-")[0]); 
+
+  // 9. TOOLTIP
+  function updateTooltip(event, key) {
+      if (!key) return;
+      
+      const mouseX = d3.pointer(event, g.node())[0];
+      const step = x.step();
+      let index = Math.round(mouseX / step);
+      const domain = x.domain();
+      index = Math.max(0, Math.min(index, domain.length - 1));
+      
+      const hoveredLabel = domain[index];
+      const xPos = x(hoveredLabel);
+      
+      const series = seriesData.find(s => s.key === key);
+      const dataPoint = series.values[index];
+
+      verticalLine.attr("x1", xPos).attr("x2", xPos).style("opacity", 1);
+
+      const valText = dataPoint ? `${dataPoint.val.toFixed(1)}%` : "0%";
+      // Tooltip Text: "Label: Value"
+      tooltipText.text(`${hoveredLabel}: ${valText}`);
+      
+      const bbox = tooltipText.node().getBBox();
+      tooltipRect.attr("width", bbox.width + 10).attr("height", bbox.height + 6);
+      
+      const [mx, my] = d3.pointer(event, svg.node());
+      let tx = mx + 10;
+      if (tx + bbox.width > CHART_WIDTH) tx = mx - bbox.width - 10;
+      
+      tooltipGroup.attr("transform", `translate(${tx}, ${my - 20})`);
+      tooltipGroup.style("display", null);
+  }
+
+  const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
+  const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#333").attr("stroke-width", 0.5).attr("rx", 2);
+  const tooltipText = tooltipGroup.append("text").attr("x", 5).attr("y", 12).style("font-size", `${FONT_SIZE}px`).style("font-weight", "bold").style("fill", "#333");
 }

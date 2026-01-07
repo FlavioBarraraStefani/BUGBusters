@@ -175,7 +175,7 @@ async function draw_group_2(data, choice, containerId) {
            .text("Error loading map")
            .attr("x", width/2)
            .attr("y", height/2)
-           .style("font-size", `${labelFontSize}px`);
+           .style("font-size", `${chartLabelFontSize}px`);
         return;
     }
   }
@@ -190,7 +190,7 @@ async function draw_group_2(data, choice, containerId) {
        .text("No Data")
        .attr("x", width/2)
        .attr("y", height/2)
-       .style("font-size", `${labelFontSize}px`);
+       .style("font-size", `${chartLabelFontSize}px`);
     return;
   }
 
@@ -273,7 +273,7 @@ async function draw_group_2(data, choice, containerId) {
   // 8a. Halo (White stroke outline)
   titleGroup.append("text")
     .text(groupInfo.region)
-    .style("font-size", `${labelFontSize}px`) // Use constant
+    .style("font-size", `${chartLabelFontSize}px`) // Use constant
     .style("font-weight", "bold")
     .style("stroke", "white")
     .style("stroke-width", "3px")
@@ -284,7 +284,7 @@ async function draw_group_2(data, choice, containerId) {
   // 8b. Actual Text
   titleGroup.append("text")
     .text(groupInfo.region)
-    .style("font-size", `${labelFontSize}px`) // Use constant
+    .style("font-size", `${chartLabelFontSize}px`) // Use constant
     .style("font-weight", "bold")
     .style("fill", COLORS.textPrimary);
 
@@ -299,6 +299,6 @@ async function draw_group_2(data, choice, containerId) {
   const tooltipText = tooltipGroup.append("text")
     .attr("x", 5)
     .attr("y", 12)
-    .style("font-size", `${labelFontSize - 2}px`) // Slightly smaller than main labels
+    .style("font-size", `${chartLabelFontSize - 2}px`) // Slightly smaller than main labels
     .style("font-weight", "bold");
 }

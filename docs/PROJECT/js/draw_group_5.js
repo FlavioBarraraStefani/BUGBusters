@@ -32,7 +32,7 @@ function draw_group_5(data, choice, containerId) {
       .attr("x", innerWidth/2)
       .attr("y", innerHeight/2)
       .style("text-anchor", "middle")
-      .style("font-size", `${labelFontSize}px`);
+      .style("font-size", `${chartLabelFontSize}px`);
      return;
   }
 
@@ -83,8 +83,8 @@ function draw_group_5(data, choice, containerId) {
     .attr("x", d => x1(d.key) + x1.bandwidth() / 2)
     .attr("y", d => y(d.value) - 4)
     .attr("text-anchor", "middle")
-    // Slightly smaller than standard labelFontSize
-    .style("font-size", `${Math.max(8, labelFontSize - 3)}px`) 
+    // Slightly smaller than standard chartLabelFontSize
+    .style("font-size", `${Math.max(8, chartLabelFontSize - 3)}px`) 
     .style("fill", COLORS.textPrimary) 
     .style("font-weight", "bold")
     .text(d => d.value > 0 ? d.value : "");
@@ -156,7 +156,7 @@ function draw_group_5(data, choice, containerId) {
     .call(d3.axisBottom(x0))
     .attr("color", COLORS.axisLine) // Color of the line and ticks
     .selectAll("text")
-      .style("font-size", `${labelFontSize}px`)
+      .style("font-size", `${chartLabelFontSize}px`)
       .style("fill", COLORS.textPrimary);
 
   // X Title
@@ -164,7 +164,7 @@ function draw_group_5(data, choice, containerId) {
     .attr("x", innerWidth / 2)
     .attr("y", innerHeight + 35)
     .attr("text-anchor", "middle")
-    .style("font-size", `${labelFontSize}px`)
+    .style("font-size", `${chartLabelFontSize}px`)
     .style("fill", COLORS.textPrimary)
     .text("Casualties per Attack (Bin)");
 
@@ -173,7 +173,7 @@ function draw_group_5(data, choice, containerId) {
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")))
     .attr("color", COLORS.axisLine) // Color of the line and ticks
     .selectAll("text")
-      .style("font-size", `${labelFontSize - 1}px`)
+      .style("font-size", `${chartLabelFontSize - 1}px`)
       .style("fill", COLORS.textPrimary);
 
   // Y Title
@@ -182,7 +182,7 @@ function draw_group_5(data, choice, containerId) {
     .attr("y", -35)
     .attr("x", -innerHeight / 2)
     .attr("text-anchor", "middle")
-    .style("font-size", `${labelFontSize}px`)
+    .style("font-size", `${chartLabelFontSize}px`)
     .style("fill", COLORS.textPrimary)
     .text("Number of Attacks");
 
@@ -206,7 +206,7 @@ function draw_group_5(data, choice, containerId) {
       item.append("text")
           .attr("x", 12).attr("y", 7)
           .text(label)
-          .style("font-size", `${labelFontSize}px`)
+          .style("font-size", `${chartLabelFontSize}px`)
           .style("fill", COLORS.textPrimary);
   };
 
@@ -224,7 +224,7 @@ function draw_group_5(data, choice, containerId) {
   const tooltipText = tooltipGroup.append("text")
     .attr("x", 5)
     .attr("y", 12)
-    .style("font-size", `${labelFontSize}px`)
+    .style("font-size", `${chartLabelFontSize}px`)
     .style("font-weight", "bold")
     .style("fill", "#333");
 }

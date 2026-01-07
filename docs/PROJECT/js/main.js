@@ -63,6 +63,7 @@ const COLORS = {
 
 //FONT SIZE OF EACH CHART LABEL
 const labelFontSize = 16//px
+const chartLabelFontSize = 10//px
 const isSmallScreen = () => window.innerWidth < 576;
 
 // Aspect ratio 3:2 (width:height)

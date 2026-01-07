@@ -246,7 +246,7 @@ function draw_group_1(data, choice, containerId) {
   // DATA CHECK
   const groupData = data[choice];
   if (!groupData || groupData.length === 0) {
-    g.append("text").text("No Data Available").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle").style("font-size", labelFontSize + "px").style("fill", COLORS.textPrimary);
+    g.append("text").text("No Data Available").attr("x", innerWidth/2).attr("y", innerHeight/2).style("text-anchor", "middle").style("font-size", chartLabelFontSize + "px").style("fill", COLORS.textPrimary);
     return;
   }
 
@@ -297,14 +297,14 @@ function draw_group_1(data, choice, containerId) {
     .call(d3.axisBottom(xScale).tickFormat(d3.format("d")).ticks(5))
     .attr('color', COLORS.axisLine)
     .selectAll("text")
-      .style("font-size", labelFontSize + "px")
+      .style("font-size", chartLabelFontSize + "px")
       .style("fill", COLORS.textPrimary);
 
   g.append('g')
     .call(d3.axisLeft(yScale).ticks(5).tickFormat(d3.format("~s")))
     .attr('color', COLORS.axisLine)
     .selectAll("text")
-      .style("font-size", labelFontSize + "px")
+      .style("font-size", chartLabelFontSize + "px")
       .style("fill", COLORS.textPrimary);
     
   // LABELS
@@ -312,7 +312,7 @@ function draw_group_1(data, choice, containerId) {
     .attr("x", innerWidth / 2)
     .attr("y", innerHeight + localMargin.bottom - 5)
     .style("text-anchor", "middle")
-    .style("font-size", labelFontSize + "px")
+    .style("font-size", chartLabelFontSize + "px")
     .style("fill", COLORS.textPrimary)
     .text("Years");
 
@@ -321,7 +321,7 @@ function draw_group_1(data, choice, containerId) {
     .attr("y", -localMargin.left + 15)
     .attr("x", -innerHeight / 2)
     .style("text-anchor", "middle")
-    .style("font-size", labelFontSize + "px")
+    .style("font-size", chartLabelFontSize + "px")
     .style("fill", COLORS.textPrimary)
     .text("Cumulative Attacks");
 
@@ -338,7 +338,7 @@ function draw_group_1(data, choice, containerId) {
 
   const tooltipGroup = focus.append('g').attr('class', 'tooltip-container');
   const tooltipRect = tooltipGroup.append('rect').attr('fill', 'rgba(255, 255, 255, 0.95)').attr('stroke', '#ccc').attr('rx', 4);
-  const tooltipText = tooltipGroup.append('text').attr('x', 9).attr('dy', '.35em').style("font-size", (labelFontSize - 2) + "px").style("fill", "#333");
+  const tooltipText = tooltipGroup.append('text').attr('x', 9).attr('dy', '.35em').style("font-size", (chartLabelFontSize - 2) + "px").style("fill", "#333");
 
   g.append('rect')
     .attr('class', 'overlay')

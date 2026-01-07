@@ -31,7 +31,7 @@ function draw_group_3(data, choice, containerId) {
      .attr("x", innerWidth/2)
      .attr("y", innerHeight/2)
      .style("text-anchor", "middle")
-     .style("font-size", `${labelFontSize}px`);
+     .style("font-size", `${chartLabelFontSize}px`);
     return;
   }
 
@@ -154,8 +154,8 @@ function draw_group_3(data, choice, containerId) {
 
   // 7. LABELS
   const texts = g.append("g")
-    // Usa labelFontSize (leggermente ridotto per il wrap se necessario, ma leggibile)
-    .style("font-size", `${Math.max(9, labelFontSize - 2)}px`) 
+    // Usa chartLabelFontSize (leggermente ridotto per il wrap se necessario, ma leggibile)
+    .style("font-size", `${Math.max(9, chartLabelFontSize - 2)}px`) 
     .style("fill", COLORS.textPrimary)
     .style("pointer-events", "none")
     .selectAll("text")
@@ -178,7 +178,7 @@ function draw_group_3(data, choice, containerId) {
      .attr("x", CHART_MARGIN.left + labelPadding) // Allineato col blocco di sinistra
      .attr("y", CHART_MARGIN.top + headerY)
      .attr("text-anchor", "middle")
-     .style("font-size", `${labelFontSize}px`)
+     .style("font-size", `${chartLabelFontSize}px`)
      .style("font-weight", "bold")
      .style("fill", "#666")
      .text("ATTACKS");
@@ -187,7 +187,7 @@ function draw_group_3(data, choice, containerId) {
      .attr("x", CHART_WIDTH - CHART_MARGIN.right - labelPadding) // Allineato col blocco di destra
      .attr("y", CHART_MARGIN.top + headerY)
      .attr("text-anchor", "middle")
-     .style("font-size", `${labelFontSize}px`)
+     .style("font-size", `${chartLabelFontSize}px`)
      .style("font-weight", "bold")
      .style("fill", "#666")
      .text("TARGETS");
@@ -203,7 +203,7 @@ function draw_group_3(data, choice, containerId) {
   const tooltipText = tooltipGroup.append("text")
     .attr("x", 4)
     .attr("y", 9)
-    .style("font-size", `${Math.max(8, labelFontSize - 4)}px`) // Piccolo per il tooltip
+    .style("font-size", `${Math.max(8, chartLabelFontSize - 4)}px`) // Piccolo per il tooltip
     .style("font-family", "sans-serif");
 
   function showTooltip(event, text) {
