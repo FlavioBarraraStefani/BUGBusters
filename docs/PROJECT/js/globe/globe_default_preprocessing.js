@@ -25,7 +25,7 @@ function precomputeColormap() {
   }
 }
 
-const BIN_RESOLUTION = 3.0; 
+const BIN_RESOLUTION = window.innerWidth < 576 ? 6.0 : 3.0; 
 
 let allTassels = []; 
 const yearLookup = {}; 
@@ -287,7 +287,7 @@ function createLegendGlobe() {
         .attr('height', LEGEND_LENGTH)
         .attr('fill', 'url(#colormap-gradient-html)')
         .attr('stroke', '#333')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 1);
       
       legendSvg.append('g')
         .attr('class', 'colormap-axis')
@@ -302,7 +302,7 @@ function createLegendGlobe() {
         .attr('height', LEGEND_THICKNESS)
         .attr('fill', 'url(#colormap-gradient-html)')
         .attr('stroke', '#333')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 1);
       
       legendSvg.append('g')
         .attr('class', 'colormap-axis')
@@ -380,7 +380,7 @@ function updateLegendTicks(year,transition=true) {
         .range([0, LEGEND_LENGTH]);
       
       axis = d3.axisBottom(axisScale)
-        .ticks(5)
+        .ticks(4)
         .tickFormat(d3.format('.0f'));
     }
     
@@ -389,7 +389,8 @@ function updateLegendTicks(year,transition=true) {
       .duration(transition ? playIntervalMs : 0)
       .call(axis)
       .selectAll('text')
-      .style('font-size', `${labelFontSize}px`);
+      .style('font-size', `${labelFontSize}px`)
+      .attr('stroke-width', 1);
 }
 
   // Function to update legend visibility based on year

@@ -319,14 +319,14 @@ function right_chart_target(svg) {
           .on('mouseover', (e, d) => updateVisuals(d.key, true))
           .on('mouseout', () => updateVisuals(null))
           .on('click', (e, d) => {
-            if (typeof stopAnimation === 'function') stopAnimation();
-            if (typeof showModal === 'function') showModal("target", d.key);
+            stopAnimation();
+            showModal("target", d.key);
             e.stopPropagation();
           })
           .call(e => e.transition().duration(transitionDurationMs).style('opacity', 1)),
 
           update => update.text(d => d.text)
-          .transition().duration(duration).ease(d3.easeLinear)
+          .transition().duration(duration/3*2).ease(d3.easeLinear)
           .attr('x', rightPadAxis + 5)
           .attr('y', d => d.y)
           .style('fill', d => d.color)

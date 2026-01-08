@@ -309,7 +309,7 @@ footer {
    Time Control Styles
    =========================== */
 #timeline-container {
-  max-width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0.5rem 1rem;
   z-index: 100;
