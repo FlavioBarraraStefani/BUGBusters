@@ -51,7 +51,7 @@ function draw_attack_1(data, choice, containerId) {
   const hoverRadius = Math.max(7, fontSize * 0.8);
 
   // Adjust radius to account for labels
-  const labelSpace = fontSize *5;
+  const labelSpace = fontSize *3;
   const centerX = CHART_WIDTH / 2;
   const centerY = CHART_HEIGHT / 2;
   const radius = Math.min(centerX, centerY) - labelSpace;
@@ -149,24 +149,24 @@ function draw_attack_1(data, choice, containerId) {
     
     // Posizionamenti specifici per feature
     if (feature.key === 'success') {
-      // Success Rate (alto)
+      // Success Rate (alto) - reduced padding
       anchor = 'middle';
       xOffset = 0;
-      yOffsetTitle = -fontSize * 0.7;
+      yOffsetTitle = -fontSize * 0.15;
     } else if (feature.key === 'nkill') {
-      // Avg Kills (destra)
-      anchor = 'start';
-      xOffset = fontSize * 0.7;
+      // Avg Kills (destra) - centered text, larger padding
+      anchor = 'middle';
+      xOffset = fontSize * 2;
       yOffsetTitle = 0;
-    } else if (feature.key === 'nwound') {
-      // Avg Wounded (basso)
+    } else if (feature.key === 'propvalue') {
+      // Avg Damage (basso) - reduced padding
       anchor = 'middle';
       xOffset = 0;
-      yOffsetTitle = fontSize * 1.5;
-    } else if (feature.key === 'propvalue') {
-      // Avg Damage (sinistra)
-      anchor = 'start';
-      xOffset = -fontSize * 3.5;
+      yOffsetTitle = fontSize * 0.3;
+    } else if (feature.key === 'nwound') {
+      // Avg Wounded (sinistra) - centered text, larger padding
+      anchor = 'middle';
+      xOffset = -fontSize * 2;
       yOffsetTitle = 0;
     }
 
@@ -178,20 +178,18 @@ function draw_attack_1(data, choice, containerId) {
       .attr('letter-spacing', '0.3').style('pointer-events', 'none');
 
     // Rimuovi simbolo del dollaro da Avg Damage
-    let cleanLabel = feature.label.replace(/\s*\(\$\)/g, '');
+    let cleanLabel = feature.label;
     const words = cleanLabel.split(' ');
 
-    // Logica per andare a capo
-        if (words.length > 1) {
-        // Calcola offset verticale in base alla posizione
+    // Logica per andare a capo:
+    // - Top/Bottom (success, propvalue): single line
+    // - Sides (nkill, nwound): two lines
+    const isSideLabel = (feature.key === 'nkill' || feature.key === 'nwound');
+    
+    if (words.length > 1 && isSideLabel) {
+        // Side labels: split into two lines
         let firstLineDy = '-0.3em';
         let secondLineDy = '1.1em';
-        
-        // Per Avg Wounded (in basso), riduci lo spazio tra le righe
-        if (feature.key === 'nwound') {
-            firstLineDy = '-1.5em';
-            secondLineDy = '0.95em';
-        }
         
         // PRIMA RIGA (spostata leggermente in alto)
         textLabel.append('tspan')
@@ -205,7 +203,7 @@ function draw_attack_1(data, choice, containerId) {
             .attr('dy', secondLineDy)
             .text(words.slice(1).join(' '));
     } else {
-        // Se è una parola sola, scrivila normalmente al centro
+        // Top/Bottom labels or single word: keep as single line
         textLabel.text(cleanLabel);
     }
 
@@ -239,13 +237,13 @@ function draw_attack_1(data, choice, containerId) {
       maxValAnchor = 'start';
       maxValXOffset = maxValOffset;
       maxValYOffset = 0;
-    } else if (feature.key === 'nwound') {
-      // Avg Wounded (basso)
+    } else if (feature.key === 'propvalue') {
+      // Avg Damage (basso)
       maxValAnchor = 'middle';
       maxValXOffset = 0;
       maxValYOffset = maxValOffset * 1.3;
-    } else if (feature.key === 'propvalue') {
-      // Avg Damage (sinistra)
+    } else if (feature.key === 'nwound') {
+      // Avg Wounded (sinistra)
       maxValAnchor = 'end';
       maxValXOffset = -maxValOffset;
       maxValYOffset = 0;
@@ -261,8 +259,8 @@ function draw_attack_1(data, choice, containerId) {
   const avgValues = [
     normalize(globalAverage.success_rate, 'success'),
     normalize(globalAverage.avg_kills, 'nkill'),
-    normalize(globalAverage.avg_wounded, 'nwound'),
-    normalize(globalAverage.avg_damage, 'propvalue')
+    normalize(globalAverage.avg_damage, 'propvalue'),
+    normalize(globalAverage.avg_wounded, 'nwound')
   ];
   
   const avgCoords = avgValues.map((value, i) => {
@@ -284,8 +282,8 @@ function draw_attack_1(data, choice, containerId) {
     const values = [
       normalize(metrics.success_rate, 'success'),
       normalize(metrics.avg_kills, 'nkill'),
-      normalize(metrics.avg_wounded, 'nwound'),
-      normalize(metrics.avg_damage, 'propvalue')
+      normalize(metrics.avg_damage, 'propvalue'),
+      normalize(metrics.avg_wounded, 'nwound')
     ];
     const pathCoords = values.map((value, i) => {
       const angle = angleSlice * i - Math.PI / 2;
@@ -301,7 +299,7 @@ function draw_attack_1(data, choice, containerId) {
       .attr('filter', 'url(#glow)');
 
     pathCoords.forEach((coord, i) => {
-      const actualValue = [metrics.success_rate, metrics.avg_kills, metrics.avg_wounded, metrics.avg_damage][i];
+      const actualValue = [metrics.success_rate, metrics.avg_kills, metrics.avg_damage, metrics.avg_wounded][i];
       const fmt = (v) => {
         if (v >= 1000000) return (v/1000000).toFixed(1) + 'M';
         if (v >= 1000) return (v/1000).toFixed(0) + 'k';

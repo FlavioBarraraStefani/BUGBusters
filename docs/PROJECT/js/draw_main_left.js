@@ -33,6 +33,27 @@ let animationFrame = null;
 
 let transitionDurationMs = 500;
 
+// Animate slider from current value to target value over duration ms
+function animateSliderTo(targetValue, duration = transitionDurationMs) {
+  const startVal = +slider.property('value');
+  const startTime = performance.now();
+  
+  function animate(now) {
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const eased = t * (2 - t); // easeOutQuad
+    const currentVal = Math.round(startVal + (targetValue - startVal) * eased);
+    
+    title.property('value', currentVal);
+    slider.property('value', currentVal);
+    
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
 let stepAnimation = null; //function to step animation (optional year param)
 let stepAnimationRight = () => {}; //function to step right animation (optional year param)
 
@@ -78,7 +99,7 @@ function updateSlider() {
 
   const y = years[currentIndex] <= sliderRange[1] ? years[currentIndex] : sliderRange[1];
   title.property('value', y);
-  slider.property('value', y);
+  animateSliderTo(y, playIntervalMs * 0.8);
   if (currentIndex >= years.length) {
     stopAnimation();
     return;
@@ -286,6 +307,10 @@ function draw_main_left(categoryInfo, containerId) {
     .on('mouseout', () => {})
     .attr('cursor', 'default');
 
+  if (currentCat != previousCat) {
+    animateSliderTo(sliderRange[0], transitionDurationMs);
+  }
+
   setTimeout(() => {
   let nextFn = globe_default;
   
@@ -319,7 +344,7 @@ function draw_main_left(categoryInfo, containerId) {
   const finalValue = Math.max(sliderRange[0], Math.min(snapped, sliderRange[1]));
   
   title.property('value', finalValue);
-  slider.property('value', finalValue);
+  animateSliderTo(finalValue, transitionDurationMs);
   nextFn();
   
   //first render after transition
