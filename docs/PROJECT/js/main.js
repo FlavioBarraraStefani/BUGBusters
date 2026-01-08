@@ -304,6 +304,14 @@ async function initChartsAfterAuth() {
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'assassination', container: 'plot_attack_assassination_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_5' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_5' },
+    
+    // ===== TARGET CATEGORY =====
+    { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
+    { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
+    { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
+    { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
+    { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
+    
     /*
         // ===== TARGET CATEGORY =====
         // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
