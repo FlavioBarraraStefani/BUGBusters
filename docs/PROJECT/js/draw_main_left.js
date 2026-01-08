@@ -83,9 +83,7 @@ function updateSlider() {
     stopAnimation();
     return;
   }
-  return y;
-
-  
+  return y;  
 }
 
 window.addEventListener('resize', () => { if (window._draw_main_left_lastCall) draw_main_left(...window._draw_main_left_lastCall); });
@@ -167,7 +165,7 @@ function draw_main_left(categoryInfo, containerId) {
 
       const year = +this.value;
       title.property('value', year);
-      stepAnimation(); stepAnimationRight(false);
+      stepAnimation(false); stepAnimationRight(false);
     });
 
     playBtn.on('click', function () {
@@ -176,9 +174,6 @@ function draw_main_left(categoryInfo, containerId) {
 
 
 
-    //----------//
-    // Enable drag to rotate globe
-    //----------//
     //----------//
     // Enable drag to rotate globe
     //----------//
@@ -206,20 +201,11 @@ function draw_main_left(categoryInfo, containerId) {
     //----------//
     // Enable zoom to scale globe
     //----------//
-    baseScale = projection.scale(); 
+    baseScale = projection.scale(); // store initial scale
     const zoom = d3.zoom()
-      .scaleExtent([0.85, 4])
-      // --- NEW: Add this filter ---
-      .filter(function(event) {
-        // If touch: only allow if 2 fingers (pinch). Ignore single touch (rotation).
-        if (event.touches) return event.touches.length >= 2;
-        // If mouse: only allow wheel (prevents click-drag from interfering with rotation)
-        return event.type === 'wheel';
-      })
-      // ----------------------------
+      .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
-
         const t = projection.translate();
         g.select('circle.ocean-bg')
           .attr('r', projection.scale())
@@ -229,10 +215,7 @@ function draw_main_left(categoryInfo, containerId) {
         needsUpdate = true;
         requestAnimationFrame(updateGlobe);
       });
-
-    svg.call(zoom)
-    .style("touch-action", "none") 
-    .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+    svg.call(zoom);
 
     //----------//
     // Auto-rotation loop
@@ -277,16 +260,19 @@ function draw_main_left(categoryInfo, containerId) {
     } else if (previousCat === 'group') { //remove group coloring
       g.selectAll('path.country').attr('d', path)
         .transition().duration(transitionDurationMs)
-        .style('fill', COLORS.GLOBE.country.fill);
+        .attr('fill', COLORS.GLOBE.country.fill);
 
       d3.select("body").select("#globe-tooltip").remove()
 
-
     } else if (previousCat === 'attack') {
-      //clean attack coloring
+      g.selectAll('path.country').attr('d', path)
+        .transition().duration(transitionDurationMs)
+        .attr('fill', COLORS.GLOBE.country.fill);
+
+      d3.select("body").select("#globe-tooltip").remove()        
     } else if (previousCat === 'target') {
-      g.selectAll('defs.neon-defs').remove();                    //remove prefabs
-      g.select('g.target-balls')                                 //remove sphere balls
+      g.selectAll('defs.neon-defs').remove(); 
+      g.select('g.target-balls') 
         .transition().duration(transitionDurationMs)
         .attr('opacity', 0)
         .on('end', function () { d3.select(this).remove(); });
@@ -335,6 +321,8 @@ function draw_main_left(categoryInfo, containerId) {
   title.property('value', finalValue);
   slider.property('value', finalValue);
   nextFn();
-
+  
+  //first render after transition
+  stepAnimation(true);
 }, transitionDurationMs);
 }

@@ -186,5 +186,4 @@ function globe_target() {
 
   rotateOnStart = true;
   playIntervalMs = 1000;
-  stepAnimation();
 }

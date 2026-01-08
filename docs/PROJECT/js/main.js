@@ -352,7 +352,14 @@ async function initChartsAfterAuth() {
     },
     {
       file: 
-        "PROJECT/CATEGORIES/globe_categories.json",
+        "PROJECT/CATEGORIES/globe_attacks_counts.json",
+      func: (data) => {
+        window._attackData = data;
+      }, choice: null, container: "body"
+    },
+    {
+      file: 
+        "PROJECT/CATEGORIES/globe_targets.json",
       func: (data) => {
         precomputeTargetData(data);
       }, choice: null, container: "body"

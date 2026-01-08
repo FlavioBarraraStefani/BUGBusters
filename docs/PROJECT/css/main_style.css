@@ -369,17 +369,29 @@ footer {
   height: 100%;
 }
 
-
-/* ===========================
-   REMOVE AFTER DEBUG
-   =========================== 
-   
-svg {
-  border: 5px solid #ddd;
-}
-*/
-
 svg {
   background: transparent;
   background-color: transparent;
+}
+
+/* ===========================
+   ROTATIONAL MEDIA QUERIES
+   =========================== */
+
+/*hide them when in landscape mode on small height screens*/
+#navbar, #footer {
+  transition: transform 0.4s ease-in-out;
+  position: relative; 
+  z-index: 1030;     
+}
+
+@media (max-height: 576px) and (orientation: landscape) {
+  
+  #navbar {
+    transform: translateY(-100%);
+  }
+
+  #footer {
+    transform: translateY(100%);
+  }
 }

@@ -360,7 +360,7 @@ function createLegendGlobe() {
 
 
   // Function to update legend ticks based on current year
-function updateLegendTicks(year) {
+function updateLegendTicks(year,transition=true) {
     const fixedMin = yearMinCounts[year] || 0;
     const fixedMax = yearMaxCounts[year] || 1;
     
@@ -386,18 +386,18 @@ function updateLegendTicks(year) {
     
     legendSvg.select('g.colormap-axis')
       .transition()
-      .duration(playIntervalMs)
+      .duration(transition ? playIntervalMs : 0)
       .call(axis)
       .selectAll('text')
       .style('font-size', `${labelFontSize}px`);
 }
 
   // Function to update legend visibility based on year
-function updateLegendVisibility(year) {
+function updateLegendVisibility(year, transition = true) {
     if (year === sliderRange[0]) {
-      hideColormapLegend(true);
+      hideColormapLegend(transition);
     } else {
-      showColormapLegend(true);
-      updateLegendTicks(year);
+      showColormapLegend(transition);
+      updateLegendTicks(year,transition);
     }
 }

@@ -15,7 +15,7 @@ function globe_default() {
       .style("padding", "8px 12px")
       .style("border-radius", "4px")
       .style("pointer-events", "none") 
-      .style("font-size", labelFontSize + "px") 
+      .style("font-size", `${labelFontSize}px`) 
       .style("z-index", "9999")
       .style("display", "none");
   }
@@ -185,12 +185,12 @@ function globe_default() {
   // Start up animation
   updateTassels(currentYear, { transition: true, duration: 1000 }); 
   
-  updateLegendVisibility(currentYear);
+  updateLegendVisibility(currentYear, true);
 
-  stepAnimation = () => {
+  stepAnimation = (transition=true) => {
     const year = +slider.property('value');
-    updateTassels(year, { transition: true, duration: playIntervalMs });
-    updateLegendVisibility(year);
+    updateTassels(year, { transition: transition, duration: playIntervalMs });
+    updateLegendVisibility(year,transition);
   };
 
   updateGlobe = () => {
@@ -207,5 +207,5 @@ function globe_default() {
   };
 
   rotateOnStart = false;
-  playIntervalMs = 250;
+  playIntervalMs = 400;
 }

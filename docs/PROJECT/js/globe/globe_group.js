@@ -40,7 +40,7 @@ function globe_group() {
       .style('opacity', 0)
       .style('z-index', 99)
       .style('font-family', 'sans-serif')
-      .style('font-size', '12px');
+      .style('font-size', `${labelFontSize}px`);
   }
 
   // Helper: Logic to render the HTML content
@@ -113,7 +113,7 @@ function globe_group() {
     if (!dominantGroup) {
       // Grey out if no data
       const reset = animate ? sel.transition().duration(playIntervalMs) : sel;
-      reset.style('fill', COLORS.GLOBE.country.fill)
+      reset.attr('fill', COLORS.GLOBE.country.fill)
            .attr('data-group', null);
       
       // Clean up events but KEEP mouseout to ensure state resets if we leave
@@ -134,7 +134,7 @@ function globe_group() {
     const finalFill = d3.interpolateRgb(baseColor, targetColor)(t);
 
     const activeSel = animate ? sel.transition().duration(playIntervalMs) : sel;
-    activeSel.style('fill', finalFill)
+    activeSel.attr('fill', finalFill)
              .attr('data-group', dominantGroup);
 
     // Attach Interactions
@@ -172,13 +172,13 @@ function globe_group() {
   // =============================
 
   // This function is called by your main loopAnimation
-  stepAnimation = () => {
+  stepAnimation = (transition = true) => {
     const year = +slider.property('value');
     g.selectAll('path.country')
       .attr('d', path)
       .each(function(d) {
         // True = animate color transitions
-        updateCountryShape(d3.select(this), d, year, true); 
+        updateCountryShape(d3.select(this), d, year, transition); 
       });
   };
 
@@ -191,7 +191,6 @@ function globe_group() {
     g.selectAll('path.country')
       .attr('d', path)
       .each(function(d) {
-         // False = instant updates (no transition)
          updateCountryShape(d3.select(this), d, year, false); 
       });
   };
@@ -199,7 +198,6 @@ function globe_group() {
   // Initial call to set everything up
   rotateOnStart = true;
   playIntervalMs = 300;
-  stepAnimation();
 }
 
 

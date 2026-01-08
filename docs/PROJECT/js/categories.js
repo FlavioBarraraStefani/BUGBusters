@@ -121,11 +121,16 @@ function setCanvasSizes() {
   // Don't calculate if main content is hidden
   if (mainContent.style.display === 'none') return;
 
+  // --- NEW: Check for Mobile Landscape Mode ---
+  // Matches the CSS media query we added earlier
+  const isMobileLandscape = window.matchMedia("(max-height: 576px) and (orientation: landscape)").matches;
+
   // Get heights of fixed elements
-  const navbarHeight = navbar.offsetHeight ;
+  // If isMobileLandscape is true, force height to 0. Otherwise, use real height.
+  const navbarHeight = isMobileLandscape ? 0 : navbar.offsetHeight;
   const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
-  const footerHeight = footer ? footer.offsetHeight : 0;
+  const footerHeight = (footer && !isMobileLandscape) ? footer.offsetHeight : 0;
 
   // Position category header directly below navbar
   if (categoryHeader) {
