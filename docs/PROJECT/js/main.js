@@ -287,12 +287,12 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_2' },
     { file: 'PROJECT/ATTACKS/rose_chart.json', func: draw_attack_2, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_2' },
     
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'explosion', container: 'plot_attack_explosion_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'armed_assault', container: 'plot_attack_armed_assault_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'assassination', container: 'plot_attack_assassination_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_3' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_3, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_3' },
-
+    { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'explosion', container: 'plot_attack_explosion_3' },
+    { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'armed_assault', container: 'plot_attack_armed_assault_3' },
+    { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'assassination', container: 'plot_attack_assassination_3' },
+    { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_3' },
+    { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_3' },
+    
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'explosion', container: 'plot_attack_explosion_4' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'armed_assault', container: 'plot_attack_armed_assault_4' },
     { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'assassination', container: 'plot_attack_assassination_4' },

@@ -190,9 +190,6 @@ function globe_group() {
 
     g.selectAll('path.country')
       .attr('d', path)
-      .each(function(d) {
-         updateCountryShape(d3.select(this), d, year, false); 
-      });
   };
 
   // Initial call to set everything up

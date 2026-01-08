@@ -35,18 +35,18 @@ function draw_target_1(data, choice, containerId) {
 
   // Region Abbreviations
   const regionAbbreviations = {
-      "Middle East & North Africa": "MENA",
-      "Central America & Caribbean": "Cent. Am. & Carib",
-      "South America": "S. America",
-      "North America": "N. America",
-      "Sub-Saharan Africa": "Sub-Saharan Afr.",
-      "Australasia & Oceania": "Oceania",
-      "Southeast Asia": "SE Asia",
-      "East Asia": "E. Asia",
-      "South Asia": "S. Asia",
-      "Central Asia": "Cent. Asia",
-      "Western Europe": "W. Europe",
-      "Eastern Europe": "E. Europe"
+      "Middle East & North Africa":   "MENA",
+      "Central America & Caribbean":  "Cent. Am. & Carib",
+      "South America":                "South America",
+      "North America":                "North America",
+      "Sub-Saharan Africa":           "Sub-Saharan Africa",
+      "Australasia & Oceania":        "Oceania",
+      "Southeast Asia":               "Southeast Asia",
+      "East Asia":                    "East Asia",
+      "South Asia":                   "South Asia",
+      "Central Asia":                 "Central Asia",
+      "Western Europe":               "Western Europe",
+      "Eastern Europe":               "Eastern Europe"
   };
   const getShortName = (name) => regionAbbreviations[name] || name;
 
@@ -116,9 +116,28 @@ function draw_target_1(data, choice, containerId) {
   // 4. SCALES & COLOR
   const x = d3.scaleLinear().domain([0, 1]).range([0, innerWidth]);
 
-  const color = d3.scaleOrdinal()
-      .domain(allCategories)
-      .range(COLORS.targetColors || d3.schemeTableau10);
+  // Color mapping: map CATEGORIES.target pairs to COLORS.targetColors; other categories use COLORS.defaultComparison
+  const color = (() => {
+      const map = new Map();
+      const tableau = d3.schemeTableau10;
+
+        CATEGORIES.target.forEach((k, i) => {
+              map.set(k, COLORS.targetColors[i] || tableau[i % tableau.length]);
+          });
+
+      const defaultOther =  COLORS.defaultComparison
+
+      allCategories.forEach(k => {
+          if (!map.has(k)) map.set(k, defaultOther);
+      });
+
+      // Explicit fallback for a generic 'others' key
+      if (!map.has('others')) map.set('others', defaultOther);
+
+      return d3.scaleOrdinal()
+          .domain(allCategories)
+          .range(allCategories.map(k => map.get(k)));
+  })();
 
   const otherCategories = allCategories.filter(c => c !== choice);
   const stackKeys = [choice, ...otherCategories];
@@ -169,10 +188,11 @@ function draw_target_1(data, choice, containerId) {
               
               // Text Content
               tooltipText.text("");
-              tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").style("font-weight", "bold").text(`Target: ${seriesKey}`);
+              tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").style("font-weight", "bold").text(`Target: ${seriesKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`);
               tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text(`Continent: ${d.data.continent}`);
               tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text(`Region: ${d.data.region}`);
-              tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text(`Percentage: ${val}%`);
+              tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text("Percentage: ");
+              tooltipText.append("tspan").attr("font-weight", "bold").text(`${val}%`);
 
               // Resize Rect
               const bbox = tooltipText.node().getBBox();
@@ -185,7 +205,7 @@ function draw_target_1(data, choice, containerId) {
 
               // --- DYNAMIC POSITIONING (Boundary Detection) ---
               const [mx, my] = d3.pointer(event, svg.node());
-              const offset = 15;
+              const offset = 5;
               
               let tx = mx + offset;
               let ty = my + offset;
@@ -209,16 +229,6 @@ function draw_target_1(data, choice, containerId) {
           .on("mouseout", function() {
               if (!activeSeries) updateVisuals(null);
               tooltipGroup.style("display", "none");
-          })
-          .on("click", function(event) {
-              event.stopPropagation();
-              if (activeSeries === seriesKey) {
-                  activeSeries = null;
-                  updateVisuals(null);
-              } else {
-                  activeSeries = seriesKey;
-                  updateVisuals(seriesKey);
-              }
           });
   });
 
@@ -261,6 +271,7 @@ function draw_target_1(data, choice, containerId) {
           .style("font-size", "10px")
           .style("fill", "#d32f2f")
           .style("font-weight", "bold")
+          .style("text-anchor", "middle")
           .text(`Global Avg: ${(globalAvg * 100).toFixed(1)}%`);
   }
 

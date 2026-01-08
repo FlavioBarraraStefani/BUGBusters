@@ -307,47 +307,41 @@ function draw_main_left(categoryInfo, containerId) {
     .on('mouseout', () => {})
     .attr('cursor', 'default');
 
-  if (currentCat != previousCat) {
-    animateSliderTo(sliderRange[0], transitionDurationMs);
-  }
+  let nextFn = globe_default;
+    
+    timeAxisBinning = 1;
+    sliderRange = [1969, 2020];
+
+    switch (currentCat) {
+      case 'group':
+        sliderRange = [1975, 2020];
+        nextFn = globe_group;
+        break;
+        case 'attack':
+          nextFn = globe_attack;
+          sliderRange = [1969, 2020];
+        break;
+      case 'target':
+        nextFn = globe_target;
+        timeAxisBinning = 5;
+        sliderRange = [1974, 2019];
+        break;
+    }
+
+    slider.property('min', sliderRange[0]);
+    slider.property('max', sliderRange[1]);
+    slider.property('step', timeAxisBinning);
+    
+    if (currentCat != previousCat)
+      animateSliderTo(sliderRange[0], transitionDurationMs);
 
   setTimeout(() => {
-  let nextFn = globe_default;
-  
-  timeAxisBinning = 1;
-  sliderRange = [1969, 2020];
 
-  switch (currentCat) {
-    case 'group':
-      sliderRange = [1975, 2020];
-      nextFn = globe_group;
-      break;
-      case 'attack':
-        nextFn = globe_attack;
-        sliderRange = [1969, 2020];
-      break;
-    case 'target':
-      nextFn = globe_target;
-      timeAxisBinning = 5;
-      sliderRange = [1974, 2019];
-      break;
-  }
+    nextFn();
 
-  slider.property('min', sliderRange[0]);
-  slider.property('max', sliderRange[1]);
-  slider.property('step', timeAxisBinning);
 
-  const currentVal = +title.property('value');  
-  const offset = currentVal - sliderRange[0];
-  const snapped = sliderRange[0] + Math.floor(offset / timeAxisBinning) * timeAxisBinning;
-  
-  const finalValue = Math.max(sliderRange[0], Math.min(snapped, sliderRange[1]));
-  
-  title.property('value', finalValue);
-  animateSliderTo(finalValue, transitionDurationMs);
-  nextFn();
-  
-  //first render after transition
-  stepAnimation(true);
-}, transitionDurationMs);
+    
+    //first render after transition
+    stepAnimation(true);
+  }, transitionDurationMs);
 }

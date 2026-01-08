@@ -179,9 +179,6 @@ function globe_attack() {
 
     g.selectAll('path.country')
       .attr('d', path)
-      .each(function(d) {
-        updateCountryShape(d3.select(this), d, year, false);
-      });
   };
 
   // Initial Render
