@@ -14,7 +14,7 @@ function draw_group_5(data, choice, containerId) {
   // 1. SETUP DIMENSIONS
   // Use global CHART_MARGIN
   const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
-  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
+  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom - chartLabelFontSize * 3; // Extra space for x-axis title
 
   svg
     .attr('width', '100%')
@@ -162,7 +162,7 @@ function draw_group_5(data, choice, containerId) {
   // X Title
   g.append("text")
     .attr("x", innerWidth / 2)
-    .attr("y", innerHeight + 35)
+    .attr("y", CHART_HEIGHT - chartLabelFontSize *3)
     .attr("text-anchor", "middle")
     .style("font-size", `${chartLabelFontSize}px`)
     .style("fill", COLORS.textPrimary)

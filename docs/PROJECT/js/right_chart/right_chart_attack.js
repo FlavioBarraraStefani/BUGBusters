@@ -42,8 +42,8 @@ function right_chart_attack(svg) {
     leftPadAxis = RIGHT_CHART_MARGIN;
     rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 20;
   } else {
-    leftPadAxis = RIGHT_CHART_MARGIN;
-    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 150;
+    leftPadAxis = RIGHT_CHART_MARGIN+10;
+    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 160;
   }
 
   // Ensure container exists

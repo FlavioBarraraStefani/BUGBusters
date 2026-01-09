@@ -36,8 +36,6 @@ function preload_attack_3() {
     // Check DOM just in case
     if (document.getElementById("attack3-svg-cache")) return;
 
-    console.log("Starting Attack 3 Preload...");
-
     const hiddenContainer = d3.select("body").append("svg")
       .attr("id", "attack3-svg-cache")
       .style("position", "absolute")
@@ -73,7 +71,6 @@ function preload_attack_3() {
     });
 
     await Promise.all(loadPromises);
-    console.log("Attack 3 Icons Preloaded Successfully");
   })();
 
   return window._attack3_preload_promise;

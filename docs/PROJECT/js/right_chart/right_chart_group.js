@@ -67,7 +67,7 @@ function right_chart_group(svg) {
 
   // --- NEW: Define Top Margin ---
   const fontSize = labelFontSize * (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen()) ? 1 : 1.5);
-  const MARGIN_TOP = fontSize;
+  const MARGIN_TOP = fontSize * 2; // Increased top margin for title
   
   // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
@@ -100,7 +100,7 @@ function right_chart_group(svg) {
       .attr('text-anchor', 'middle') // Centers text horizontally
       .style('font-weight', 'bold')
       .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
-      .attr('y', MARGIN_TOP / 2*3)    // Center vertically within the top margin
+      .attr('y', MARGIN_TOP * 0.75)    // Center vertically within the top margin
       .style('font-size', `${fontSize}px`) 
       .text("Probability Distribution of attacks")
       .style('opacity', 0)
