@@ -10,15 +10,41 @@ function right_chart_attack(svg) {
   let lastMouseX = null; // <--- ADDED
 
   // --- 1. Layout Calculations ---
-  leftPadAxis = RIGHT_CHART_MARGIN + 20;
+  // Set padding differently when legend is shown
 
-  const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
+  const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.2);
   const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
-  const MARGIN_TOP = (showLegend ? 30 : 0)+ preferredSize;
 
-  rightPadAxis = !showLegend ?
-    RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 180 :
-    RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+  // Precompute legend rows so MARGIN_TOP can depend on actual legend height
+  const legendFontSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
+  let legend_rows = 0;
+  if (showLegend) {
+    const availableWidth = RIGHT_CHART_WIDTH - 20;
+    const itemSpacingEstimate = 15;
+    let currentRowWidth = 0;
+    legend_rows = 1;
+    attackTypes.forEach(type => {
+      const label = type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const approxLabelWidth = label.length * (legendFontSize * 0.6);
+      const approxItemWidth = 12 /* swatch */ + 6 /* gap */ + approxLabelWidth + 8 /* padding */;
+      if (currentRowWidth > 0 && (currentRowWidth + approxItemWidth) > availableWidth) {
+        legend_rows++;
+        currentRowWidth = approxItemWidth + itemSpacingEstimate;
+      } else {
+        currentRowWidth += approxItemWidth + itemSpacingEstimate;
+      }
+    });
+  }
+
+  const MARGIN_TOP = (showLegend ? preferredSize * 1.2 * Math.max(1, legend_rows) : 0) + preferredSize;
+
+  if (showLegend) {
+    leftPadAxis = RIGHT_CHART_MARGIN;
+    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 20;
+  } else {
+    leftPadAxis = RIGHT_CHART_MARGIN;
+    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 150;
+  }
 
   // Ensure container exists
   let container = svg.select('.attacks-container');
@@ -31,12 +57,7 @@ function right_chart_attack(svg) {
       .attr('fill', 'transparent')
       .style('pointer-events', 'all');
 
-    // 2. Create Axis Group
-    const yGroup = container.append('g')
-      .attr('class', 'y-axis-attack')
-      .style('font-family', 'sans-serif')
-      .attr('opacity', 0)
-      .attr('transform', `translate(${leftPadAxis}, -${RIGHT_CHART_HEIGHT})`);
+    // Note: Y axis removed — thresholds (dotted lines) are used instead
 
     // 3. Hover Line
     container.append('line')
@@ -128,32 +149,53 @@ function right_chart_attack(svg) {
     const minPxPerTick = labelFontSize + 2;
     const numTicks = Math.max(2, Math.min(5, Math.floor(availableHeight / minPxPerTick)));
 
-    // Update Y-Axis
-    const yAxis = d3.axisLeft(y)
-      .ticks(numTicks)
-      .tickFormat(d3.format(".2s"));
+    // Y axis removed: ensure any existing axis group is removed
+    container.selectAll('.y-axis-attack').remove();
 
-    const yAxisGroup = container.select('.y-axis-attack');
+    // --- HORIZONTAL THRESHOLD LINES ---
+    // Draw up to 3 largest thresholds that fit within yMax
+    const thresholds = [100, 500, 1000, 5000, 10000, 20000, 50000];
+    const availableThresholds = thresholds.filter(t => t <= yMax).sort((a, b) => a - b);
+    const thresholdsToShow = availableThresholds.slice(-3);
 
-    if (yAxisGroup.attr('opacity') == 0) {
-      yAxisGroup.call(yAxis);
-      yAxisGroup.transition().duration(transitionDurationMs).ease(d3.easeCubicOut)
-        .attr('opacity', 1)
-        .attr('transform', `translate(${leftPadAxis}, 0)`);
-    } else {
-      yAxisGroup.transition().duration(duration)
-        .attr('transform', `translate(${leftPadAxis}, 0)`)
-        .attr('opacity', 1)
-        .call(yAxis);
-    }
+    const tGroups = container.selectAll('.threshold-group')
+      .data(thresholdsToShow, d => d);
 
-    yAxisGroup.selectAll('.tick text')
-      .style('font-size', `${labelFontSize}px`)
-      .attr('fill', COLORS.RIGHT_CHART.textPrimary);
+    tGroups.join(
+      enter => enter.append('g').attr('class', 'threshold-group')
+        .attr('opacity', 0)
+        .call(g => {
+          g.append('line')
+            .attr('class', 'threshold-line')
+            .attr('x1', leftPadAxis)
+            .attr('x2', rightPadAxis)
+            .attr('y1', d => y(d))
+            .attr('y2', d => y(d))
+            .attr('stroke', COLORS.RIGHT_CHART.axisLine || '#888')
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '3 3')
+            .style('opacity', 0.12);
 
-    yAxisGroup.selectAll('path, line')
-      .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-      .attr('stroke-width', 2);
+          g.append('text')
+            .attr('class', 'threshold-label')
+            .attr('x', leftPadAxis)
+            .attr('text-anchor', 'start')
+            .attr('y', d => y(d) - 4)
+            .style('font-size', `${preferredSize * 0.8}px`)
+            .attr('fill', COLORS.defaultComparison)
+            .style('opacity', 1)
+            .text(d => String(d));
+        })
+        .transition().duration(transitionDurationMs).attr('opacity', 1),
+      update => update.call(g => {
+        g.select('line').transition().duration(duration)
+          .attr('x1', leftPadAxis).attr('x2', rightPadAxis)
+          .attr('y1', d => y(d)).attr('y2', d => y(d));
+        g.select('text').transition().duration(duration)
+          .attr('x', leftPadAxis - 8).attr('y', d => y(d) - 4);
+      }),
+      exit => exit.transition().duration(duration).style('opacity', 0).remove()
+    );
 
 
     // Line Generator
@@ -266,7 +308,7 @@ function right_chart_attack(svg) {
             .attr('class', 'attack-line')
             .attr('fill', 'none')
             .attr('stroke', d => d.color)
-            .attr('stroke-width', 3)
+            .attr('stroke-width', 1.5)
             .attr('stroke-linecap', 'round')
             .style('cursor', 'pointer')
             .on('mousemove', updateTooltip)
@@ -307,48 +349,104 @@ function right_chart_attack(svg) {
       );
 
     // --- LINE LABELS ---
-    const labelData = (!showLegend && !isStart) ? series : [];
+    const nameLabelData = (!showLegend && !isStart) ? series : [];
+    const valueLabelData = (showLegend && !isStart) ? series : [];
 
-    // Join Labels
+    // Join Name Labels (right-side textual names when legend is hidden)
     const labels = container.selectAll('.line-label')
-      .data(labelData, d => d.type)
+      .data(nameLabelData, d => d.type)
       .join(
         enter => enter.append('text')
-        .attr('class', 'line-label new-label')
-        .attr('x', rightPadAxis + 10)
-        .attr('dy', '0.35em')
-        .style('font-family', 'sans-serif')
-        .style('font-weight', 'bold')
-        .style('font-size', `${labelFontSize * (isSmallScreen() ? 0.75 : 1.2)}px`)
-        .attr('fill', d => d.color)
-        .attr('opacity', 0)
-        .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`)
-        .text(d => d.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
-        .style('cursor', 'pointer')
-        .on('mousemove', updateTooltip)
-        .on('mouseleave', hideTooltip)
-        .on('click', function(event, d) {
-          if (typeof stopAnimation === 'function') stopAnimation();
-          if (typeof showModal === 'function') showModal("attack", d.type);
-          event.stopPropagation();
-        }),
+          .attr('class', 'line-label new-label')
+          .attr('x', rightPadAxis + 10)
+          .attr('dy', '0.35em')
+          .style('font-family', 'sans-serif')
+          .style('font-weight', 'bold')
+          .style('font-size', `${preferredSize}px`)
+          .attr('fill', d => d.color)
+          .attr('opacity', 0)
+          .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`)
+          .text(d => d.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
+          .style('cursor', 'pointer')
+          .on('mousemove', updateTooltip)
+          .on('mouseleave', hideTooltip)
+          .on('click', function(event, d) {
+            if (typeof stopAnimation === 'function') stopAnimation();
+            if (typeof showModal === 'function') showModal("attack", d.type);
+            event.stopPropagation();
+          }),
         update => update
-        .attr('x', rightPadAxis + 10)
-        .attr('fill', d => d.color)
-        .style('cursor', 'pointer')
-        .on('mousemove', updateTooltip),
+          .attr('x', rightPadAxis + 10)
+          .attr('fill', d => d.color)
+          .style('cursor', 'pointer')
+          .on('mousemove', updateTooltip),
         exit => exit.transition().duration(duration).style('opacity', 0).remove()
       );
 
-    // Label Collision Logic
+    // Helper: format edge values as 3-char right-aligned strings
+    const formatEdgeValue = (v) => {
+      const n = +v || 0;
+      let s;
+      if (n >= 1000) {
+        s = Math.round(n / 1000) + 'K';
+      } else {
+        s = Math.round(n).toString();
+      }
+      return s.padStart(3, ' ');
+    };
+
+    // Helper: parse displayed value back to numeric
+    const parseDisplayedValue = (txt) => {
+      if (!txt) return 0;
+      const t = txt.trim();
+      if (t.endsWith('K')) {
+        const k = parseInt(t.slice(0, -1)) || 0;
+        return k * 1000;
+      }
+      return parseInt(t.replace(/,/g, '')) || 0;
+    };
+
+    // Join Value Labels (numeric right-side values when legend is shown)
+    // Move them further right and remove animated counting — simple rewrite
+    const valueLabels = container.selectAll('.line-value-label')
+      .data(valueLabelData, d => d.type)
+      .join(
+        enter => enter.append('text')
+          .attr('class', 'line-value-label new-value-label')
+          .attr('x', rightPadAxis +15)
+          .attr('text-anchor', 'end')
+          .style('font-family', 'monospace')
+          .attr('dy', '0.35em')
+          .style('font-weight', 'bold')
+          .style('font-size', `${preferredSize*0.8}px`)
+          .attr('fill', d => d.color)
+          .attr('opacity', 0)
+          .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`)
+          .text(formatEdgeValue(0))
+          .style('cursor', 'pointer')
+          .on('mousemove', updateTooltip)
+          .on('mouseleave', hideTooltip)
+          .on('click', function(event, d) {
+            if (typeof stopAnimation === 'function') stopAnimation();
+            if (typeof showModal === 'function') showModal("attack", d.type);
+            event.stopPropagation();
+          }),
+        update => update
+          .attr('x', rightPadAxis + 30)
+          .attr('text-anchor', 'end')
+          .style('font-family', 'monospace')
+          .attr('fill', d => d.color)
+          .style('cursor', 'pointer')
+          .on('mousemove', updateTooltip),
+        exit => exit.transition().duration(duration).style('opacity', 0).remove()
+      );
+
+    // Label Collision Logic (compute ideal positions from series end values)
     const nodes = [];
-    labels.each(function(d) {
+    series.forEach(d => {
       const lastVal = d.values[d.values.length - 1];
       const idealY = (lastVal && !isNaN(lastVal.value)) ? y(lastVal.value) : y(0);
-      nodes.push({
-        id: d.type,
-        y: idealY
-      });
+      nodes.push({ id: d.type, y: idealY });
     });
 
     const spacing = labelFontSize * 1.4;
@@ -371,7 +469,7 @@ function right_chart_attack(svg) {
       iter++;
     }
 
-    // Apply Label Positions
+    // Apply Positions to Name Labels
     labels.each(function(d) {
       const el = d3.select(this);
       const node = nodes.find(n => n.id === d.type);
@@ -388,6 +486,33 @@ function right_chart_attack(svg) {
           .attr('y', finalY)
           .attr('transform', 'translate(0, 0)')
           .style('opacity', 1);
+      }
+    });
+
+    // Apply Positions and Animated Values to Value Labels
+    valueLabels.each(function(d) {
+      const el = d3.select(this);
+      const node = nodes.find(n => n.id === d.type);
+      const finalY = node ? node.y : 0;
+
+      // Determine end numeric value
+      const lastVal = d.values[d.values.length - 1];
+      const endValue = lastVal && !isNaN(lastVal.value) ? +lastVal.value : 0;
+
+      // No animated counting: simply set final text and transition position/opacity
+      const display = formatEdgeValue(endValue);
+      if (el.classed('new-value-label')) {
+        el.text(display)
+          .attr('y', finalY)
+          .transition().duration(transitionDurationMs).ease(d3.easeCubicOut)
+          .attr('opacity', 1)
+          .attr('transform', 'translate(0, 0)')
+          .on('end', () => el.classed('new-value-label', false));
+      } else {
+        el.text(display);
+        el.transition().duration(duration).ease(d3.easeLinear)
+          .attr('y', finalY)
+          .attr('transform', 'translate(0, 0)');
       }
     });
 
@@ -428,7 +553,7 @@ function right_chart_attack(svg) {
               .style('font-family', 'sans-serif')
               .style('font-weight', 'bold')
               .style('font-size', `${legendFontSize}px`)
-              .attr('fill', COLORS.RIGHT_CHART.textPrimary)
+              .attr('fill', d => d.color)
               .text(d => d.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
 
             return g;

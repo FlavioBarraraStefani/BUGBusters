@@ -85,7 +85,7 @@ const COLORS = {
 }
 
 //FONT SIZE OF EACH CHART LABEL
-const labelFontSize = 16//px
+const labelFontSize = 14//px
 const chartLabelFontSize = 10//px
 const isSmallScreen = () => window.innerWidth < 576;
 const isXLScreen = () => window.innerWidth >= 1200;
