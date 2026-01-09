@@ -141,7 +141,7 @@ function right_chart_group(svg) {
     const labelPadding = 5;
     // When labels are on top (not stacked), gap must include label height + padding
     const labelOnTop = !STACKED_LAYOUT_PREFERRED;
-    const gap = labelOnTop ? (labelPadding + fontSize) : 70;
+    const gap = labelOnTop ? (labelPadding + fontSize) : 0;
     const totalGaps = (data.length * gap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 

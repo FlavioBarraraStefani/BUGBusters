@@ -55,7 +55,7 @@ function animateSliderTo(targetValue, duration = transitionDurationMs) {
   requestAnimationFrame(animate);
 }
 
-let stepAnimation = null; //function to step animation (optional year param)
+let stepAnimation = () => {}; //function to step animation (optional year param)
 let stepAnimationRight = () => {}; //function to step right animation (optional year param)
 
 

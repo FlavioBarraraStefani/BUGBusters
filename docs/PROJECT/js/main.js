@@ -315,19 +315,7 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'assassination', container: 'plot_attack_assassination_3' },
     { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_3' },
     { file: 'PROJECT/ATTACKS/waffle_data.json', func: draw_attack_3, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_3' },
-    
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'explosion', container: 'plot_attack_explosion_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'armed_assault', container: 'plot_attack_armed_assault_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'assassination', container: 'plot_attack_assassination_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_4' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_4, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_4' },
-
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'explosion', container: 'plot_attack_explosion_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'armed_assault', container: 'plot_attack_armed_assault_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'assassination', container: 'plot_attack_assassination_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'hostage_taking', container: 'plot_attack_hostage_taking_5' },
-    { file: 'comparing_categories/bar_chart.json', func: draw_attack_5, choice: 'infrastructure_attack', container: 'plot_attack_infrastructure_attack_5' },
-    
+        
     // ===== TARGET CATEGORY =====
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
@@ -335,39 +323,6 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
     
-    /*
-        // ===== TARGET CATEGORY =====
-        // For each choice in ['military_police', 'government', 'business', 'citizens', 'transportations']
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'military_police', container: 'plot_target_military_police_1' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'citizens', container: 'plot_target_citizens_1' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
-    
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'military_police', container: 'plot_target_military_police_2' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'citizens', container: 'plot_target_citizens_2' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
-    
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'military_police', container: 'plot_target_military_police_3' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'government', container: 'plot_target_government_3' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'business', container: 'plot_target_business_3' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'citizens', container: 'plot_target_citizens_3' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_3, choice: 'transportations', container: 'plot_target_transportations_3' },
-    
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'military_police', container: 'plot_target_military_police_4' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'government', container: 'plot_target_government_4' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'business', container: 'plot_target_business_4' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'citizens', container: 'plot_target_citizens_4' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_4, choice: 'transportations', container: 'plot_target_transportations_4' },
-    
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'military_police', container: 'plot_target_military_police_5' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'government', container: 'plot_target_government_5' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'business', container: 'plot_target_business_5' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'citizens', container: 'plot_target_citizens_5' },
-        { file: 'comparing_categories/bar_chart.json', func: draw_target_5, choice: 'transportations', container: 'plot_target_transportations_5' },
-    */
     // ===== MAIN PAGE CHARTS =====
     { file: "PROJECT/CATEGORIES/globe.json", func: (data) => { window.globe_data = data }, choice: null, container: "body" },
     {
@@ -491,21 +446,24 @@ document.addEventListener("DOMContentLoaded", function() {
     function checkScreen() {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const isLandscape = width > height;
         
-        // Detect if it is a mobile device (rough check using touch capability + width)
-        // You can adjust 992px to 768px depending on what you consider "mobile"
-        const isMobile = width < 992; 
+        // Calculate aspect ratio to detect elongated screens
+        const aspectRatio = width / height;
+        const isElongated = aspectRatio > 1.5; // Screen is significantly wider than tall
+        
+        // A rotated phone has an elongated ratio AND a small height
+        const MAX_PHONE_HEIGHT = 600; // If height is under this when elongated, it's likely a rotated phone
+        const isRotatedPhone = isElongated && height < MAX_PHONE_HEIGHT;
 
         let errorType = null;
 
-        // SCENARIO 1: Phone is Rotated (Mobile + Landscape)
-        if (isMobile && isLandscape) {
-            errorType = 'rotation';
-        }
-        // SCENARIO 2: Screen is just too small (e.g. Galaxy Fold front screen or Watch)
-        else if (width < MIN_WIDTH) {
+        // 1. First check if screen width is too small (tiny devices)
+        if (width < MIN_WIDTH) {
             errorType = 'small';
+        }
+        // 2. If it's a rotated phone (elongated + small height), suggest rotation
+        else if (isRotatedPhone) {
+            errorType = 'rotation';
         }
 
         // --- SHOW OR HIDE MODAL ---
@@ -514,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Update Text based on error
             if (errorType === 'rotation') {
                 title.innerText = "Please Rotate Device";
-                message.innerText = "This app works best in Portrait mode. Please rotate your phone.";
+                message.innerText = "This website works best in Portrait mode. Please rotate your phone.";
             } else {
                 title.innerText = "Screen Too Small";
                 message.innerText = "Your screen is too small to view this content. Please use a larger device.";
@@ -525,9 +483,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 screenModal.show();
             }
         } else {
-            // Conditions met: Hide modal if it's currently open
+            // Conditions met: If modal was open, reload the page to reset state
             if (modalElement.classList.contains('show')) {
-                screenModal.hide();
+                window.location.reload();
             }
         }
     }
