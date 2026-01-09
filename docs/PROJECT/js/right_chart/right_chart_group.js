@@ -202,7 +202,6 @@ function right_chart_group(svg) {
         const labelText = g.select('.group-label')
           .text(labelName)
           .attr('fill', color)
-          .style('font-weight', 'bold')
           .style('font-size', `${fontSize}px`)
           .style('cursor', 'pointer'); // Ensure cursor indicates clickability
 
@@ -365,7 +364,7 @@ function right_chart_group(svg) {
         // Calculate which vertical band was clicked
         const [mx, my] = d3.pointer(event);
         const clickedGroup = data.find((d, i) => {
-             const yTop = smallGap + gap + i * (rectHeight + gap);
+             const yTop = smallGap + groupGap + i * (rectHeight + groupGap);
              const yBottom = yTop + rectHeight;
              return my >= (yTop - 25) && my <= yBottom;
         });
