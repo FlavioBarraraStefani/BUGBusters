@@ -32,7 +32,7 @@
   <!-- Scripts -->
   <script src="js/draw_group_1.js"></script>
   <script src="js/draw_group_2.js"></script>
-  <script src="js/draw_group_3.js" ></script>
+  <script src="js/draw_group_3.js"></script>
   <script src="js/draw_group_4.js"></script>
   <script src="js/draw_group_5.js"></script>
 
@@ -49,7 +49,7 @@
   <script src="js/globe/globe_default_preprocessing.js"></script>
   <script src="js/globe/globe_group.js"></script>
   <script src="js/globe/globe_attack.js"></script>
-  <script src="js/globe/globe_target.js"></script> 
+  <script src="js/globe/globe_target.js"></script>
   <script src="js/draw_main_right.js"></script>
   <script src="js/right_chart/right_chart_group.js"></script>
   <script src="js/right_chart/right_chart_attack.js"></script>
@@ -61,35 +61,36 @@
 <body class="d-flex flex-column min-vh-100" id="body">
 
   <!-- NAVBAR (fixed top) -->
-<nav id="navbar" class="navbar navbar-expand-lg bg-white py-1">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-      <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
-      <span class="brand-text">BUGBusters</span>
-    </a>
+  <nav id="navbar" class="navbar navbar-expand-lg bg-white py-1">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="assets/logo.png" alt="Logo BUGBusters" height="28" />
+        <span class="brand-text">BUGBusters</span>
+      </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
-      aria-expanded="false" aria-label="Apri menu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
+        aria-expanded="false" aria-label="Apri menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <div id="nav" class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#projectDescriptionModal">Description</a>
-        </li>
-      </ul>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal"
+              data-bs-target="#projectDescriptionModal">Description</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
 
   <!-- MAIN CONTENT AREA -->
   <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-    
+
     <!-- Login Section (shown by default) -->
     <section id="api-auth" class="py-5 w-100">
       <div class="container">
@@ -153,7 +154,8 @@
         </div>
 
         <!-- Timeline fixed to bottom -->
-        <div id="timeline-container" class="d-flex align-items-center gap-2 px-4 bg-white private-section border-bottom mx-auto">
+        <div id="timeline-container"
+          class="d-flex align-items-center gap-2 px-4 bg-white private-section border-bottom mx-auto">
           <!-- Left: fixed-size play button -->
           <div class="flex-shrink-0">
             <button id="timeline_play_btn" class="btn btn-primary btn-sm">▶</button>
@@ -161,7 +163,7 @@
 
           <!-- Middle: flexible slider -->
           <div class="flex-grow-1 px-2">
-            <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100"/>
+            <input type="range" min="1969" max="2020" value="1969" id="timeline_year_slider" class="w-100" />
           </div>
 
           <!-- Right: fixed-width year label (4 chars) -->
@@ -180,7 +182,8 @@
       <div class="modal-content">
         <div class="modal-header border-0 px-4 pt-4">
           <h2 class="modal-title section-heading h4" id="aboutUsModalLabel">About Us</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
         </div>
         <div class="modal-body p-4 p-lg-5">
           <div class="row g-4 align-items-center justify-content-center text-center text-lg-start">
@@ -219,12 +222,15 @@
   </div>
 
   <!-- PROJECT DESCRIPTION MODAL -->
-  <div class="modal fade" id="projectDescriptionModal" tabindex="-1" aria-labelledby="projectDescriptionModalLabel" aria-hidden="true">
+  <div class="modal fade" id="projectDescriptionModal" tabindex="-1" aria-labelledby="projectDescriptionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="projectDescriptionModalLabel">Project Description and Data at Hand</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+          <h2 class="modal-title section-heading h4" id="projectDescriptionModalLabel">Project Description and Data at
+            Hand</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
         </div>
         <div class="modal-body p-4 p-lg-5">
           <div class="row g-4 align-items-center">
@@ -232,26 +238,30 @@
               <div class="p-4 border rounded-3 h-100" style="max-width: 65ch;">
                 <h3 class="h5 mb-3">What are we talking about?</h3>
                 <p class="mb-4">
-                  The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database (GTD)</a>
+                  The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database
+                    (GTD)</a>
                   is an event-level dataset maintained by the
                   <a href="https://umd.edu/" target="_blank">University of Maryland</a>.
                   It contains over 200,000 records of terrorist attacks worldwide, spanning from 1970 to 2020.
                 </p>
                 <p class="mb-4">
-                  Data are collected from multiple open sources. The GTD research team integrates and standardizes them to
+                  Data are collected from multiple open sources. The GTD research team integrates and standardizes them
+                  to
                   ensure consistency over time, performing rigorous quality control, retrospective coding, and
                   cross-referencing with other terrorism databases to identify and include missing events.
                 </p>
                 <h3 class="h5 mb-3">What are we dealing with?</h3>
                 <p class="mb-4">
-                  Each record in the GTD represents a single terrorist incident and includes detailed information such as
+                  Each record in the GTD represents a single terrorist incident and includes detailed information such
+                  as
                   the date and location of the attack, type of weapon used, targets and victims, perpetrators, and any
                   claims of responsibility.
                 </p>
                 <p class="mb-0">
                   Additional variables describe casualties, outcomes, and data sources.
                   A full codebook and documentation can be found on the
-                  <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">GTD website</a>.
+                  <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">GTD
+                    website</a>.
                 </p>
               </div>
             </div>
@@ -265,34 +275,37 @@
     </div>
   </div>
 
-    <!-- CATEGORY SELECTION HEADER (shown when authenticated) -->
-    <div id="main-header" style="display:none" class="category-header bg-white private-section border-bottom">
-      <div class="container py-1">
-        <div class="d-flex justify-content-center gap-1 gap-lg-4 gap-md-2">
-          <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
-            data-category="group" onclick="selectCategory('group')">
-            <div class="d-flex flex-column align-items-center">
-              <i class="fa-solid fa-users fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
-              <small class="text-muted mt-1" style="font-weight:400; text-transform:none; font-size:0.7rem;">Groups</small>
-            </div>
-          </button>
-          <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
-            data-category="attack" onclick="selectCategory('attack')">
-            <div class="d-flex flex-column align-items-center">
-              <i class="fa-solid fa-bomb fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
-              <small class="text-muted mt-1" style="font-weight:400; text-transform:none; font-size:0.7rem;">Attacks</small>
-            </div>
-          </button>
-          <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
-            data-category="target" onclick="selectCategory('target')">
-            <div class="d-flex flex-column align-items-center">
-              <i class="fa-solid fa-bullseye fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
-              <small class="text-muted mt-1" style="font-weight:400; text-transform:none; font-size:0.7rem;">Targets</small>
-            </div>
-          </button>
-        </div>
+  <!-- CATEGORY SELECTION HEADER (shown when authenticated) -->
+  <div id="main-header" style="display:none" class="category-header bg-white private-section border-bottom">
+    <div class="container py-1">
+      <div class="d-flex justify-content-center gap-1 gap-lg-4 gap-md-2">
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
+          data-category="group" onclick="selectCategory('group')">
+          <div class="d-flex flex-column align-items-center">
+            <i class="fa-solid fa-users fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
+            <small class="text-muted mt-1"
+              style="font-weight:400; text-transform:none; font-size:0.7rem;">Groups</small>
+          </div>
+        </button>
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
+          data-category="attack" onclick="selectCategory('attack')">
+          <div class="d-flex flex-column align-items-center">
+            <i class="fa-solid fa-bomb fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
+            <small class="text-muted mt-1"
+              style="font-weight:400; text-transform:none; font-size:0.7rem;">Attacks</small>
+          </div>
+        </button>
+        <button type="button" class="btn btn-outline-primary category-btn flex-fill py-2 px-0 px-md-3 border-0"
+          data-category="target" onclick="selectCategory('target')">
+          <div class="d-flex flex-column align-items-center">
+            <i class="fa-solid fa-bullseye fa-lg" aria-hidden="true" style="font-size:1.0rem; padding:0.25rem 0;"></i>
+            <small class="text-muted mt-1"
+              style="font-weight:400; text-transform:none; font-size:0.7rem;">Targets</small>
+          </div>
+        </button>
       </div>
     </div>
+  </div>
   <!-- FOOTER hidden
 <footer id="footer" class="py-1 border-top bg-white mt-auto">
   <div class="container">
@@ -353,78 +366,261 @@
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
           <h2 class="modal-title section-heading h4" id="modalGroupLabel">Group Details</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
         </div>
         <div class="modal-body p-4 p-lg-5">
-          <!-- ISIL -->
+
           <div id="content_group_ISIL" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_ISIL_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_ISIL_1" class="mb-0">ISIL (Islamic State of Iraq and the Levant) emerged as one of the most deadly terrorist organizations in modern history. This visualization shows the temporal distribution of attacks attributed to ISIL across different regions.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_ISIL_2" class="mb-0">The geographical spread of ISIL's operations demonstrates their strategic focus on destabilizing regions across the Middle East and North Africa. Peak activity was observed between 2014 and 2017.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_ISIL_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_ISIL_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_ISIL_3" class="mb-0">Analysis of attack methods reveals a predominant use of explosive devices and armed assaults. The sophistication and coordination of attacks increased over time as the organization gained resources.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_ISIL_4" class="mb-0">Civilian casualties represent the majority of victims in ISIL attacks. Government and military targets were also frequently targeted as part of their campaign to destabilize state institutions.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_ISIL_4" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_ISIL_5" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_ISIL_5" class="mb-0">The decline in ISIL activity after 2017 correlates with international military interventions and the loss of territorial control. However, the organization continues to pose threats through decentralized cells.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Rise and Fall (2013-2017)</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_ISIL_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_ISIL_1" class="mb-0">This chart tracks the total number of ISIL attacks over
+                      time. It clearly shows a massive spike starting in 2013, when the group expanded rapidly. Activity
+                      remained very high until 2017, when they began losing significant territory.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Focus on the Middle East</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_ISIL_2" class="mb-0">While ISIL operated globally, this map confirms that
+                      their core activity was heavily concentrated in the Middle East & North Africa. The heat map shows
+                      the highest intensity in Iraq, where they established their main stronghold.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_ISIL_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Tactics and Targets</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_ISIL_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_ISIL_3" class="mb-0">This diagram links attack methods to their targets. ISIL
+                      relied heavily on Bombings and Hostage Taking. These tactics were primarily directed at Private
+                      Citizens and the Military, showing a strategy of both direct combat and instilling fear in the
+                      population.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Changing Priorities</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_ISIL_4" class="mb-0">The ranking chart shows how ISIL's targets changed over
+                      the years. They frequently focused between Civilians and Police/Military forces shifting between them around 2018-2019. This
+                      reflects their dual nature: acting as both a terrorist group attacking soft targets and a militia
+                      fighting for territory.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_ISIL_4" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">High Lethality</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_ISIL_5" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_ISIL_5" class="mb-0">This chart compares deaths versus injuries. ISIL
+                      operations were notably lethal, often resulting in mass-casualty events. Compared to other groups,
+                      their attacks frequently resulted in a high ratio of fatalities per incident.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
-          <!-- taliban -->
+
           <div id="content_group_taliban" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_taliban_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_taliban_1" class="mb-0">The Taliban has been one of the most persistent insurgent groups, with operations primarily concentrated in Afghanistan and Pakistan. This chart illustrates their attack patterns over the past decades.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_taliban_2" class="mb-0">Taliban operations show strong geographical concentration in specific provinces, with rural areas often serving as operational bases. Urban centers became increasingly targeted after 2010.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_taliban_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_taliban_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_taliban_3" class="mb-0">IEDs (Improvised Explosive Devices) represent the most common attack method employed by Taliban forces. Armed assaults on military installations and checkpoints also feature prominently.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_taliban_4" class="mb-0">Military and police forces constitute the primary targets of Taliban attacks. Government officials and infrastructure supporting foreign military operations are also frequently targeted.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_taliban_4" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_taliban_5" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_taliban_5" class="mb-0">The trajectory of Taliban activity reflects the broader geopolitical situation in Afghanistan, with significant increases during periods of political transition and foreign military withdrawal.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Long-Term Insurgency</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_taliban_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_taliban_1" class="mb-0">The line chart illustrates the long duration of the
+                      Taliban insurgency. There is a steady increase in attacks over decades, with a sharp rise after
+                      2005 as they regrouped and intensified their campaign against coalition forces.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Concentration in South Asia</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_taliban_2" class="mb-0">This map focuses on South Asia. It highlights the
+                      extreme concentration of attacks within Afghanistan and the border areas of Pakistan. The
+                      localized nature of this conflict contrasts with groups that operate on a global scale.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_taliban_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Guerrilla Tactics</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_taliban_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_taliban_3" class="mb-0">The diagram shows the Taliban's main tactics: Armed
+                      Assaults and Improvised Explosives (IEDs). The flow connects these methods primarily to Police and
+                      Military targets, which is consistent with an insurgency aiming to weaken state security.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Inconsistent Targets</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_taliban_4" class="mb-0">This visualization shows that their attack didn't focus
+                      on any specific target type consistently over time. Instead, it varied between different categories,
+                      keeping on top civilians, police, and military forces.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_taliban_4" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Casualty Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_taliban_5" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_taliban_5" class="mb-0">This chart categorizes attacks by the number of
+                      victims. While there are many small skirmishes typical of guerrilla warfare, the data also reveals
+                      a significant number of high-fatality events, usually from large-scale assaults on bases or
+                      cities.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
-          <!-- SL -->
+
           <div id="content_group_SL" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_SL_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_SL_1" class="mb-0">Shining Path (Sendero Luminoso) was a Maoist guerrilla organization in Peru that launched an armed struggle in 1980. This visualization depicts the evolution of their violent campaign.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_SL_2" class="mb-0">Operations were concentrated in Peru's highland regions before expanding to urban areas including Lima. The group's territorial control peaked in the late 1980s and early 1990s.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_SL_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_SL_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_SL_3" class="mb-0">Shining Path employed a variety of tactics including assassinations, car bombings, and armed attacks. Their brutal methods targeted both government forces and civilians deemed to be collaborators.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_group_SL_4" class="mb-0">Targets ranged from local officials and police to agricultural cooperatives and international aid workers. The indiscriminate violence contributed to tens of thousands of deaths during the conflict.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_group_SL_4" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_group_SL_5" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_group_SL_5" class="mb-0">The capture of leader Abimael Guzm�n in 1992 led to a significant decline in Shining Path activity. Remnants of the organization continue to operate in remote coca-growing regions.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">History of the Conflict</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_SL_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_SL_1" class="mb-0">This chart captures the lifecycle of the Shining Path. It
+                      shows a rapid accumulation of attacks during the 1980s, followed by a dramatic plateau (stop in
+                      growth) in the early 1990s after the capture of their leader, Abimael Guzmán.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Focus on Peru</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_SL_2" class="mb-0">The map highlights operations within South America,
+                      specifically Peru. The highest density of attacks occurred in the Andean highlands (Ayacucho) and
+                      the capital, Lima, reflecting their strategy to surround urban centers and attack symbolic rural 
+                      areas.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_SL_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Sabotage and Assassination</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_SL_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_SL_3" class="mb-0">Analysis of attack flows reveals a distinct pattern: a
+                      high volume of Bombings targeting Utilities (economic sabotage) and Government infrastructure,
+                      alongside Assassinations directed at Police and local authorities.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Targeting Government and Infrastructure</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_group_SL_4" class="mb-0">The ranking chart tracks Shining Path's priorities. It
+                      highlights a focus on "Utilities" (such as destroying power pylons) and "Government"
+                      targets during the 1980s and 1990s, which corresponds to the peak of their insurgency.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_group_SL_4" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Group Aggression</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_group_SL_5" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_group_SL_5" class="mb-0">This chart breaks down the human cost. While many acts of
+                      sabotage (like blowing up infrastructure) resulted in fewer direct casualties, the data also
+                      reflects the brutal massacres and targeted assassinations that defined the group's violence.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
+
         </div>
       </div>
     </div>
@@ -436,83 +632,249 @@
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
           <h2 class="modal-title section-heading h4" id="modalAttackLabel">Attack Details</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
         </div>
         <div class="modal-body p-4 p-lg-5">
           <!-- explosion -->
           <div id="content_attack_explosion" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_explosion_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_explosion_1" class="mb-0">Explosive attacks constitute one of the most devastating forms of terrorism. This visualization shows the distribution and frequency of bombing incidents across different regions and time periods.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_attack_explosion_2" class="mb-0">Vehicle-borne improvised explosive devices (VBIEDs) and suicide bombings account for the highest casualty rates. Urban centers and crowded public spaces are frequently targeted for maximum impact.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_attack_explosion_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_explosion_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_explosion_3" class="mb-0">The sophistication of explosive devices has evolved significantly, from simple pipe bombs to complex multi-stage devices. Detection and prevention technologies continue to adapt to these changing threats.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_explosion_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_explosion_1" class="mb-0">Explosive attacks constitute one of the most
+                      devastating forms of terrorism. This visualization shows the distribution and frequency of bombing
+                      incidents across different regions and time periods.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_attack_explosion_2" class="mb-0">Vehicle-borne improvised explosive devices
+                      (VBIEDs) and suicide bombings account for the highest casualty rates. Urban centers and crowded
+                      public spaces are frequently targeted for maximum impact.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_attack_explosion_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_explosion_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_explosion_3" class="mb-0">The sophistication of explosive devices has
+                      evolved significantly, from simple pipe bombs to complex multi-stage devices. Detection and
+                      prevention technologies continue to adapt to these changing threats.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- armed_assault -->
           <div id="content_attack_armed_assault" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_armed_assault_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_armed_assault_1" class="mb-0">Armed assaults involve direct attacks using firearms or other weapons. This category encompasses a wide range of incidents from small-scale shootings to coordinated military-style operations.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_attack_armed_assault_2" class="mb-0">The availability of small arms in conflict zones contributes significantly to the prevalence of armed assaults. Training camps and illicit weapons trafficking enable these attacks.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_attack_armed_assault_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_armed_assault_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_armed_assault_3" class="mb-0">Military and police personnel are frequently targeted in armed assaults. Checkpoints, patrols, and military bases represent high-risk environments in conflict zones.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_armed_assault_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_armed_assault_1" class="mb-0">Armed assaults involve direct attacks using
+                      firearms or other weapons. This category encompasses a wide range of incidents from small-scale
+                      shootings to coordinated military-style operations.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_attack_armed_assault_2" class="mb-0">The availability of small arms in conflict
+                      zones contributes significantly to the prevalence of armed assaults. Training camps and illicit
+                      weapons trafficking enable these attacks.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_attack_armed_assault_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_armed_assault_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_armed_assault_3" class="mb-0">Military and police personnel are frequently
+                      targeted in armed assaults. Checkpoints, patrols, and military bases represent high-risk
+                      environments in conflict zones.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- assassination -->
           <div id="content_attack_assassination" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_assassination_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_assassination_1" class="mb-0">Assassinations target specific individuals, typically political figures, officials, or community leaders. These attacks are characterized by their precision and intended symbolic impact.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_attack_assassination_2" class="mb-0">Government officials, judges, and law enforcement leaders are common targets. The goal is often to destabilize institutions and create fear among those in positions of authority.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_attack_assassination_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_assassination_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_assassination_3" class="mb-0">Methods range from close-range shootings to sophisticated operations involving surveillance and coordinated teams. The level of planning often reflects the target's importance.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_assassination_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_assassination_1" class="mb-0">Assassinations target specific individuals,
+                      typically political figures, officials, or community leaders. These attacks are characterized by
+                      their precision and intended symbolic impact.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_attack_assassination_2" class="mb-0">Government officials, judges, and law
+                      enforcement leaders are common targets. The goal is often to destabilize institutions and create
+                      fear among those in positions of authority.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_attack_assassination_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_assassination_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_assassination_3" class="mb-0">Methods range from close-range shootings to
+                      sophisticated operations involving surveillance and coordinated teams. The level of planning often
+                      reflects the target's importance.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- hostage_taking -->
           <div id="content_attack_hostage_taking" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_hostage_taking_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_hostage_taking_1" class="mb-0">Hostage-taking incidents include kidnappings for ransom and barricade situations. These events create prolonged crises with significant psychological impact on victims and communities.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_attack_hostage_taking_2" class="mb-0">Ransom payments have become a significant funding source for terrorist organizations. International policies on ransom payments vary, creating complex ethical and practical dilemmas.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_attack_hostage_taking_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_hostage_taking_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_hostage_taking_3" class="mb-0">Foreign nationals and aid workers are frequently targeted due to their perceived value. Travel advisories and security protocols have evolved in response to these threats.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_hostage_taking_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_hostage_taking_1" class="mb-0">Hostage-taking incidents include kidnappings
+                      for ransom and barricade situations. These events create prolonged crises with significant
+                      psychological impact on victims and communities.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_attack_hostage_taking_2" class="mb-0">Ransom payments have become a significant
+                      funding source for terrorist organizations. International policies on ransom payments vary,
+                      creating complex ethical and practical dilemmas.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_attack_hostage_taking_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_hostage_taking_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_hostage_taking_3" class="mb-0">Foreign nationals and aid workers are
+                      frequently targeted due to their perceived value. Travel advisories and security protocols have
+                      evolved in response to these threats.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- infrastructure_attack -->
           <div id="content_attack_infrastructure_attack" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_infrastructure_attack_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_infrastructure_attack_1" class="mb-0">Infrastructure attacks target essential services including power grids, water systems, and transportation networks. These attacks aim to disrupt daily life and undermine government capabilities.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_attack_infrastructure_attack_2" class="mb-0">Energy infrastructure, particularly oil and gas facilities, represents high-value targets. Attacks on pipelines and refineries can have significant economic consequences.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_attack_infrastructure_attack_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_attack_infrastructure_attack_3" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_attack_infrastructure_attack_3" class="mb-0">Communication systems and internet infrastructure are increasingly targeted. Cyber-physical attacks represent an evolving threat to critical systems.</p></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_infrastructure_attack_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_infrastructure_attack_1" class="mb-0">Infrastructure attacks target
+                      essential services including power grids, water systems, and transportation networks. These
+                      attacks aim to disrupt daily life and undermine government capabilities.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_attack_infrastructure_attack_2" class="mb-0">Energy infrastructure, particularly
+                      oil and gas facilities, represents high-value targets. Attacks on pipelines and refineries can
+                      have significant economic consequences.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_attack_infrastructure_attack_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_attack_infrastructure_attack_3" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_attack_infrastructure_attack_3" class="mb-0">Communication systems and internet
+                      infrastructure are increasingly targeted. Cyber-physical attacks represent an evolving threat to
+                      critical systems.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
@@ -525,87 +887,199 @@
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
           <h2 class="modal-title section-heading h4" id="modalTargetLabel">Target Details</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
         </div>
         <div class="modal-body p-4 p-lg-5">
           <!-- military_police -->
           <div id="content_target_military_police" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_target_military_police_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_target_military_police_1" class="mb-0">Military and police forces are among the most frequent targets of terrorist attacks worldwide. These attacks aim to undermine state authority and demonstrate the capability to strike at symbols of security and power.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_target_military_police_2" class="mb-0">Attacks on military installations and checkpoints are particularly common in conflict zones. These targets are often chosen for their strategic value and the potential to acquire weapons and equipment.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_target_military_police_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_target_military_police_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_target_military_police_1" class="mb-0">Military and police forces are among the
+                      most frequent targets of terrorist attacks worldwide. These attacks aim to undermine state
+                      authority and demonstrate the capability to strike at symbols of security and power.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_target_military_police_2" class="mb-0">Attacks on military installations and
+                      checkpoints are particularly common in conflict zones. These targets are often chosen for their
+                      strategic value and the potential to acquire weapons and equipment.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_target_military_police_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- government -->
           <div id="content_target_government" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_target_government_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_target_government_1" class="mb-0">Government buildings, officials, and diplomats are prime targets for terrorist organizations seeking to make political statements. These attacks directly challenge state legitimacy and governance capacity.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_target_government_2" class="mb-0">Assassinations of government officials and politicians aim to disrupt political processes and create power vacuums. High-profile attacks on leaders receive extensive media coverage, amplifying the terrorists' message.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_target_government_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_target_government_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_target_government_1" class="mb-0">Government buildings, officials, and diplomats
+                      are prime targets for terrorist organizations seeking to make political statements. These attacks
+                      directly challenge state legitimacy and governance capacity.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_target_government_2" class="mb-0">Assassinations of government officials and
+                      politicians aim to disrupt political processes and create power vacuums. High-profile attacks on
+                      leaders receive extensive media coverage, amplifying the terrorists' message.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_target_government_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- business -->
           <div id="content_target_business" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_target_business_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_target_business_1" class="mb-0">Business targets include corporations, retail establishments, and commercial districts. These attacks aim to cause economic disruption and create fear among workers and consumers.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_target_business_2" class="mb-0">Multinational corporations are frequently targeted as symbols of globalization and Western economic influence. Attacks on foreign businesses can be motivated by both ideological and nationalist grievances.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_target_business_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_target_business_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_target_business_1" class="mb-0">Business targets include corporations, retail
+                      establishments, and commercial districts. These attacks aim to cause economic disruption and
+                      create fear among workers and consumers.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_target_business_2" class="mb-0">Multinational corporations are frequently targeted
+                      as symbols of globalization and Western economic influence. Attacks on foreign businesses can be
+                      motivated by both ideological and nationalist grievances.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_target_business_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- citizens -->
           <div id="content_target_citizens" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_target_citizens_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_target_citizens_1" class="mb-0">Civilian populations bear the heaviest burden of terrorist violence. Attacks on citizens are designed to maximize fear and psychological impact across entire societies.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_target_citizens_2" class="mb-0">Religious gatherings, community events, and public celebrations are frequently targeted. These attacks aim to divide communities along ethnic, religious, or sectarian lines.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_target_citizens_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_target_citizens_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_target_citizens_1" class="mb-0">Civilian populations bear the heaviest burden of
+                      terrorist violence. Attacks on citizens are designed to maximize fear and psychological impact
+                      across entire societies.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_target_citizens_2" class="mb-0">Religious gatherings, community events, and public
+                      celebrations are frequently targeted. These attacks aim to divide communities along ethnic,
+                      religious, or sectarian lines.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_target_citizens_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
           <!-- transportations -->
           <div id="content_target_transportations" class="choice-content" style="display: none;">
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-8"><div id="plot_target_transportations_1" class="modal-canvas"><svg></svg></div></div>
-              <div class="col-12 col-xl-4"><p id="paragraph_target_transportations_1" class="mb-0">Transportation systems are high-value targets due to their critical role in modern society. Attacks on transit networks cause widespread disruption and generate significant media attention.</p></div>
-            </div></div></section>
-            <section class="py-4"><div class="container"><h5 class="text-center mb-4 section-heading">Analysis</h5><div class="row align-items-center g-4">
-              <div class="col-12 col-xl-4 order-2 order-xl-1"><p id="paragraph_target_transportations_2" class="mb-0">Airports and airlines have been iconic targets since the early days of modern terrorism. Aviation security has evolved dramatically in response to hijackings and bombings.</p></div>
-              <div class="col-12 col-xl-8 order-1 order-xl-2"><div id="plot_target_transportations_2" class="modal-canvas"><svg></svg></div></div>
-            </div></div></section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-8">
+                    <div id="plot_target_transportations_1" class="modal-canvas"><svg></svg></div>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <p id="paragraph_target_transportations_1" class="mb-0">Transportation systems are high-value
+                      targets due to their critical role in modern society. Attacks on transit networks cause widespread
+                      disruption and generate significant media attention.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="py-4">
+              <div class="container">
+                <h5 class="text-center mb-4 section-heading">Analysis</h5>
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-xl-4 order-2 order-xl-1">
+                    <p id="paragraph_target_transportations_2" class="mb-0">Airports and airlines have been iconic
+                      targets since the early days of modern terrorism. Aviation security has evolved dramatically in
+                      response to hijackings and bombings.</p>
+                  </div>
+                  <div class="col-12 col-xl-8 order-1 order-xl-2">
+                    <div id="plot_target_transportations_2" class="modal-canvas"><svg></svg></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="screenBlockModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-    <div class="modal-content text-center">
-      <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-        
-        <h1 class="display-1 text-warning mb-4">
+  <div class="modal fade" id="screenBlockModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+    data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+      <div class="modal-content text-center">
+        <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+
+          <h1 class="display-1 text-warning mb-4">
             <i class="bi bi-phone-vibrate"></i>
-        </h1>
+          </h1>
 
-        <h2 id="blockerTitle">Please Rotate Your Device</h2>
-        <p class="lead" id="blockerMessage">
+          <h2 id="blockerTitle">Please Rotate Your Device</h2>
+          <p class="lead" id="blockerMessage">
             We don't support landscape mode on phones. Please rotate your phone to portrait.
-        </p>
+          </p>
 
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </body>
 
