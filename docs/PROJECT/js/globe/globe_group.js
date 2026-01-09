@@ -175,9 +175,7 @@ function globe_group() {
   stepAnimation = (transition = true) => {
     const year = +slider.property('value');
     g.selectAll('path.country')
-      .attr('d', path)
       .each(function(d) {
-        // True = animate color transitions
         updateCountryShape(d3.select(this), d, year, transition); 
       });
   };

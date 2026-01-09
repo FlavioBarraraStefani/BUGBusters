@@ -41,7 +41,7 @@ function animateSliderTo(targetValue, duration = transitionDurationMs) {
   function animate(now) {
     const elapsed = now - startTime;
     const t = Math.min(elapsed / duration, 1);
-    const eased = t * (2 - t); // easeOutQuad
+    const eased = t; // linear
     const currentVal = Math.round(startVal + (targetValue - startVal) * eased);
     
     title.property('value', currentVal);
@@ -49,6 +49,7 @@ function animateSliderTo(targetValue, duration = transitionDurationMs) {
     
     if (t < 1) {
       requestAnimationFrame(animate);
+      stepAnimation(false); stepAnimationRight(false);
     }
   }
   requestAnimationFrame(animate);
@@ -264,42 +265,6 @@ function draw_main_left(categoryInfo, containerId) {
   //save last call params for resize
   window._draw_main_left_lastCall = [categoryInfo, containerId];
 
-  //if the category changed, reset the globe to default
-  if (currentCat !== previousCat) {
-    stopAnimation();
-
-    if (previousCat === null) { //remove hexbins
-      g.selectAll('.tassel-bin')
-        .transition().duration(transitionDurationMs)
-        .attr('opacity', 0)
-        .on('end', function () { d3.select(this).remove(); });
-
-      hideColormapLegend(true); //hide legend
-      d3.select("body").select(".tassel-tooltip").remove()
-
-
-    } else if (previousCat === 'group') { //remove group coloring
-      g.selectAll('path.country').attr('d', path)
-        .transition().duration(transitionDurationMs)
-        .attr('fill', COLORS.GLOBE.country.fill);
-
-      d3.select("body").select("#globe-tooltip").remove()
-
-    } else if (previousCat === 'attack') {
-      g.selectAll('path.country').attr('d', path)
-        .transition().duration(transitionDurationMs)
-        .attr('fill', COLORS.GLOBE.country.fill);
-
-      d3.select("body").select("#globe-tooltip").remove()        
-    } else if (previousCat === 'target') {
-      g.selectAll('defs.neon-defs').remove(); 
-      g.select('g.target-balls') 
-        .transition().duration(transitionDurationMs)
-        .attr('opacity', 0)
-        .on('end', function () { d3.select(this).remove(); });
-    }
-  }
-
   //remove all tooltips and interactions
   g.selectAll('path.country')
     .on('click', () => {})
@@ -336,12 +301,44 @@ function draw_main_left(categoryInfo, containerId) {
       animateSliderTo(sliderRange[0], transitionDurationMs);
 
   setTimeout(() => {
+      //if the category changed, reset the globe to default
+    if (currentCat !== previousCat) {
+      stopAnimation();
 
-    nextFn();
+      if (previousCat === null) { //remove hexbins
+        g.selectAll('.tassel-bin')
+          .transition().duration(transitionDurationMs)
+          .attr('opacity', 0)
+          .on('end', function () { d3.select(this).remove(); });
+
+        hideColormapLegend(true); //hide legend
+        d3.select("body").select(".tassel-tooltip").remove()
 
 
-    
-    //first render after transition
+      } else if (previousCat === 'group') { //remove group coloring
+        g.selectAll('path.country').attr('d', path)
+          .transition().duration(transitionDurationMs)
+          .attr('fill', COLORS.GLOBE.country.fill);
+
+        d3.select("body").select("#globe-tooltip").remove()
+
+      } else if (previousCat === 'attack') {
+        g.selectAll('path.country').attr('d', path)
+          .transition().duration(transitionDurationMs)
+          .attr('fill', COLORS.GLOBE.country.fill);
+
+        d3.select("body").select("#globe-tooltip").remove()        
+      } else if (previousCat === 'target') {
+        g.selectAll('defs.neon-defs').remove(); 
+        g.select('g.target-balls') 
+          .transition().duration(transitionDurationMs)
+          .attr('opacity', 0)
+          .on('end', function () { d3.select(this).remove(); });
+      }
+    }
+
+
+    nextFn();    
     stepAnimation(true);
   }, transitionDurationMs);
 }

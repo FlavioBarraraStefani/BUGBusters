@@ -35,6 +35,7 @@ const COLORS = {
   },
 
   //EACH CATEGORY COLOR SET
+  /* old values
   groupColors: [
     '#42A5F5',
     '#66BB6A', 
@@ -54,10 +55,32 @@ const COLORS = {
     '#FFCC80', 
     '#CE93D8'
   ],
+  */
+
+  groupColors: [
+    '#5C6BC0', // 1. Indigo (Calming, deep blue)
+    '#009688', // 2. Persian Green (Rich Teal)
+    '#F9A825', // 3. Dark Yellow/Mustard (Readable, unlike neon yellow)
+  ],
+  attackColors: [
+    '#AD1457', // 4. Rose Red (Deep pinkish-red, not aggressive)
+    '#607D8B', // 5. Blue Grey (Neutral anchor)
+    '#7E57C2', // 7. Deep Lavender (Distinct from your other purples)
+    '#66BB6A', // 8. Fern Green (Soft natural green)
+    '#8D6E63', // 6. Cocoa Brown (Earth tone for contrast)
+  ],  
+  targetColors: [
+    '#EF6C00', // 9. Burnt Orange (Warm but not neon)
+    '#26C6DA', // 10. Cyan (Muted turquoise)
+    '#EC407A', // 11. Berry (Soft magenta)
+    '#78909C', // 12. Cool Grey (Secondary neutral)
+    '#558B2F'  // 13. Olive Green (Darker, military green)
+  ],
+
   defaultComparison: '#78909C',
 
   //COMMON COLORS
-  axisLine: '#64B5F6',    //axes
+  axisLine: '#05253fff', //'#64B5F6' old color   
   textPrimary: '#1565C0', //labels
 }
 
@@ -448,3 +471,71 @@ async function initChartsAfterAuth() {
     if (errorMessage) errorMessage.textContent = err.message;
   }
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. Initialize the modal with static backdrop (cannot click outside)
+    const modalElement = document.getElementById('screenBlockModal');
+    const screenModal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    // 2. Define your limits
+    const MIN_WIDTH = 300; // Minimum width in pixels (e.g. for tiny phones)
+    
+    // Define logic elements
+    const title = document.getElementById('blockerTitle');
+    const message = document.getElementById('blockerMessage');
+
+    function checkScreen() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const isLandscape = width > height;
+        
+        // Detect if it is a mobile device (rough check using touch capability + width)
+        // You can adjust 992px to 768px depending on what you consider "mobile"
+        const isMobile = width < 992; 
+
+        let errorType = null;
+
+        // SCENARIO 1: Phone is Rotated (Mobile + Landscape)
+        if (isMobile && isLandscape) {
+            errorType = 'rotation';
+        }
+        // SCENARIO 2: Screen is just too small (e.g. Galaxy Fold front screen or Watch)
+        else if (width < MIN_WIDTH) {
+            errorType = 'small';
+        }
+
+        // --- SHOW OR HIDE MODAL ---
+        
+        if (errorType) {
+            // Update Text based on error
+            if (errorType === 'rotation') {
+                title.innerText = "Please Rotate Device";
+                message.innerText = "This app works best in Portrait mode. Please rotate your phone.";
+            } else {
+                title.innerText = "Screen Too Small";
+                message.innerText = "Your screen is too small to view this content. Please use a larger device.";
+            }
+
+            // Only call show() if it's not already shown to avoid flickering
+            if (!modalElement.classList.contains('show')) {
+                screenModal.show();
+            }
+        } else {
+            // Conditions met: Hide modal if it's currently open
+            if (modalElement.classList.contains('show')) {
+                screenModal.hide();
+            }
+        }
+    }
+
+    // 3. Listeners
+    window.addEventListener('resize', checkScreen);
+    window.addEventListener('orientationchange', checkScreen);
+
+    // Initial check
+    checkScreen();
+});

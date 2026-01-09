@@ -10,10 +10,11 @@ function right_chart_attack(svg) {
   let lastMouseX = null; // <--- ADDED
 
   // --- 1. Layout Calculations ---
-  leftPadAxis = RIGHT_CHART_MARGIN + 50;
+  leftPadAxis = RIGHT_CHART_MARGIN + 20;
 
+  const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
   const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
-  const MARGIN_TOP = showLegend ? 30 : 0;
+  const MARGIN_TOP = (showLegend ? 30 : 0)+ preferredSize;
 
   rightPadAxis = !showLegend ?
     RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 180 :
@@ -36,22 +37,6 @@ function right_chart_attack(svg) {
       .style('font-family', 'sans-serif')
       .attr('opacity', 0)
       .attr('transform', `translate(${leftPadAxis}, -${RIGHT_CHART_HEIGHT})`);
-
-    const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
-    const availableHeight = RIGHT_CHART_HEIGHT - 2 * RIGHT_CHART_MARGIN;
-    const maxFittingSize = availableHeight / 6;
-    const finalFontSize = Math.max(10, Math.min(preferredSize, maxFittingSize));
-
-    yGroup.append('text')
-      .attr('class', 'axis-title')
-      .attr('transform', 'rotate(-90)')
-      .attr('x', -((RIGHT_CHART_HEIGHT + MARGIN_TOP) / 2))
-      .attr('y', -70)
-      .attr('dy', '1em')
-      .style('text-anchor', 'middle')
-      .style('font-size', `${finalFontSize}px`)
-      .attr('fill', COLORS.RIGHT_CHART.textPrimary)
-      .text("Cumulative Attacks");
 
     // 3. Hover Line
     container.append('line')
@@ -77,7 +62,34 @@ function right_chart_attack(svg) {
         .style('font-family', 'sans-serif')
         .style('box-shadow', '0 2px 10px rgba(0,0,0,0.5)');
     }
+
+    let title = container.select('.main-chart-title');
+        //creatae title if not exists
+      if (title.empty()) {
+        title = container.append('text')
+          .attr('class', 'main-chart-title')
+          .attr('text-anchor', 'middle') // Centers text horizontally
+          .style('font-weight', 'bold')
+          .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
+          .attr('y', preferredSize /2*3)    // Center vertically within the top margin
+          .style('font-size', `${preferredSize}px`) 
+          .text("Cumulative count of Attacks by Type")
+          .style('opacity', 0)
+          .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
+  
+        title.transition()
+          .duration(transitionDurationMs)
+          .ease(d3.easeCubicOut)
+          .style('opacity', 1)
+          .attr('transform', 'translate(0, 0)');
+      }
+
+    let legendGroup = container.select('.top-legend');
+    if (legendGroup.empty()) {
+      legendGroup = container.append('g').attr('class', 'top-legend');
   }
+  }
+
 
   // --- 2. Update Function ---
   container._updateLines = (duration = 0) => {
@@ -384,9 +396,7 @@ function right_chart_attack(svg) {
       const legendFontSize = labelFontSize * (isSmallScreen() ? 0.75 : 1);
 
       let legendGroup = container.select('.top-legend');
-      if (legendGroup.empty()) {
-        legendGroup = container.append('g').attr('class', 'top-legend');
-      }
+
 
       const legendData = attackTypes.map((type, i) => ({
         type: type,
@@ -480,7 +490,7 @@ function right_chart_attack(svg) {
       // 4. Center Vertically
       const totalBlockHeight = rows.length * lineHeight;
       const areaHeight = RIGHT_CHART_MARGIN + MARGIN_TOP;
-      const blockStartY = 5 + (areaHeight - totalBlockHeight) / 2;
+      const blockStartY = preferredSize *2 + (areaHeight - totalBlockHeight) / rows.length;
 
       if (duration === 0) {
         legendGroup.attr('transform', `translate(0, ${blockStartY})`);

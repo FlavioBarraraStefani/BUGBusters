@@ -66,7 +66,8 @@ function right_chart_group(svg) {
   const pre = window._precomputed_group;
 
   // --- NEW: Define Top Margin ---
-  const MARGIN_TOP = labelFontSize * (isSmallScreen() ? 1 : 1.5) ;
+  const fontSize = labelFontSize * (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen()) ? 1 : 1.5);
+  const MARGIN_TOP = fontSize;
   
   // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
@@ -100,7 +101,7 @@ function right_chart_group(svg) {
       .style('font-weight', 'bold')
       .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
       .attr('y', MARGIN_TOP / 2*3)    // Center vertically within the top margin
-      .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`) 
+      .style('font-size', `${fontSize}px`) 
       .text("Probability Distribution of attacks")
       .style('opacity', 0)
       .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
@@ -137,7 +138,7 @@ function right_chart_group(svg) {
     
     // Layout
     const smallGap = 10;
-    const gap = STACKED_LAYOUT_PREFERRED ? smallGap : 70;
+    const gap = (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen())) ? smallGap : 70;
     const totalGaps = (data.length * gap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
@@ -197,7 +198,7 @@ function right_chart_group(svg) {
           .text(labelName)
           .attr('fill', color)
           .style('font-weight', 'bold')
-          .style('font-size', `${labelFontSize * (isSmallScreen() ? 1 : 1.5)}px`)
+          .style('font-size', `${fontSize}px`)
           .style('cursor', 'pointer'); // Ensure cursor indicates clickability
 
         // DIRECT LABEL CLICK HANDLER (Crucial for Stacked Layout)

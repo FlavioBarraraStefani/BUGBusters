@@ -164,7 +164,6 @@ function globe_attack() {
   stepAnimation = (transition = true) => {
     const year = +slider.property('value');
     g.selectAll('path.country')
-      .attr('d', path)
       .each(function(d) {
         updateCountryShape(d3.select(this), d, year, transition);
       });
@@ -175,7 +174,6 @@ function globe_attack() {
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
-    const year = +slider.property('value');
 
     g.selectAll('path.country')
       .attr('d', path)
