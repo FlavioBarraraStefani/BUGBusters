@@ -322,7 +322,12 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'government', container: 'plot_target_government_1' },
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'business', container: 'plot_target_business_1' },
     { file: 'PROJECT/TARGETS/target_barchart.json', func: draw_target_1, choice: 'transportations', container: 'plot_target_transportations_1' },
-    
+
+    { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'citizens', container: 'plot_target_citizens_2' },
+    { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'military_police', container: 'plot_target_military_police_2' },
+    { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
+    { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
+    { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
     // ===== MAIN PAGE CHARTS =====
     { file: "PROJECT/CATEGORIES/globe.json", func: (data) => { window.globe_data = data }, choice: null, container: "body" },
     {
