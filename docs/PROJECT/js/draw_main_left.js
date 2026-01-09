@@ -265,13 +265,6 @@ function draw_main_left(categoryInfo, containerId) {
   //save last call params for resize
   window._draw_main_left_lastCall = [categoryInfo, containerId];
 
-  //remove all tooltips and interactions
-  g.selectAll('path.country')
-    .on('click', () => {})
-    .on('mousemove', () => {})
-    .on('mouseout', () => {})
-    .attr('cursor', 'default');
-
   let nextFn = globe_default;
     
     timeAxisBinning = 1;
@@ -296,14 +289,23 @@ function draw_main_left(categoryInfo, containerId) {
     slider.property('min', sliderRange[0]);
     slider.property('max', sliderRange[1]);
     slider.property('step', timeAxisBinning);
-    
-    if (currentCat != previousCat)
+    if (slider.property('value') > sliderRange[0]) {
       animateSliderTo(sliderRange[0], transitionDurationMs);
+    }
 
   setTimeout(() => {
+    if (slider.property('value') >= sliderRange[0]) {
+      animateSliderTo(sliderRange[0], transitionDurationMs);
+    }
       //if the category changed, reset the globe to default
     if (currentCat !== previousCat) {
       stopAnimation();
+      //remove all tooltips and interactions
+      g.selectAll('path.country')
+        .on('click', () => { })
+        .on('mousemove', () => { })
+        .on('mouseout', () => { })
+        .attr('cursor', 'default');
 
       if (previousCat === null) { //remove hexbins
         g.selectAll('.tassel-bin')

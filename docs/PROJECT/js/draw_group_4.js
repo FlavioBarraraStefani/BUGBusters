@@ -34,10 +34,11 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
-  const colorMap = {};
-  topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
-  });
+const categoricalColors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f"];
+const colorMap = {};
+topTargets.forEach((target, i) => {
+        colorMap[target] = categoricalColors[i % categoricalColors.length];
+});
 
   // 2. SVG SETUP
   svg
@@ -337,9 +338,10 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
+  const categoricalColors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f"];
   const colorMap = {};
   topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+      colorMap[target] = categoricalColors[i % categoricalColors.length];
   });
 
   // 2. SVG SETUP
@@ -659,9 +661,10 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
+  const categoricalColors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f"];
   const colorMap = {};
   topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+      colorMap[target] = categoricalColors[i % categoricalColors.length];
   });
 
   // 2. SVG SETUP
@@ -986,9 +989,10 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
+  const categoricalColors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f"];
   const colorMap = {};
   topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+      colorMap[target] = categoricalColors[i % categoricalColors.length];
   });
 
   // 2. SVG SETUP
@@ -1331,9 +1335,10 @@ function draw_group_4(data, choice, containerId) {
   const topTargets = inputJSON.top_targets; 
   const timeLabels = timeline.map(d => d.label);
 
+  const categoricalColors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f"];
   const colorMap = {};
   topTargets.forEach((target, i) => {
-      colorMap[target] = COLORS.targetColors[i % COLORS.targetColors.length];
+      colorMap[target] = categoricalColors[i % categoricalColors.length];
   });
 
   // 2. SVG SETUP

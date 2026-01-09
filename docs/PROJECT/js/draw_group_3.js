@@ -55,17 +55,39 @@ function draw_group_3(data, choice, containerId) {
   const { nodes, links } = sankey(sankeyData);
 
   // 4. COLORS & UTILS
-  const getColor = (d, i) => {
-      // Se è "Unknown", usa il colore di default
-      if (d.name === 'Unknown') return COLORS.defaultComparison;
-      
-      // Altrimenti usa le palette
-      if (d.type === 'attack') {
-          return COLORS.attackColors[i % COLORS.attackColors.length];
+  // Count nodes by type to assign colors sequentially
+  let attackColorIndex = 0;
+  let targetColorIndex = 0;
+  
+  // Categorical colormaps (Tableau-inspired)
+  const colorsAttack = [
+    '#E15759', // Red
+    '#F28E2B', // Orange
+    '#EDC948', // Yellow
+    '#59A14F', // Green
+    '#76B7B2', // Teal
+  ];
+  const colorsTarget = [
+    '#4E79A7', // Blue
+    '#9C755F', // Brown
+    '#B07AA1', // Purple
+    '#FF9DA7', // Pink
+    '#BAB0AC', // Gray
+  ];
+
+  // Pre-assign colors to each node based on type
+  const nodeColorMap = new Map();
+  nodes.forEach(d => {
+      if (d.name === 'Unknown') {
+          nodeColorMap.set(d.index, COLORS.defaultComparison);
+      } else if (d.type === 'attack') {
+          nodeColorMap.set(d.index, colorsAttack[attackColorIndex++ % colorsAttack.length]);
       } else {
-          return COLORS.targetColors[i % COLORS.targetColors.length];
+          nodeColorMap.set(d.index, colorsTarget[targetColorIndex++ % colorsTarget.length]);
       }
-  };
+  });
+
+  const getColor = (d) => nodeColorMap.get(d.index);
 
   // 5. DRAW LINKS
   const link = g.append("g")

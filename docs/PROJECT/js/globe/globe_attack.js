@@ -101,9 +101,19 @@ function globe_attack() {
     }
 
     // --- COLORING & EVENTS ---
+    // Helper to check if a named transition is active on this element
+    const hasActiveTransition = (node, name) => {
+      const t = node.__transition;
+      return t && Object.values(t).some(tr => tr.name === name);
+    };
+
     if (!dominantType) {
-    const reset = animate ? sel.transition().duration(playIntervalMs) : sel;
-    reset.attr('fill', COLORS.GLOBE.country.fill);
+      if (animate) {
+        sel.transition("fill-color").duration(playIntervalMs)
+           .attr('fill', COLORS.GLOBE.country.fill);
+      } else if (!hasActiveTransition(sel.node(), "fill-color")) {
+        sel.attr('fill', COLORS.GLOBE.country.fill);
+      }
       
       // Clear events but KEEP mouseout
       sel.on('click', null)
@@ -121,13 +131,11 @@ function globe_attack() {
 
     // Apply Fill
     if (animate) {
-       sel.interrupt()
-          .transition().duration(playIntervalMs)
+       sel.transition("fill-color").duration(playIntervalMs)
           .ease(d3.easeLinear)
           .attr('fill', targetColor);
-    } else {
-       sel.interrupt()
-          .attr('fill', targetColor);
+    } else if (!hasActiveTransition(sel.node(), "fill-color")) {
+       sel.attr('fill', targetColor);
     }
 
     // Attach Interactions

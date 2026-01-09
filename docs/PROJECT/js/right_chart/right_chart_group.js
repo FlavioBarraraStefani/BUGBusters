@@ -138,7 +138,10 @@ function right_chart_group(svg) {
     
     // Layout
     const smallGap = 10;
-    const gap = (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen())) ? smallGap : 70;
+    const labelPadding = 5;
+    // When labels are on top (not stacked), gap must include label height + padding
+    const labelOnTop = !STACKED_LAYOUT_PREFERRED;
+    const gap = labelOnTop ? (labelPadding + fontSize) : 70;
     const totalGaps = (data.length * gap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
@@ -213,8 +216,10 @@ function right_chart_group(svg) {
             .attr('x', xStart - 10).attr('y', yBottom).attr('dy', 0)
             .attr('text-anchor', 'end').style('opacity', 1);
         } else {
+          // Label positioned 5px below previous rect (or title), centered above current rect
           labelText.transition().duration(duration)
-            .attr('x', lineX1 + bgWidth / 2).attr('y', yTop).attr('dy', '-0.5em')
+            .attr('x', lineX1 + bgWidth / 2).attr('y', yTop - labelPadding).attr('dy', 0)
+            .attr('dominant-baseline', 'auto')
             .attr('text-anchor', 'middle').style('opacity', 1);
         }
 

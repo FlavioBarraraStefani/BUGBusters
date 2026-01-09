@@ -7,19 +7,25 @@ function globe_group() {
   const HOVER_STROKE = "black";
   const HOVER_WIDTH = 3;
 
-  const MAX_CUMULATIVE = d3.max(
-    Object.values(groupData),
-    country =>
-      d3.max(
-        Object.values(country),
-        yearMap => d3.max(Object.values(yearMap))
-      )
-  ) || 1;
+  // Compute max cumulative per group (not universal)
+  const maxCumulativeByGroup = {};
+  Object.values(groupData).forEach(countryEntry => {
+    Object.entries(countryEntry).forEach(([group, yearMap]) => {
+      const maxVal = d3.max(Object.values(yearMap)) || 0;
+      if (!maxCumulativeByGroup[group] || maxVal > maxCumulativeByGroup[group]) {
+        maxCumulativeByGroup[group] = maxVal;
+      }
+    });
+  });
 
-  const colorInterp = d3.scaleSqrt()
-    .domain([0, MAX_CUMULATIVE])
-    .range([0.1, 1])
-    .clamp(true);
+  // Create a color interpolator per group
+  const colorInterpByGroup = {};
+  Object.entries(maxCumulativeByGroup).forEach(([group, maxVal]) => {
+    colorInterpByGroup[group] = d3.scaleSqrt()
+      .domain([0, maxVal || 1])
+      .range([0.15, 1])
+      .clamp(true);
+  });
 
   // 2. State Tracking
   let hoveredCountry = null; // Stores the ID (name) of the currently hovered country
@@ -110,11 +116,22 @@ function globe_group() {
     }
 
     // --- COLORING & EVENTS ---
+    // Helper to check if a named transition is active on this element
+    const hasActiveTransition = (node, name) => {
+      const t = node.__transition;
+      return t && Object.values(t).some(tr => tr.name === name);
+    };
+
     if (!dominantGroup) {
       // Grey out if no data
-      const reset = animate ? sel.transition().duration(playIntervalMs) : sel;
-      reset.attr('fill', COLORS.GLOBE.country.fill)
-           .attr('data-group', null);
+      if (animate) {
+        sel.transition("fill-color").duration(playIntervalMs)
+           .attr('fill', COLORS.GLOBE.country.fill);
+      } else if (!hasActiveTransition(sel.node(), "fill-color")) {
+        // Only set immediately if no animation is running
+        sel.attr('fill', COLORS.GLOBE.country.fill);
+      }
+      sel.attr('data-group', null);
       
       // Clean up events but KEEP mouseout to ensure state resets if we leave
       sel.on('click', null)
@@ -127,15 +144,21 @@ function globe_group() {
       return;
     }
 
-    // Calculate Fill
+    // Calculate Fill using group-specific interpolator
     const baseColor = COLORS.GLOBE.country.fill;
     const targetColor = COLORS.groupColors[CATEGORIES.group.indexOf(dominantGroup)];
-    const t = colorInterp(dominantCount);
+    const groupInterp = colorInterpByGroup[dominantGroup] || d3.scaleSqrt().domain([0,1]).range([0.1,1]);
+    const t = groupInterp(dominantCount);
     const finalFill = d3.interpolateRgb(baseColor, targetColor)(t);
 
-    const activeSel = animate ? sel.transition().duration(playIntervalMs) : sel;
-    activeSel.attr('fill', finalFill)
-             .attr('data-group', dominantGroup);
+    if (animate) {
+      sel.transition("fill-color").duration(playIntervalMs)
+         .attr('fill', finalFill);
+    } else if (!hasActiveTransition(sel.node(), "fill-color")) {
+      // Only set immediately if no animation is running
+      sel.attr('fill', finalFill);
+    }
+    sel.attr('data-group', dominantGroup);
 
     // Attach Interactions
     sel.on('click', () => { stopAnimation(); showModal("group", dominantGroup); })
@@ -184,10 +207,8 @@ function globe_group() {
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
-    const year = +slider.property('value');
 
-    g.selectAll('path.country')
-      .attr('d', path)
+    g.selectAll('path.country').attr('d', path)
   };
 
   // Initial call to set everything up
