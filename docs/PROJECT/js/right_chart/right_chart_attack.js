@@ -19,7 +19,7 @@ function right_chart_attack(svg) {
   const legendFontSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
   let legend_rows = 0;
   if (showLegend) {
-    const availableWidth = RIGHT_CHART_WIDTH - 20;
+    const availableWidth = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN * 2;
     const itemSpacingEstimate = 15;
     let currentRowWidth = 0;
     legend_rows = 1;
@@ -516,19 +516,18 @@ function right_chart_attack(svg) {
       }
     });
 
-    // --- LEGEND LOGIC (Full Width Centered - FIXED) ---
+    // --- LEGEND LOGIC (Table-like centered layout, matching target chart) ---
     if (showLegend) {
       const legendFontSize = labelFontSize * (isSmallScreen() ? 0.75 : 1);
-
       let legendGroup = container.select('.top-legend');
-
+      if (legendGroup.empty()) legendGroup = container.append('g').attr('class', 'top-legend');
 
       const legendData = attackTypes.map((type, i) => ({
         type: type,
         color: attackColors[i % attackColors.length]
       }));
 
-      // 1. Render Items (Create them immediately)
+      // Render items
       const legendItems = legendGroup.selectAll('.legend-item')
         .data(legendData, d => d.type)
         .join(
@@ -536,12 +535,14 @@ function right_chart_attack(svg) {
             const g = enter.append('g')
               .attr('class', 'legend-item new-legend-item')
               .style('cursor', 'pointer')
-              .attr('opacity', 0) // Start invisible
+              .attr('opacity', 0)
               .on('click', function(event, d) {
                 stopAnimation();
                 showModal("attack", d.type);
                 event.stopPropagation();
-              });
+              })
+              .on('mouseover', (e, d) => {/* noop: ribbons handle hover */})
+              .on('mouseout', () => {});
 
             g.append('rect')
               .attr('width', 12).attr('height', 12)
@@ -562,75 +563,89 @@ function right_chart_attack(svg) {
           exit => exit.remove()
         );
 
-      // 2. Calculate Layout Synchronously
-      const availableWidth = RIGHT_CHART_WIDTH - 20;
+      // Measure and pack items into minimal rows then render as centered table
+      const availW = RIGHT_CHART_WIDTH - 2 * RIGHT_CHART_MARGIN;
       const itemSpacing = 15;
       const lineHeight = legendFontSize + 8;
 
-      let rows = [];
-      let currentRow = {
-        width: 0,
-        items: []
-      };
-
-      // Force bbox calculation
+      // Build width map
+      const items = [];
       legendItems.each(function() {
-        const g = d3.select(this);
+        const el = d3.select(this);
         const w = this.getBBox().width;
-
-        if (currentRow.width + w > availableWidth && currentRow.items.length > 0) {
-          rows.push(currentRow);
-          currentRow = {
-            width: 0,
-            items: []
-          };
-        }
-        currentRow.items.push({
-          element: g,
-          x: currentRow.width
-        });
-        currentRow.width += w + itemSpacing;
+        items.push({ element: el, width: w });
       });
-      if (currentRow.items.length > 0) rows.push(currentRow);
 
-      // 3. Apply Positions
-      rows.forEach((row, rowIndex) => {
-        const actualRowWidth = row.width - itemSpacing;
-        const startX = (RIGHT_CHART_WIDTH - actualRowWidth) / 2;
+      // Greedy pack into minimal number of rows
+      const rowsPacked = [];
+      let curRow = [];
+      let curWidth = 0;
+      items.forEach(it => {
+        const itemW = it.width + itemSpacing;
+        if (curRow.length > 0 && (curWidth + itemW) > availW) {
+          rowsPacked.push(curRow);
+          curRow = [it];
+          curWidth = itemW;
+        } else {
+          curRow.push(it);
+          curWidth += itemW;
+        }
+      });
+      if (curRow.length > 0) rowsPacked.push(curRow);
 
-        row.items.forEach(item => {
+      const numRows = Math.max(1, rowsPacked.length);
+      const totalItems = items.length;
+      const numCols = Math.ceil(totalItems / numRows);
+
+      // Distribute items into columns (top-to-bottom)
+      const columns = Array.from({ length: numCols }, () => []);
+      for (let i = 0; i < totalItems; i++) {
+        const col = Math.floor(i / numRows);
+        const rowIndex = i % numRows;
+        columns[col].push({ item: items[i], rowIndex });
+      }
+
+      // Compute column widths and table metrics
+      const colWidths = columns.map(col => col.reduce((s, c) => Math.max(s, c.item.width), 0));
+      const gap = Math.max(itemSpacing, 8);
+      // tableWidth: sum of column widths + gaps between columns
+      const tableWidth = colWidths.reduce((s, w) => s + w, 0) + gap * Math.max(0, numCols - 1);
+      // startX: center the table within available width (no extra arbitrary offset)
+      const startX = RIGHT_CHART_MARGIN + Math.max(0, (availW - tableWidth) / 2);
+
+      // Position items
+      columns.forEach((col, colIndex) => {
+        let x = startX + colWidths.slice(0, colIndex).reduce((s, w) => s + w + gap, 0);
+        col.forEach(({ item, rowIndex }) => {
+          const yPos = rowIndex * lineHeight;
           if (item.element.classed('new-legend-item')) {
-            item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+            item.element.attr('transform', `translate(${x}, ${yPos})`);
           } else {
             if (duration === 0) {
-              item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+              item.element.attr('transform', `translate(${x}, ${yPos})`);
             } else {
-              item.element.transition().duration(duration)
-                .attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+              item.element.transition().duration(duration).attr('transform', `translate(${x}, ${yPos})`);
             }
           }
         });
       });
 
-      // 4. Center Vertically
-      const totalBlockHeight = rows.length * lineHeight;
+      // Vertical placement (center within title/legend area)
+      const totalBlockHeight = numRows * lineHeight;
       const areaHeight = RIGHT_CHART_MARGIN + MARGIN_TOP;
-      const blockStartY = preferredSize *2 + (areaHeight - totalBlockHeight) / rows.length;
+      const blockStartY = preferredSize * 2 + Math.max(0, (areaHeight - totalBlockHeight) / 2);
 
       if (duration === 0) {
         legendGroup.attr('transform', `translate(0, ${blockStartY})`);
       } else {
-        legendGroup.transition().duration(duration)
-          .attr('transform', `translate(0, ${blockStartY})`);
+        legendGroup.transition().duration(duration).attr('transform', `translate(0, ${blockStartY})`);
       }
 
-      // 5. Fade In New Items (After positioning is set)
+      // Fade in new items
       legendGroup.selectAll('.new-legend-item')
         .transition().duration(transitionDurationMs)
         .attr('opacity', 1)
-        .on('end', function() {
-          d3.select(this).classed('new-legend-item', false);
-        });
+        .on('end', function() { d3.select(this).classed('new-legend-item', false); });
 
     } else {
       container.select('.top-legend').remove();

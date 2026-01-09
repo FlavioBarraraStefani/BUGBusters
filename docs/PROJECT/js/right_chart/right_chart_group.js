@@ -141,8 +141,10 @@ function right_chart_group(svg) {
     const labelPadding = 5;
     // When labels are on top (not stacked), gap must include label height + padding
     const labelOnTop = !STACKED_LAYOUT_PREFERRED;
-    const gap = labelOnTop ? (labelPadding + fontSize) : 0;
-    const totalGaps = (data.length * gap) + (2 * smallGap);
+    // Use a larger gap to accommodate the label when labels are placed on top.
+    // In stacked layout, use a small gap between groups so they don't touch.
+    const groupGap = labelOnTop ? (labelPadding + fontSize) : smallGap;
+    const totalGaps = (data.length * groupGap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
     // 3. Bind Data & Render Groups
@@ -177,7 +179,7 @@ function right_chart_group(svg) {
         const color = COLORS.groupColors[i];
         const darkerColor = d3.color(color) ? d3.color(color).darker(0.8) : color;
 
-        const yTop = MARGIN_TOP + smallGap + gap + i * (rectHeight + gap);
+        const yTop = MARGIN_TOP + smallGap + (labelOnTop ? groupGap : 0) + i * (rectHeight + groupGap);
         const yBottom = yTop + rectHeight;
 
         // Draw Background
@@ -192,7 +194,7 @@ function right_chart_group(svg) {
           .transition().duration(duration)
           .attr('x1', lineX1).attr('x2', lineX2)
           .attr('y1', yBottom).attr('y2', yBottom)
-          .attr('stroke', darkerColor).attr('stroke-width', 3)
+          .attr('stroke', darkerColor).attr('stroke-width', 1.5)
           .style('opacity', 1);
 
         // Draw Label
@@ -248,7 +250,7 @@ function right_chart_group(svg) {
           }
           pathEl
             .attr('fill', color).attr('fill-opacity', 0.75)
-            .attr('stroke', darkerColor).attr('stroke-width', 3)
+            .attr('stroke', darkerColor).attr('stroke-width', 1.5)
             .attr('d', pathString).style('opacity', 1);
         }
       });

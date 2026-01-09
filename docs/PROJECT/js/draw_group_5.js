@@ -168,24 +168,6 @@ function draw_group_5(data, choice, containerId) {
     .style("fill", COLORS.textPrimary)
     .text("Casualties per Attack (Bin)");
 
-  // Y Axis
-  g.append("g")
-    .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")))
-    .attr("color", COLORS.axisLine) // Color of the line and ticks
-    .selectAll("text")
-      .style("font-size", `${chartLabelFontSize - 1}px`)
-      .style("fill", COLORS.textPrimary);
-
-  // Y Title
-  g.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", -35)
-    .attr("x", -innerHeight / 2)
-    .attr("text-anchor", "middle")
-    .style("font-size", `${chartLabelFontSize}px`)
-    .style("fill", COLORS.textPrimary)
-    .text("Number of Attacks");
-
   // 7. LEGEND (CENTERED & HORIZONTAL)
   const legendGroup = g.append("g")
     .attr("transform", `translate(${innerWidth / 2}, -10)`); // Inside top margin

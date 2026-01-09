@@ -11,15 +11,41 @@ function right_chart_target(svg) {
   });
 
   // --- 1. Layout Calculations ---
-  leftPadAxis = RIGHT_CHART_MARGIN + 20;
+  // initial fallback; will be set properly after computing legend rows
 
-  const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
+  // Use same preferredSize logic as attack chart and precompute legend rows
+  const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.2);
   const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
-  const MARGIN_TOP = (showLegend ? 30 : 0)+ preferredSize
 
-  rightPadAxis = !showLegend ?
-    RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 110 :
-    RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+  const legendFontSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
+  let legend_rows = 0;
+  if (showLegend) {
+    const availableWidth = RIGHT_CHART_WIDTH - 2* RIGHT_CHART_MARGIN;
+    const itemSpacingEstimate = 15;
+    let currentRowWidth = 0;
+    legend_rows = 1;
+    KEYS.forEach(type => {
+      const label = type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const approxLabelWidth = label.length * (legendFontSize * 0.6);
+      const approxItemWidth = 12 + 6 + approxLabelWidth + 8;
+      if (currentRowWidth > 0 && (currentRowWidth + approxItemWidth) > availableWidth) {
+        legend_rows++;
+        currentRowWidth = approxItemWidth + itemSpacingEstimate;
+      } else {
+        currentRowWidth += approxItemWidth + itemSpacingEstimate;
+      }
+    });
+  }
+
+  const MARGIN_TOP = (showLegend ? preferredSize * 1.2 * Math.max(1, legend_rows) : 0) + preferredSize;
+
+  if (showLegend) {
+    leftPadAxis = RIGHT_CHART_MARGIN +25;
+    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
+  } else {
+    leftPadAxis = RIGHT_CHART_MARGIN +25;
+    rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 100;
+  }
 
   // --- 2. Container Setup ---
   let container = svg.select('.targets-container');
@@ -52,14 +78,7 @@ function right_chart_target(svg) {
   const labelsGroup = container.selectChild('g.labels-group', 'g').attr('class', 'labels-group');
 
   // D. Axis (Above everything for readability)
-  let yAxisGroup = container.select('.y-axis-target');
-  if (yAxisGroup.empty()) {
-    yAxisGroup = container.append('g')
-      .attr('class', 'y-axis-target')
-      .style('font-family', 'sans-serif')
-      .attr('opacity', 0)
-      .attr('transform', `translate(${leftPadAxis}, -${RIGHT_CHART_HEIGHT})`);
-  }
+  // Y axis removed — thresholds (dotted lines) will be used as reference lines
 
   let title = container.select('.main-chart-title');
         //creatae title if not exists
@@ -86,7 +105,6 @@ function right_chart_target(svg) {
   overlay.lower();
   ribbonsGroup.raise();
   labelsGroup.raise();
-  yAxisGroup.raise();
 
   // --- Helper: Get Stack Height ---
   const getStackHeight = (step) => {
@@ -133,32 +151,57 @@ function right_chart_target(svg) {
       .attr('width', Math.max(0, rightPadAxis - leftPadAxis))
       .attr('height', (RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN) - (RIGHT_CHART_MARGIN + MARGIN_TOP));
 
-    // --- E. Render Y-Axis ---
-    const height = (RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN) - (RIGHT_CHART_MARGIN + MARGIN_TOP);
-    const minPxPerTick = labelFontSize + 2;
-    const numTicks = Math.max(2, Math.min(5, Math.floor(height / minPxPerTick)));
+    // Y axis removed: ensure it's not present
+    container.selectAll('.y-axis-target').remove();
 
-    const yAxis = d3.axisLeft(y).ticks(numTicks).tickFormat(d3.format(".2s"));
+    // --- HORIZONTAL THRESHOLD LINES ---
+    // thresholds for targets chart
+    const thresholds = [1000, 2000, 5000, 10000, 25000, 50000];
+    const availableThresholds = thresholds.filter(t => t <= yMax).sort((a, b) => a - b);
+    const thresholdsToShow = availableThresholds.slice(-3);
 
-    if (yAxisGroup.attr('opacity') == 0) {
-      yAxisGroup.call(yAxis);
-      yAxisGroup.transition().duration(transitionDurationMs).ease(d3.easeCubicOut)
-        .attr('opacity', 1)
-        .attr('transform', `translate(${leftPadAxis}, 0)`);
-    } else {
-      const t = yAxisGroup.transition().duration(duration).ease(d3.easeLinear);
-      t.attr('opacity', 1)
-        .attr('transform', `translate(${leftPadAxis}, 0)`)
-        .call(yAxis);
-    }
+    const tGroups = container.selectAll('.threshold-group')
+      .data(thresholdsToShow, d => d);
 
-    yAxisGroup.selectAll('.tick text')
-      .style('font-size', `${labelFontSize}px`)
-      .attr('fill', COLORS.RIGHT_CHART.textPrimary);
+    tGroups.join(
+      enter => enter.append('g').attr('class', 'threshold-group')
+        .attr('opacity', 0)
+        .call(g => {
+          g.append('line')
+            .attr('class', 'threshold-line')
+            .attr('x1', RIGHT_CHART_MARGIN+10)
+            .attr('x2', rightPadAxis)
+            .attr('y1', d => y(d))
+            .attr('y2', d => y(d))
+            .attr('stroke', COLORS.RIGHT_CHART.axisLine || '#888')
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '3 3')
+            .style('opacity', 0.12);
 
-    yAxisGroup.selectAll('path, line')
-      .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-      .attr('stroke-width', 2);
+          g.append('text')
+            .attr('class', 'threshold-label')
+            .attr('x', RIGHT_CHART_MARGIN-5)
+            .attr('text-anchor', 'start')
+            .attr('y', d => y(d)-preferredSize/2)
+            .attr('dy', '0.35em')
+            .style('font-size', `${preferredSize * 0.8}px`)
+            .attr('fill', COLORS.defaultComparison)
+            .style('opacity', 1)
+            .text(d => String(d));
+        })
+        .transition().duration(transitionDurationMs).attr('opacity', 1),
+      update => update.call(g => {
+        g.select('line').transition().duration(duration)
+          .attr('x1', RIGHT_CHART_MARGIN+10).attr('x2', rightPadAxis)
+          .attr('y1', d => y(d)).attr('y2', d => y(d));
+        g.select('text').transition().duration(duration)
+          .attr('x', RIGHT_CHART_MARGIN-5).attr('y', d => y(d)-preferredSize/2);
+      }),
+      exit => exit.transition().duration(duration).style('opacity', 0).remove()
+    );
+
+    // Ensure thresholds sit behind ribbons and labels
+    container.selectAll('.threshold-group').lower();
 
     // --- F. Prepare Data (Ribbons & Labels) ---
     if (visualTimeline.length === 0) {
@@ -204,8 +247,8 @@ function right_chart_target(svg) {
     // --- G. Render Ribbons ---
     const area = d3.area()
       .x(d => x(d.x))
-      .y0(d => y(d.y0))
-      .y1(d => y(d.y1))
+      .y0(d => y(d.y0)-3)
+      .y1(d => y(d.y1)-3)
       .curve(visualTimeline.length === 1 ? d3.curveLinear : d3.curveBumpX);
 
     if (ribbonsGroup.attr('data-init') !== "true") {
@@ -393,50 +436,74 @@ function right_chart_target(svg) {
       const itemSpacing = 15;
       const lineHeight = legendFontSize + 8;
 
-      let rows = [];
-      let currentRow = {
-        width: 0,
-        items: []
-      };
-
+      // Build an array of legend item elements and widths
+      const items = [];
       legendItems.each(function() {
-        const g = d3.select(this);
+        const el = d3.select(this);
         const w = this.getBBox().width;
-        if (currentRow.width + w > availableWidth && currentRow.items.length > 0) {
-          rows.push(currentRow);
-          currentRow = {
-            width: 0,
-            items: []
-          };
-        }
-        currentRow.items.push({
-          element: g,
-          x: currentRow.width
-        });
-        currentRow.width += w + itemSpacing;
+        items.push({ element: el, width: w });
       });
-      if (currentRow.items.length > 0) rows.push(currentRow);
 
-      rows.forEach((row, rowIndex) => {
-        const actualRowWidth = row.width - itemSpacing;
-        const startX = (RIGHT_CHART_WIDTH - actualRowWidth) / 2;
-        row.items.forEach(item => {
+      // Greedy pack into the minimal number of rows given availableWidth
+      const availW = RIGHT_CHART_WIDTH - 2 * RIGHT_CHART_MARGIN;
+      const rowsPacked = [];
+      let curRow = [];
+      let curWidth = 0;
+      items.forEach(it => {
+        const itemW = it.width + itemSpacing;
+        if (curRow.length > 0 && (curWidth + itemW) > availW) {
+          rowsPacked.push(curRow);
+          curRow = [it];
+          curWidth = itemW;
+        } else {
+          curRow.push(it);
+          curWidth += itemW;
+        }
+      });
+      if (curRow.length > 0) rowsPacked.push(curRow);
+
+      const numRows = Math.max(1, rowsPacked.length);
+      const totalItems = items.length;
+      const numCols = Math.ceil(totalItems / numRows);
+
+      // Distribute items into columns (top-to-bottom, left-to-right)
+      const columns = Array.from({ length: numCols }, () => []);
+      let ci = 0;
+      for (let i = 0; i < totalItems; i++) {
+        const col = Math.floor(i / numRows);
+        const rowIndex = i % numRows;
+        columns[col].push({ item: items[i], rowIndex });
+      }
+
+      // Compute column widths
+      const colWidths = columns.map(col => col.reduce((s, c) => Math.max(s, c.item.width), 0));
+      const gap = Math.max(itemSpacing, 8);
+      const tableWidth = colWidths.reduce((s, w) => s + w, 0) + gap * (numCols + 1);
+      const startX = RIGHT_CHART_MARGIN + Math.max(0, (availW - tableWidth) / 2) + gap;
+
+      // Position items: x based on column, y based on rowIndex
+      columns.forEach((col, colIndex) => {
+        let x = startX + colWidths.slice(0, colIndex).reduce((s, w) => s + w + gap, 0);
+        col.forEach(({ item, rowIndex }) => {
+          const yPos = rowIndex * lineHeight;
           if (item.element.classed('new-legend-item')) {
-            item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+            item.element.attr('transform', `translate(${x}, ${yPos})`);
           } else {
             if (duration === 0) {
-              item.element.attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+              item.element.attr('transform', `translate(${x}, ${yPos})`);
             } else {
-              item.element.transition().duration(duration)
-                .attr('transform', `translate(${startX + item.x}, ${rowIndex * lineHeight})`);
+              item.element.transition().duration(duration).attr('transform', `translate(${x}, ${yPos})`);
             }
           }
         });
       });
 
+      // Build rows array for height calculation
+      rows = Array.from({ length: numRows }, (_, i) => ({ items: [] }));
+
       const totalBlockHeight = rows.length * lineHeight;
       const areaHeight = RIGHT_CHART_MARGIN + MARGIN_TOP;
-      const blockStartY = preferredSize *2 + (areaHeight - totalBlockHeight) / rows.length;
+      const blockStartY = preferredSize * 2 + Math.max(0, (areaHeight - totalBlockHeight) / 2);
 
       if (duration === 0) {
         legendGroup.attr('transform', `translate(0, ${blockStartY})`);
