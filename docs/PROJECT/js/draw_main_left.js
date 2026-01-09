@@ -10,6 +10,7 @@ let playBtn = null;
 let slider = null;
 let title = null;
 
+
 let sliderRange = [1969, 2020];
 
 //ALLOW drag to rotate globe
@@ -17,8 +18,9 @@ let needsUpdate = false;
 let updateGlobe = null;   // function to update globe rendering
 
 let baseScale = 1;
+const LEFT_CHART_LATERAL_PADDING = 10;
 function computeBaseGlobeScale() {
-  return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - 10;//padding to make the globe fit
+  return Math.min(LEFT_CHART_WIDTH, LEFT_CHART_HEIGHT) / 2 - LEFT_CHART_LATERAL_PADDING;//padding to make the globe fit
 }
 
 let rotateOnStart = true;
@@ -119,6 +121,8 @@ function draw_main_left(categoryInfo, containerId) {
   const currentCat = categoryInfo?.current || null;
   const previousCat = categoryInfo?.previous || null;
 
+  baseScale = computeBaseGlobeScale();
+
   //called once to initialize
   if (!window._draw_main_left_lastCall) {
     //initialize SVG
@@ -136,8 +140,6 @@ function draw_main_left(categoryInfo, containerId) {
 
     //render once the globe
     window.globeRotation = [+10, -10];
-    baseScale = computeBaseGlobeScale();
-
     projection = d3.geoOrthographic()
       .scale(baseScale)
       .center([0, 0])

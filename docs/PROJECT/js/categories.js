@@ -112,7 +112,6 @@ function setCanvasSizes() {
   const navbar = document.querySelector('.navbar');
   const categoryHeader = document.querySelector('.category-header');
   const timelineContainer = document.getElementById('timeline-container');
-  const footer = document.querySelector('footer');
   const mainContent = document.getElementById('main-content');
   const canvasRow = mainContent?.querySelector('.canvas-row');
   const containerFluid = mainContent?.querySelector('.container-fluid');
@@ -130,35 +129,26 @@ function setCanvasSizes() {
   const navbarHeight = isMobileLandscape ? 0 : navbar.offsetHeight;
   const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
-  const footerHeight = (footer && !isMobileLandscape) ? footer.offsetHeight : 0;
 
-  // Position category header directly below navbar
+  // Position category header at the bottom of the page
   if (categoryHeader) {
     categoryHeader.style.position = 'fixed';
-    categoryHeader.style.top = `${navbarHeight}px`;
+    categoryHeader.style.bottom = '0';
     categoryHeader.style.left = '0';
     categoryHeader.style.right = '0';
   }
 
-  // Position footer at bottom
-  if (footer) {
-    footer.style.position = 'fixed';
-    footer.style.bottom = '0';
-    footer.style.left = '0';
-    footer.style.right = '0';
-  }
-
-  // Position timeline directly above footer
+  // Position timeline directly above category header
   if (timelineContainer) {
     timelineContainer.style.position = 'fixed';
-    timelineContainer.style.bottom = `${footerHeight}px`;
+    timelineContainer.style.bottom = `${categoryHeight}px`;
     timelineContainer.style.left = '0';
     timelineContainer.style.right = '0';
   }
 
-  // Position and size main content between category header and timeline
-  const mainContentTop = navbarHeight + categoryHeight;
-  const mainContentBottom = footerHeight + timelineHeight;
+  // Position and size main content between navbar and timeline
+  const mainContentTop = navbarHeight;
+  const mainContentBottom = categoryHeight + timelineHeight;
   const availableHeight = window.innerHeight - mainContentTop - mainContentBottom;
   const availableWidth = window.innerWidth;
 

@@ -216,6 +216,19 @@ footer {
   border-color: var(--color-primary);
 }
 
+.category-btn small {
+  color: #000 !important;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 0.7rem;
+}
+
+.category-btn:hover small,
+.category-btn:focus small,
+.category-btn.active small {
+  color: #fff !important;
+}
+
 /* ===========================
    Canvas category Styles
    =========================== */
