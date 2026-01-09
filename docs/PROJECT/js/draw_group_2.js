@@ -20,7 +20,16 @@ async function draw_group_2(data, choice, containerId) {
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${width} ${height}`);
 
+  //retry loading world topology if not present
   const world = window._countries;
+  if (!world) {
+    const retry = () => {
+      if (window._countries)  draw_group_2(data, choice, containerId);
+      else setTimeout(retry, 50);
+    };
+    retry();
+    return;
+  }
   const countriesFeatures = topojson.feature(world, world.objects.countries).features;
 
   // 3. PREPARE DATA

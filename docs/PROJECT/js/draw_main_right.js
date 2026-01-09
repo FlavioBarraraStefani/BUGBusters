@@ -73,11 +73,11 @@ function draw_main_right(categoryInfo, containerId) {
 
       t.selectAll('path')
         .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-        .attr('stroke-width', 2);
+        .attr('stroke-width', 1);
 
       t.selectAll('line')
         .attr('stroke', COLORS.RIGHT_CHART.axisLine)
-        .attr('stroke-width', 2);
+        .attr('stroke-width', 1);
     }
   } 
   window._draw_main_right_lastCall = [categoryInfo, containerId];
