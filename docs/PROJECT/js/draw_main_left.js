@@ -15,7 +15,7 @@ let sliderRange = [1969, 2020];
 
 //ALLOW drag to rotate globe
 let needsUpdate = false;
-let updateGlobe = () => {};   // function to update globe rendering
+let updateGlobe = () => {};;   // function to update globe rendering
 
 let baseScale = 1;
 const LEFT_CHART_LATERAL_PADDING = 10;
@@ -205,13 +205,12 @@ function draw_main_left(categoryInfo, containerId) {
     .filter(function(event) {
       const se = event.sourceEvent;
       if (!se) return true;
-      // TouchEvent: allow only single-touch drags
+      // If this is a TouchEvent allow only single-touch
       if (se.touches) return se.touches.length === 1;
-      // PointerEvent: allow mouse/pen; allow touch only for the primary pointer
+      // PointerEvent: allow mouse/pen; allow touch only for primary pointer
       if (se.pointerType) {
         if (se.pointerType === 'mouse' || se.pointerType === 'pen') return true;
         if (se.pointerType === 'touch') return !!se.isPrimary;
-        return true;
       }
       return true;
     })
@@ -232,18 +231,17 @@ function draw_main_left(categoryInfo, containerId) {
       requestAnimationFrame(updateGlobe);
     });
     
-    // Attach drag to SVG
+    // Attach drag to SVG (single-touch only)
     svg.call(drag);
 
-    // Ensure the SVG and its wrapper allow pointer/touch gestures to be handled (enables pinch-to-zoom)
-    // Set on the wrapper because some mobile browsers ignore touch-action on SVG elements.
+    // Use the wrapper for zoom so mobile browsers properly route pinch events
     const wrapper = container.select('.canvas-wrapper');
+    // Ensure wrapper and svg allow JS to handle touch gestures
     wrapper.style('touch-action', 'none');
     svg.style('touch-action', 'none')
       .style('-webkit-user-select', 'none')
       .style('-webkit-touch-callout', 'none')
       .style('-ms-touch-action', 'none');
-    
 
     //----------//
     // Enable zoom to scale globe
@@ -262,7 +260,8 @@ function draw_main_left(categoryInfo, containerId) {
         needsUpdate = true;
         requestAnimationFrame(updateGlobe);
       });
-    svg.call(zoom);
+    // Attach zoom to the wrapper to improve mobile pinch handling
+    wrapper.call(zoom);
 
     //----------//
     // Auto-rotation loop
