@@ -202,18 +202,6 @@ function draw_main_left(categoryInfo, containerId) {
     // Enable drag to rotate globe
     //----------//
     const drag = d3.drag()
-    .filter(function(event) {
-      const se = event.sourceEvent;
-      if (!se) return true;
-      // If this is a TouchEvent allow only single-touch
-      if (se.touches) return se.touches.length === 1;
-      // PointerEvent: allow mouse/pen; allow touch only for primary pointer
-      if (se.pointerType) {
-        if (se.pointerType === 'mouse' || se.pointerType === 'pen') return true;
-        if (se.pointerType === 'touch') return !!se.isPrimary;
-      }
-      return true;
-    })
     .on('drag', function (event) {
       const rotate = projection.rotate();
       let k = 50 / projection.scale();
@@ -231,17 +219,8 @@ function draw_main_left(categoryInfo, containerId) {
       requestAnimationFrame(updateGlobe);
     });
     
-    // Attach drag to SVG (single-touch only)
+    // Attach drag to SVG
     svg.call(drag);
-
-    // Use the wrapper for zoom so mobile browsers properly route pinch events
-    const wrapper = container.select('.canvas-wrapper');
-    // Ensure wrapper and svg allow JS to handle touch gestures
-    wrapper.style('touch-action', 'none');
-    svg.style('touch-action', 'none')
-      .style('-webkit-user-select', 'none')
-      .style('-webkit-touch-callout', 'none')
-      .style('-ms-touch-action', 'none');
 
     //----------//
     // Enable zoom to scale globe
@@ -249,11 +228,7 @@ function draw_main_left(categoryInfo, containerId) {
     baseScale = projection.scale(); // store initial scale
     const zoom = d3.zoom()
       .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
-      .on('start', function(event) {
-        try { alert('zoom start — event type: ' + (event.sourceEvent && event.sourceEvent.type)); } catch(e){}
-      })
       .on('zoom', function (event) {
-        try { /* quick debug - comment out later */ alert('zoom event — source: ' + (event.sourceEvent && event.sourceEvent.type)); } catch(e){}
         projection.scale(baseScale * event.transform.k);
         const t = projection.translate();
         g.select('circle.ocean-bg')
@@ -263,37 +238,8 @@ function draw_main_left(categoryInfo, containerId) {
 
         needsUpdate = true;
         requestAnimationFrame(updateGlobe);
-      })
-      .on('end', function(event) {
-        try { alert('zoom end — event type: ' + (event.sourceEvent && event.sourceEvent.type)); } catch(e){}
       });
-
-    // Add native listeners to trace which element receives touch/pointer/gesture events on mobile
-    try {
-      // wrapper and svg selections
-      const wrapperNode = wrapper.node();
-      const svgNode = svg.node();
-
-      if (wrapperNode) {
-        wrapperNode.addEventListener('touchstart', function(ev){ try { alert('wrapper touchstart - touches=' + (ev.touches?ev.touches.length:0)); } catch(e){} }, {passive:true});
-        wrapperNode.addEventListener('touchmove', function(ev){ try { alert('wrapper touchmove - touches=' + (ev.touches?ev.touches.length:0)); } catch(e){} }, {passive:true});
-        wrapperNode.addEventListener('pointerdown', function(ev){ try { alert('wrapper pointerdown - type=' + ev.pointerType + ' isPrimary=' + !!ev.isPrimary); } catch(e){} });
-        wrapperNode.addEventListener('pointermove', function(ev){ /* silent by default */ }, {passive:true});
-      }
-
-      if (svgNode) {
-        svgNode.addEventListener('touchstart', function(ev){ try { alert('svg touchstart - touches=' + (ev.touches?ev.touches.length:0)); } catch(e){} }, {passive:true});
-        svgNode.addEventListener('pointerdown', function(ev){ try { alert('svg pointerdown - type=' + ev.pointerType + ' isPrimary=' + !!ev.isPrimary); } catch(e){} });
-      }
-
-      // iOS specific gesturestart (Safari) — detect if pinch gestures are recognized
-      window.addEventListener('gesturestart', function(ev){ try { alert('window gesturestart fired'); } catch(e){} });
-    } catch (err) {
-      // ignore debug injection errors
-    }
-
-    // Attach zoom to the wrapper to improve mobile pinch handling
-    wrapper.call(zoom);
+    svg.call(zoom);
 
     //----------//
     // Auto-rotation loop
