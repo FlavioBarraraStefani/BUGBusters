@@ -244,7 +244,6 @@ function setCanvasSizes() {
 
   // Rescale globe if dimensions changed and globe exists
   rescaleGlobe(); //left chart
-  rescaleRightChart(); //right chart
 }
 
 /**
@@ -309,23 +308,6 @@ function rescaleGlobe() {
     baseScale = computeBaseGlobeScale();
   }
 }
-
-function rescaleRightChart() {
-  console.log('Rescaling right chart DISABLED');
-  return;
-  if (RIGHT_CHART_WIDTH === 0 || RIGHT_CHART_HEIGHT === 0) return;
-  // Update the SVG viewBox
-  const container = d3.select('#canvas-right');
-  const svg = container.select('.canvas-wrapper svg');
-  // update viewBox
-  svg.attr('viewBox', `0 0 ${RIGHT_CHART_WIDTH} ${RIGHT_CHART_HEIGHT}`);
-
-  // update group container transform if needed (reset to origin)
-  // update axis and ridgelines (stepAnimationRight handles ridges)
-  stepAnimationRight();
-  //if (typeof stepAnimationRight === 'function') stepAnimationRight();
-}
-
 
 /**
  * Show modal for a specific category and choice

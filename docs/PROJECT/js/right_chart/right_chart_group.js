@@ -67,7 +67,7 @@ function right_chart_group(svg) {
 
   // --- NEW: Define Top Margin ---
   const fontSize = labelFontSize * (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen()) ? 1 : 1.5);
-  const MARGIN_TOP = fontSize;
+  const MARGIN_TOP = fontSize * 2; // Increased top margin for title
   
   // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
@@ -100,7 +100,7 @@ function right_chart_group(svg) {
       .attr('text-anchor', 'middle') // Centers text horizontally
       .style('font-weight', 'bold')
       .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
-      .attr('y', MARGIN_TOP / 2*3)    // Center vertically within the top margin
+      .attr('y', MARGIN_TOP * 0.75)    // Center vertically within the top margin
       .style('font-size', `${fontSize}px`) 
       .text("Probability Distribution of attacks")
       .style('opacity', 0)
@@ -141,8 +141,10 @@ function right_chart_group(svg) {
     const labelPadding = 5;
     // When labels are on top (not stacked), gap must include label height + padding
     const labelOnTop = !STACKED_LAYOUT_PREFERRED;
-    const gap = labelOnTop ? (labelPadding + fontSize) : 0;
-    const totalGaps = (data.length * gap) + (2 * smallGap);
+    // Use a larger gap to accommodate the label when labels are placed on top.
+    // In stacked layout, use a small gap between groups so they don't touch.
+    const groupGap = labelOnTop ? (labelPadding + fontSize) : smallGap;
+    const totalGaps = (data.length * groupGap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
     // 3. Bind Data & Render Groups
@@ -177,7 +179,7 @@ function right_chart_group(svg) {
         const color = COLORS.groupColors[i];
         const darkerColor = d3.color(color) ? d3.color(color).darker(0.8) : color;
 
-        const yTop = MARGIN_TOP + smallGap + gap + i * (rectHeight + gap);
+        const yTop = MARGIN_TOP + smallGap + (labelOnTop ? groupGap : 0) + i * (rectHeight + groupGap);
         const yBottom = yTop + rectHeight;
 
         // Draw Background
@@ -192,7 +194,7 @@ function right_chart_group(svg) {
           .transition().duration(duration)
           .attr('x1', lineX1).attr('x2', lineX2)
           .attr('y1', yBottom).attr('y2', yBottom)
-          .attr('stroke', darkerColor).attr('stroke-width', 3)
+          .attr('stroke', darkerColor).attr('stroke-width', 1.5)
           .style('opacity', 1);
 
         // Draw Label
@@ -200,7 +202,6 @@ function right_chart_group(svg) {
         const labelText = g.select('.group-label')
           .text(labelName)
           .attr('fill', color)
-          .style('font-weight', 'bold')
           .style('font-size', `${fontSize}px`)
           .style('cursor', 'pointer'); // Ensure cursor indicates clickability
 
@@ -248,7 +249,7 @@ function right_chart_group(svg) {
           }
           pathEl
             .attr('fill', color).attr('fill-opacity', 0.75)
-            .attr('stroke', darkerColor).attr('stroke-width', 3)
+            .attr('stroke', darkerColor).attr('stroke-width', 1.5)
             .attr('d', pathString).style('opacity', 1);
         }
       });
@@ -363,7 +364,7 @@ function right_chart_group(svg) {
         // Calculate which vertical band was clicked
         const [mx, my] = d3.pointer(event);
         const clickedGroup = data.find((d, i) => {
-             const yTop = smallGap + gap + i * (rectHeight + gap);
+             const yTop = smallGap + groupGap + i * (rectHeight + groupGap);
              const yBottom = yTop + rectHeight;
              return my >= (yTop - 25) && my <= yBottom;
         });
