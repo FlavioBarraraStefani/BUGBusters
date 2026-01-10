@@ -502,3 +502,18 @@ document.addEventListener("DOMContentLoaded", function() {
     // Initial check
     checkScreen();
 });
+
+// -------------------------------
+//fading on scroll
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            obs.unobserve(e.target); // remove if you want it to animate only once
+          }
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('.fade-scroll').forEach(el => observer.observe(el));
+    });

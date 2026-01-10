@@ -68,21 +68,95 @@
         <span class="brand-text">BUGBusters</span>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
-        aria-expanded="false" aria-label="Apri menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div id="nav" class="collapse navbar-collapse">
+      <!-- Desktop Menu (hidden on mobile) -->
+      <div class="collapse navbar-collapse d-none d-lg-block">
         <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#introModal">Contents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#gtdDatasetModal">Sources</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal">About Us</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal"
-              data-bs-target="#projectDescriptionModal">Description</a>
-          </li>
         </ul>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navOffcanvas" aria-controls="navOffcanvas" aria-label="Apri menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="navOffcanvas" aria-labelledby="navOffcanvasLabel">
+        <div class="offcanvas-header border-bottom">
+          <h5 class="offcanvas-title" id="navOffcanvasLabel">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+          <!-- Menu Items Centrali -->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#introModal" data-bs-dismiss="offcanvas">Contents</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#gtdDatasetModal" data-bs-dismiss="offcanvas">Sources</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutUsModal" data-bs-dismiss="offcanvas">About Us</a>
+            </li>
+          </ul>
+          
+          <!-- Footer del menu offcanvas -->
+          <div class="border-top pt-3">
+            <div class="row align-items-center gy-3">
+              <!-- Logo Unige a sinistra -->
+              <div class="col-6 col-md-2 text-center text-md-start">
+                <a href="https://unige.it/en" target="_blank" rel="noopener noreferrer"
+                  class="d-inline-flex align-items-center text-decoration-none">
+                  <img src="https://id.unige.it/sites/id.unige.it/files/2022-02/naming-2.png" alt="Universita di Genova"
+                    style="height: 40px; width: auto;" class="me-1" />
+                </a>
+              </div>
+              
+              <div class="col-6 col-md-10 text-center text-md-end">
+                <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
+
+                  <a href="https://github.com/Isabibbi" target="_blank" rel="noopener noreferrer"
+                    class="text-decoration-none small d-inline-flex align-items-center">
+                    <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                      <path fill-rule="evenodd"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                    </svg>
+                    <span class="d-none d-md-inline">Isabella Tagliafico</span>
+                    <span class="d-md-none">IT</span>
+                  </a>
+
+                  <a href="https://github.com/supernino02" target="_blank" rel="noopener noreferrer"
+                    class="text-decoration-none small d-inline-flex align-items-center">
+                    <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                      <path fill-rule="evenodd"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                    </svg>
+                    <span class="d-none d-md-inline">Luca Ninivaggi</span>
+                    <span class="d-md-none">LN</span>
+                  </a>
+
+                  <a href="https://github.com/FlavioBarraraStefani" target="_blank" rel="noopener noreferrer"
+                    class="text-decoration-none small d-inline-flex align-items-center">
+                    <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
+                      <path fill-rule="evenodd"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                    </svg>
+                    <span class="d-none d-md-inline">Flavio Barrara Stefani</span>
+                    <span class="d-md-none">FBS</span>
+                  </a>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -176,12 +250,147 @@
 
   </main>
 
+  <!-- INTRO MODAL -->
+  <div class="modal fade" id="introModal" tabindex="-1" aria-labelledby="introModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header border-0 px-3 py-2">
+          <h2 class="modal-title section-heading h2 mb-0" id="introModalLabel">Contents</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="this.blur()"></button>
+        </div>
+        <div class="modal-body p-3 p-lg-4">
+          <div class="p-3 border rounded-3 text-justify" style="max-width: 65ch; margin-inline: auto;">
+            <p class="mb-2 small">
+              Welcome to the <strong>BUGBusters</strong> visualization project.
+              Despite decades of counterterrorism efforts, terrorism remains an unresolved issue affecting communities worldwide. 
+              This interactive platform raises awareness about terrorism (1970–2020) through clear, focused visual analyses.
+            </p>
+
+            <h3 class="h5 mb-3 pt-2">Categories</h3>
+            <p class="mb-3 small">
+              We begin with an overview of the total number of terrorist attacks globally, 
+              establishing the scale and scope of this phenomenon across decades, and then let you explore three themed categories: 
+              Groups, Attacks, and Targets.
+            </p>
+
+            <div class="d-flex gap-3 align-items-center py-1 fade-scroll">
+              <div class="flex-shrink-0 col-1 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-users fs-4" aria-hidden="true"></i>
+              </div>
+              <div class="flex-grow-1 ps-2 ps-md-3 border-start border-0 border-md-2">
+                <p class="mb-0 small">
+                  <strong>Groups</strong>: deep insights into major organizations and their patterns over time.
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 align-items-center py-1 fade-scroll">
+              <div class="flex-shrink-0 col-1 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-bomb fs-4" aria-hidden="true"></i>
+              </div>
+              <div class="flex-grow-1 ps-2 ps-md-3 border-start border-0 border-md-2">
+                <p class="mb-0 small">
+                  <strong>Attacks</strong>: analysis of tactics (bombings, armed assaults, assassinations, etc.), casualties and trends.
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 align-items-center py-1 fade-scroll">
+              <div class="flex-shrink-0 col-1 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-bullseye fs-4" aria-hidden="true"></i>
+              </div>
+              <div class="flex-grow-1 ps-2 ps-md-3 border-start border-0 border-md-2">
+                <p class="mb-0 small">
+                  <strong>Targets</strong>: who and what are attacked — military, government, civilians, transport and infrastructure — and how preferences change.
+                </p>
+              </div>
+            </div>
+
+            <h3 class="h5 mb-3 pt-2">Interactions</h3>
+            <p class="mb-2 small fade-scroll">
+              To navigate across the temporal dimension, use the timeline slider at the bottom to select specific years 
+              or play an animation showing changes over time.
+            </p>
+
+            <p class="mb-2 small fade-scroll">
+              Lastly, all the visualizations are interactive. Hover over elements to see detailed tooltips, 
+              and click on items to filter and explore related data across the different views.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GTD DATASET MODAL -->
+  <div class="modal fade" id="gtdDatasetModal" tabindex="-1" aria-labelledby="gtdDatasetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header border-0 px-4 pt-4">
+          <h2 class="modal-title section-heading h2" id="gtdDatasetModalLabel">Global Terrorism Database</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            onclick="this.blur()"></button>
+        </div>
+        <div class="modal-body p-4 p-lg-5">
+          <div class="row g-4 align-items-center">
+            <div class="col-6 col-lg-4 col-sm-4 mx-auto mx-lg-0 text-center">
+              <img src="assets/gtd.jpg" class="img-fluid object-fit-cover section-image" alt="GTD Cover Image"
+                style="max-width: 260px; border-radius: 8px;" />
+            </div>
+            <div class="col-12 col-lg-8">
+              <div class="p-4 border rounded-3 h-100" style="max-width: 65ch;">
+                <div class="fade-scroll">
+                  <h3 class="h5 mb-3">What is the GTD?</h3>
+                  <p class="mb-4">
+                    The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database (GTD)</a>
+                    is an event-level dataset maintained by the
+                    <a href="https://umd.edu/" target="_blank">University of Maryland</a>.
+                    It contains over 200,000 records of terrorist attacks worldwide, spanning from 1970 to 2020.
+                  </p>
+                </div>
+                <div class="fade-scroll">
+                  <h3 class="h5 mb-3">Data Collection & Quality</h3>
+                  <p class="mb-4">
+                    Data are collected from multiple open sources. The GTD research team integrates and standardizes them
+                    to ensure consistency over time, performing rigorous quality control, retrospective coding, and
+                    cross-referencing with other terrorism databases to identify and include missing events.
+                  </p>
+                </div>
+                <div class="fade-scroll">
+                  <h3 class="h5 mb-3">Data Contents</h3>
+                  <p class="mb-4">
+                    Each record represents a single terrorist incident and includes detailed information such as the date and location of the attack, type of weapon used, targets and victims, perpetrators, and claims of responsibility. Additional variables describe casualties, outcomes, and data sources. A full codebook and <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">documentation</a> can be found on the GTD website.
+                  </p>
+                </div>
+                <div class="fade-scroll">
+                  <h3 class="h5 mb-3">Data Cleaning & Processing</h3>
+                  <p class="mb-4 fade-scroll">
+                    During our analysis of the GTD dataset, we identified and processed numerous data columns. Several columns presented significant sparsity and were excluded from our visualizations due to limited utility for our narrative. We strategically created multiple specialized JSON files tailored to each visualization type in our project, extracting only the most relevant features for deeper insights. Despite its comprehensive nature, the GTD dataset proved manageable and didn't present insurmountable technical challenges during our processing pipeline.
+                  </p>
+                </div>  
+                <p class="mb-4 fade-scroll">
+                    <strong>Note on Data Availability:</strong> As this is a private dataset utilized for academic purposes, we cannot publish the direct source or raw data files. However, through our interactive visualizations and detailed analyses on this platform, you can fully understand the compelling narrative we have crafted as a team regarding global terrorism patterns and their human impact.
+                  </p>
+                <div class="fade-scroll">
+                  <h3 class="h5 mb-3">Implementation & Challenges</h3>
+                  <p class="mb-0">
+                    Throughout the development of this project, we encountered minimal significant implementation difficulties. Our team successfully managed the data pipeline, developed robust visualizations, and maintained code quality throughout the workflow. The combination of careful planning and agile problem-solving allowed us to work efficiently and deliver a comprehensive, well integrated visualization platform that effectively communicates complex patterns in the GTD data.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ABOUT US MODAL -->
   <div class="modal fade" id="aboutUsModal" tabindex="-1" aria-labelledby="aboutUsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="aboutUsModalLabel">About Us</h2>
+          <h2 class="modal-title section-heading h2" id="aboutUsModalLabel">About Us</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
             onclick="this.blur()"></button>
         </div>
@@ -193,7 +402,7 @@
             </div>
             <div class="col-12 col-md-6 col-lg-8 d-flex justify-content-center">
               <div class="p-4 border rounded-3 text-justify" style="max-width: 65ch;">
-                <p class="mb-3">
+                <p class="mb-3 fade-scroll">
                   The <strong>BUGBusters</strong> study group is composed of three students enrolled in the
                   <a href="https://corsi.unige.it/en/corsi/10852" target="_blank">Master's Degree in Artificial
                     Intelligence</a>
@@ -203,71 +412,23 @@
                   taught by
                   <a href="https://rubrica.unige.it/personale/UkNHU15t" target="_blank">Professor Annalisa Barla</a>.
                 </p>
-                <p class="mb-0">
-                  The goal of the project is to provide an intuitive and informative visualization
-                  of a dataset on global terrorism, revealing significant trends, patterns, and correlations.
-                  The work aims to turn complex data into clear, meaningful insights that promote
-                  a deeper understanding of global security phenomena.
+                <p class="mb-3 fade-scroll">
+                  This project is the result of true teamwork and collaborative effort. As a group, we divided our responsibilities strategically to maximize our strengths and ensure comprehensive coverage of all project aspects.
+                </p>
+                <p class="mb-3 fade-scroll">
+                  Within the BUGBusters team, responsibilities were distributed across key areas: some team members focused on low-level implementation and software engineering, developing the robust technical foundation that powers our visualizations. Others dedicated significant effort to dataset organization and data cleaning, ensuring data quality and preparing the Global Terrorism Database for analysis. As a collective, we made critical strategic decisions about project direction, methodology, and which thematic areas to prioritize and study in greater depth.
+                </p>
+                <p class="mb-3 fade-scroll">
+                  Additionally, certain team members invested substantial time in visual design and graphic impact, ensuring that complex data is not only accurate but also visually compelling and accessible to diverse audiences. This multidisciplinary approach combining technical expertise, data management, strategic planning, and visual communication transformed what could have been individual contributions into a seamless, integrated project.
+                </p>
+                <p class="mb-0 fade-scroll">
+                  The goal of the project is to provide an intuitive and informative visualization of global terrorism data, revealing significant trends, patterns, and correlations. Our collaborative approach ensures that every aspect from the technical foundation to the visual presentation reflects our shared commitment to turning complex data into clear, meaningful insights that promote a deeper understanding of global security phenomena.
                 </p>
               </div>
             </div>
             <div class="col-4 col-md-3 col-lg-2 text-center">
               <img src="assets/logoDibris.png" class="img-fluid section-image" alt="DIBRIS Logo"
                 style="max-width: 130px; height: auto;" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROJECT DESCRIPTION MODAL -->
-  <div class="modal fade" id="projectDescriptionModal" tabindex="-1" aria-labelledby="projectDescriptionModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="projectDescriptionModalLabel">Project Description and Data at
-            Hand</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-            onclick="this.blur()"></button>
-        </div>
-        <div class="modal-body p-4 p-lg-5">
-          <div class="row g-4 align-items-center">
-            <div class="col-12 col-lg-8">
-              <div class="p-4 border rounded-3 h-100" style="max-width: 65ch;">
-                <h3 class="h5 mb-3">What are we talking about?</h3>
-                <p class="mb-4">
-                  The <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank">Global Terrorism Database
-                    (GTD)</a>
-                  is an event-level dataset maintained by the
-                  <a href="https://umd.edu/" target="_blank">University of Maryland</a>.
-                  It contains over 200,000 records of terrorist attacks worldwide, spanning from 1970 to 2020.
-                </p>
-                <p class="mb-4">
-                  Data are collected from multiple open sources. The GTD research team integrates and standardizes them
-                  to
-                  ensure consistency over time, performing rigorous quality control, retrospective coding, and
-                  cross-referencing with other terrorism databases to identify and include missing events.
-                </p>
-                <h3 class="h5 mb-3">What are we dealing with?</h3>
-                <p class="mb-4">
-                  Each record in the GTD represents a single terrorist incident and includes detailed information such
-                  as
-                  the date and location of the attack, type of weapon used, targets and victims, perpetrators, and any
-                  claims of responsibility.
-                </p>
-                <p class="mb-0">
-                  Additional variables describe casualties, outcomes, and data sources.
-                  A full codebook and documentation can be found on the
-                  <a href="https://www.start.umd.edu/sites/default/files/2024-10/Codebook.pdf" target="_blank">GTD
-                    website</a>.
-                </p>
-              </div>
-            </div>
-            <div class="col-6 col-lg-4 col-sm-4 order-first order-lg-last mx-auto mx-lg-0 text-center">
-              <img src="assets/gtd.jpg" class="img-fluid object-fit-cover section-image" alt="GTD Cover Image"
-                style="max-width: 260px; border-radius: 8px;" />
             </div>
           </div>
         </div>
@@ -306,66 +467,13 @@
       </div>
     </div>
   </div>
-  <!-- FOOTER hidden
-<footer id="footer" class="py-1 border-top bg-white mt-auto">
-  <div class="container">
-    <div class="row align-items-center gy-3">
-
-      <div class="col-6 col-md-2 text-center text-md-start">
-        <a href="https://unige.it/en" target="_blank" rel="noopener noreferrer"
-          class="d-inline-flex align-items-center text-decoration-none">
-          <img src="https://id.unige.it/sites/id.unige.it/files/2022-02/naming-2.png" alt="Universita di Genova"
-            style="height: 40px; width: auto;" class="me-1" />
-        </a>
-      </div>
-
-      <div class="col-6 col-md-10 text-center text-md-end">
-        <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
-
-          <a href="https://github.com/Isabibbi" target="_blank" rel="noopener noreferrer"
-            class="text-decoration-none small d-inline-flex align-items-center">
-            <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-              <path fill-rule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-            <span class="d-none d-md-inline">Isabella Tagliafico</span>
-            <span class="d-md-none">IT</span>
-          </a>
-
-          <a href="https://github.com/supernino02" target="_blank" rel="noopener noreferrer"
-            class="text-decoration-none small d-inline-flex align-items-center">
-            <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-              <path fill-rule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-            <span class="d-none d-md-inline">Luca Ninivaggi</span>
-            <span class="d-md-none">LN</span>
-          </a>
-
-          <a href="https://github.com/FlavioBarraraStefani" target="_blank" rel="noopener noreferrer"
-            class="text-decoration-none small d-inline-flex align-items-center">
-            <svg aria-hidden="true" height="18" viewBox="0 0 16 16" fill="currentColor" class="me-1">
-              <path fill-rule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-            <span class="d-none d-md-inline">Flavio Barrara Stefani</span>
-            <span class="d-md-none">FBS</span>
-          </a>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-
--->
 
   <!-- GROUP MODAL -->
   <div class="modal fade" id="modalGroup" tabindex="-1" aria-labelledby="modalGroupLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="modalGroupLabel">Group Details</h2>
+          <h2 class="modal-title section-heading h2" id="modalGroupLabel">Group Details</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
             onclick="this.blur()"></button>
         </div>
@@ -631,7 +739,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="modalAttackLabel">Attack Details</h2>
+          <h2 class="modal-title section-heading h2" id="modalAttackLabel">Attack Details</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
             onclick="this.blur()"></button>
         </div>
@@ -886,7 +994,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content rounded-3">
         <div class="modal-header border-0 px-4 pt-4">
-          <h2 class="modal-title section-heading h4" id="modalTargetLabel">Target Details</h2>
+          <h2 class="modal-title section-heading h2" id="modalTargetLabel">Target Details</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
             onclick="this.blur()"></button>
         </div>
