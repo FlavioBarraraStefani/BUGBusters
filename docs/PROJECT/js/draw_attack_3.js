@@ -253,8 +253,10 @@ async function draw_attack_3(data, choice, containerId) {
     .on("mousemove", handleCellMouseMove)
     .on("mouseout", unhighlight);
 
-  const legendLabels = Array.from(labelsInGridData).sort();
-  const legendItems = legendLabels.map(label => items.find(d => d.label === label)).filter(item => item && item.value > 0);
+  const legendItems = Array.from(labelsInGridData)
+    .map(label => items.find(d => d.label === label))
+    .filter(item => item && item.value > 0)
+    .sort((a, b) => b.value - a.value);
 
   const legendGroup = g.append("g")
     .attr("transform", `translate(${xOffsetStart + actualGridWidth + 20}, 0)`);

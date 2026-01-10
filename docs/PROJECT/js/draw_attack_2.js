@@ -96,20 +96,31 @@ function draw_attack_2(data, choice, containerId) {
     });
   }
 
-  let tooltip = d3.select('body').select('.d3-tooltip');
-  if (tooltip.empty()) {
-    tooltip = d3.select('body').append('div')
-      .attr('class', 'd3-tooltip')
-      .style('position', 'absolute')
-      .style('background', 'rgba(255, 255, 255, 0.95)')
-      .style('border', '1px solid #ccc')
-      .style('border-radius', '4px')
-      .style('padding', '8px')
-      .style('pointer-events', 'none')
-      .style('font-size', `${labelFontSize}px`)
-      .style('opacity', 0)
-      .style('z-index', '10000');
-  }
+  // SVG-based tooltip (position relative to SVG) - replaces previous body-div tooltip
+  let lastTooltipWidth = 0;
+  let lastTooltipHeight = 0;
+  const tooltipGroup = svg.append("g")
+    .attr('class', 'svg-tooltip')
+    .style('display', 'none')
+    .style('pointer-events', 'none');
+
+  const tooltipRect = tooltipGroup.append('rect')
+    .attr('fill', 'white')
+    .attr('stroke', '#333')
+    .attr('rx', 4);
+
+  const tooltipTitle = tooltipGroup.append('text')
+    .attr('x', 8)
+    .attr('y', 14)
+    .style('font-size', `${labelFontSize}px`)
+    .style('font-weight', '700')
+    .style('fill', '#333');
+
+  const tooltipBody = tooltipGroup.append('text')
+    .attr('x', 8)
+    .attr('y', 14 + 12 + 6)
+    .style('font-size', `${labelFontSize}px`)
+    .style('fill', '#333');
 
   const x = d3.scaleBand()
     .range([0, 2 * Math.PI])
@@ -250,30 +261,48 @@ function draw_attack_2(data, choice, containerId) {
       .on("mouseover", (event, d) => {
         d3.select(event.currentTarget)
           .style("stroke", "#333")
-          .style("stroke-width", 2);        
-        const mouseX = event.pageX;
-        const mouseY = event.pageY;
-        
-        tooltip.interrupt()
-          .style("opacity", 1)
-          .html(`<strong>Year:${d.year}</strong><br>${metric.replace('_',' ')}: ${(d[metric]||0).toFixed(2)}`)
-          .style("left", (mouseX + 10) + "px")
-          .style("top", (mouseY + 10) + "px");
+          .style("stroke-width", 2);
+
+        tooltipGroup.style('display', null);
+        tooltipTitle.text(`Year: ${d.year}`);
+        tooltipBody.text(`${metric.replace('_',' ')}: ${(d[metric]||0).toFixed(2)}`);
+
+        const titleBox = tooltipTitle.node().getBBox();
+        const bodyBox = tooltipBody.node().getBBox();
+        const w = Math.max(titleBox.width, bodyBox.width) + 16;
+        const h = titleBox.height + bodyBox.height + 10;
+        tooltipRect.attr('width', w).attr('height', h);
+        lastTooltipWidth = w;
+        lastTooltipHeight = h;
+
+        const [mx, my] = d3.pointer(event, svg.node());
+        let tx = mx + 10;
+        let ty = my + 10;
+        if (tx + w > CHART_WIDTH) tx = mx - w - 10;
+        if (tx < 0) tx = 5;
+        if (ty + h > CHART_HEIGHT) ty = my - h - 10;
+        if (ty < 0) ty = 5;
+
+        tooltipGroup.attr('transform', `translate(${tx}, ${ty})`);
       })
       .on("mousemove", (event) => {
-        const mouseX = event.pageX;
-        const mouseY = event.pageY;
-        
-        tooltip
-          .style("left", (mouseX + 10) + "px")
-          .style("top", (mouseY + 10) + "px");
+        const [mx, my] = d3.pointer(event, svg.node());
+        const w = lastTooltipWidth || 100;
+        const h = lastTooltipHeight || 50;
+
+        let tx = mx + 10;
+        let ty = my + 10;
+        if (tx + w > CHART_WIDTH) tx = mx - w - 10;
+        if (tx < 0) tx = 5;
+        if (ty + h > CHART_HEIGHT) ty = my - h - 10;
+        if (ty < 0) ty = 5;
+
+        tooltipGroup.attr('transform', `translate(${tx}, ${ty})`);
       })
       .on("mouseout", (event) => {
         d3.select(event.currentTarget)
           .style("stroke", "none");
-        tooltip.transition()
-          .duration(200)
-          .style("opacity", 0);
+        tooltipGroup.style('display', 'none');
       });
   }
 
