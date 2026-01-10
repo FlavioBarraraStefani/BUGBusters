@@ -201,7 +201,7 @@ function draw_main_left(categoryInfo, containerId) {
     //----------//
     // Enable drag to rotate globe
     //----------//
-    /*
+
     const drag = d3.drag()
     .on('drag', function (event) {
       const rotate = projection.rotate();
@@ -222,13 +222,12 @@ function draw_main_left(categoryInfo, containerId) {
     
     // Attach drag to SVG
     svg.call(drag);
-*/
+
 
     baseScale = projection.scale(); // store initial scale
 
     const zoom = d3.zoom()
       .scaleExtent([0.85, 4])
-      .scaleExtent([0.2, 10])
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
 
