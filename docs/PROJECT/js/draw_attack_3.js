@@ -238,7 +238,7 @@ async function draw_attack_3(data, choice, containerId) {
     tooltipGroup.style("display", null);
     tooltipTitle.text(`Weapon: ${d.label}`);
     const pct = (d.percentage !== undefined) ? d.percentage : (((d.value / totalValue) * 100).toFixed(1));
-    tooltipBody.text(`${d.value} attacks, ${pct}% of type '${choice}'`);
+    tooltipBody.text(`${d.value} attacks (${pct}% of the category)`);
 
     const titleBox = tooltipTitle.node().getBBox();
     const bodyBox = tooltipBody.node().getBBox();
