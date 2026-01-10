@@ -6,7 +6,7 @@ let maxKillsGlobal = 0;
 // ==========================================
 
 function precomputeTargetData(rawData) {
-  const K = 1; //max:50
+  const K = 50; //max:50
   allTargetEvents = [];
   maxKillsGlobal = 0;
 
