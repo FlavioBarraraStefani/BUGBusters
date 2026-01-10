@@ -1,0 +1,2052 @@
+{
+  "explosion": [
+    {
+      "year": "1970",
+      "success_rate": 0.7955271565495208,
+      "avg_kills": 0.2971246006389776,
+      "avg_wounded": 0.3961661341853035,
+      "count": 313,
+      "avg_damage": 109547.99
+    },
+    {
+      "year": "1971",
+      "success_rate": 0.8651685393258427,
+      "avg_kills": 0.033707865168539325,
+      "avg_wounded": 0.1348314606741573,
+      "count": 178,
+      "avg_damage": 20882.69230769231
+    },
+    {
+      "year": "1972",
+      "success_rate": 0.78,
+      "avg_kills": 0.82,
+      "avg_wounded": 3.74,
+      "count": 100,
+      "avg_damage": 380565.3846153846
+    },
+    {
+      "year": "1973",
+      "success_rate": 0.8390804597701149,
+      "avg_kills": 0.13793103448275862,
+      "avg_wounded": 4.609195402298851,
+      "count": 87,
+      "avg_damage": 65010.75
+    },
+    {
+      "year": "1974",
+      "success_rate": 0.9330143540669856,
+      "avg_kills": 0.9425837320574163,
+      "avg_wounded": 3.8229665071770333,
+      "count": 209,
+      "avg_damage": 68803.85
+    },
+    {
+      "year": "1975",
+      "success_rate": 0.930327868852459,
+      "avg_kills": 0.2786885245901639,
+      "avg_wounded": 2.028688524590164,
+      "count": 244,
+      "avg_damage": 48583.0625
+    },
+    {
+      "year": "1976",
+      "success_rate": 0.9120521172638436,
+      "avg_kills": 0.501628664495114,
+      "avg_wounded": 1.9674267100977199,
+      "count": 307,
+      "avg_damage": 35389.338129496406
+    },
+    {
+      "year": "1977",
+      "success_rate": 0.8828828828828829,
+      "avg_kills": 0.03423423423423423,
+      "avg_wounded": 0.5693693693693693,
+      "count": 555,
+      "avg_damage": 239047.10932475884
+    },
+    {
+      "year": "1978",
+      "success_rate": 0.9222614840989399,
+      "avg_kills": 0.42579505300353354,
+      "avg_wounded": 1.9275618374558303,
+      "count": 566,
+      "avg_damage": 55322.28901734104
+    },
+    {
+      "year": "1979",
+      "success_rate": 0.8867497168742922,
+      "avg_kills": 0.5583238958097395,
+      "avg_wounded": 1.8459796149490373,
+      "count": 883,
+      "avg_damage": 112785.44444444444
+    },
+    {
+      "year": "1980",
+      "success_rate": 0.8361290322580646,
+      "avg_kills": 1.0283870967741935,
+      "avg_wounded": 3.552258064516129,
+      "count": 775,
+      "avg_damage": 1050104.1083333334
+    },
+    {
+      "year": "1981",
+      "success_rate": 0.8662337662337662,
+      "avg_kills": 1.3194805194805195,
+      "avg_wounded": 3.14025974025974,
+      "count": 770,
+      "avg_damage": 474611.18217391305
+    },
+    {
+      "year": "1982",
+      "success_rate": 0.8850889192886456,
+      "avg_kills": 0.9220246238030095,
+      "avg_wounded": 3.6634746922024624,
+      "count": 731,
+      "avg_damage": 2749861.1764705884
+    },
+    {
+      "year": "1983",
+      "success_rate": 0.8542168674698796,
+      "avg_kills": 1.8518072289156626,
+      "avg_wounded": 3.52289156626506,
+      "count": 830,
+      "avg_damage": 189194.26470588235
+    },
+    {
+      "year": "1984",
+      "success_rate": 0.9181957186544343,
+      "avg_kills": 1.312691131498471,
+      "avg_wounded": 1.8799694189602447,
+      "count": 1308,
+      "avg_damage": 100292.89539748954
+    },
+    {
+      "year": "1985",
+      "success_rate": 0.8970826580226904,
+      "avg_kills": 1.5696920583468394,
+      "avg_wounded": 3.1555915721231766,
+      "count": 1234,
+      "avg_damage": 89826.625
+    },
+    {
+      "year": "1986",
+      "success_rate": 0.9135424636572304,
+      "avg_kills": 0.8179035960214232,
+      "avg_wounded": 3.314460596786534,
+      "count": 1307,
+      "avg_damage": 94271.9723756906
+    },
+    {
+      "year": "1987",
+      "success_rate": 0.9242529534398888,
+      "avg_kills": 1.1785962473940237,
+      "avg_wounded": 2.6997915218902016,
+      "count": 1439,
+      "avg_damage": 142407.81964285715
+    },
+    {
+      "year": "1988",
+      "success_rate": 0.9229813664596274,
+      "avg_kills": 1.039751552795031,
+      "avg_wounded": 2.9341614906832296,
+      "count": 1610,
+      "avg_damage": 124468.01292407108
+    },
+    {
+      "year": "1989",
+      "success_rate": 0.9183558558558559,
+      "avg_kills": 0.9802927927927928,
+      "avg_wounded": 1.964527027027027,
+      "count": 1776,
+      "avg_damage": 388914.5209947644
+    },
+    {
+      "year": "1990",
+      "success_rate": 0.9189814814814815,
+      "avg_kills": 0.5873842592592593,
+      "avg_wounded": 1.9664351851851851,
+      "count": 1728,
+      "avg_damage": 70002.26834862385
+    },
+    {
+      "year": "1991",
+      "success_rate": 0.9295478443743428,
+      "avg_kills": 0.7923238696109358,
+      "avg_wounded": 1.8459516298633019,
+      "count": 1902,
+      "avg_damage": 127827.62312633832
+    },
+    {
+      "year": "1992",
+      "success_rate": 0.8808139534883721,
+      "avg_kills": 0.952906976744186,
+      "avg_wounded": 2.7005813953488373,
+      "count": 1720,
+      "avg_damage": 16186215.807017544
+    },
+    {
+      "year": "1993",
+      "success_rate": 0.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.0,
+      "avg_damage": 0.0,
+      "count": 0
+    },
+    {
+      "year": "1994",
+      "success_rate": 0.86875,
+      "avg_kills": 1.1107142857142858,
+      "avg_wounded": 3.03125,
+      "count": 1120,
+      "avg_damage": 611228.0754716981
+    },
+    {
+      "year": "1995",
+      "success_rate": 0.8856416772554002,
+      "avg_kills": 2.1588310038119443,
+      "avg_wounded": 6.703939008894536,
+      "count": 787,
+      "avg_damage": 130546320.2
+    },
+    {
+      "year": "1996",
+      "success_rate": 0.8699324324324325,
+      "avg_kills": 1.3682432432432432,
+      "avg_wounded": 6.0641891891891895,
+      "count": 1184,
+      "avg_damage": 56294718.22727273
+    },
+    {
+      "year": "1997",
+      "success_rate": 0.8761638733705773,
+      "avg_kills": 1.445996275605214,
+      "avg_wounded": 5.171322160148976,
+      "count": 1074,
+      "avg_damage": 962167.7647058824
+    },
+    {
+      "year": "1998",
+      "success_rate": 0.9155555555555556,
+      "avg_kills": 2.502222222222222,
+      "avg_wounded": 16.197777777777777,
+      "count": 450,
+      "avg_damage": 30750.0
+    },
+    {
+      "year": "1999",
+      "success_rate": 0.8685064935064936,
+      "avg_kills": 1.4464285714285714,
+      "avg_wounded": 6.25487012987013,
+      "count": 616,
+      "avg_damage": 256450.5
+    },
+    {
+      "year": "2000",
+      "success_rate": 0.863905325443787,
+      "avg_kills": 1.2579881656804734,
+      "avg_wounded": 4.582248520710059,
+      "count": 845,
+      "avg_damage": 264840.3
+    },
+    {
+      "year": "2001",
+      "success_rate": 0.8489116517285531,
+      "avg_kills": 1.208706786171575,
+      "avg_wounded": 5.857874519846351,
+      "count": 781,
+      "avg_damage": 44013743.99375
+    },
+    {
+      "year": "2002",
+      "success_rate": 0.9001447178002895,
+      "avg_kills": 2.314037626628075,
+      "avg_wounded": 8.489146164978292,
+      "count": 691,
+      "avg_damage": 13106999.999979999
+    },
+    {
+      "year": "2003",
+      "success_rate": 0.8777089783281734,
+      "avg_kills": 2.434984520123839,
+      "avg_wounded": 9.936532507739939,
+      "count": 646,
+      "avg_damage": 3708.230769230769
+    },
+    {
+      "year": "2004",
+      "success_rate": 0.9272727272727272,
+      "avg_kills": 4.365289256198347,
+      "avg_wounded": 16.221487603305786,
+      "count": 605,
+      "avg_damage": 6600000.0
+    },
+    {
+      "year": "2005",
+      "success_rate": 0.9392430278884463,
+      "avg_kills": 3.549800796812749,
+      "avg_wounded": 10.949203187250996,
+      "count": 1004,
+      "avg_damage": 1037.6166328600407
+    },
+    {
+      "year": "2006",
+      "success_rate": 0.9550561797752809,
+      "avg_kills": 3.6615168539325844,
+      "avg_wounded": 9.594101123595506,
+      "count": 1424,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2007",
+      "success_rate": 0.9544678429140581,
+      "avg_kills": 4.42743312464428,
+      "avg_wounded": 11.134319863403528,
+      "count": 1757,
+      "avg_damage": 2052644.0
+    },
+    {
+      "year": "2008",
+      "success_rate": 0.9062742060418281,
+      "avg_kills": 1.987993803253292,
+      "avg_wounded": 5.946165762974438,
+      "count": 2582,
+      "avg_damage": 1327.9171428571428
+    },
+    {
+      "year": "2009",
+      "success_rate": 0.9483234714003945,
+      "avg_kills": 1.9534516765285996,
+      "avg_wounded": 6.42603550295858,
+      "count": 2535,
+      "avg_damage": 127297.07285714286
+    },
+    {
+      "year": "2010",
+      "success_rate": 0.911929543634908,
+      "avg_kills": 1.7377902321857486,
+      "avg_wounded": 5.297037630104083,
+      "count": 2498,
+      "avg_damage": 64120.2
+    },
+    {
+      "year": "2011",
+      "success_rate": 0.9001578531965272,
+      "avg_kills": 1.7667719021310182,
+      "avg_wounded": 4.650355169692186,
+      "count": 2534,
+      "avg_damage": 60732.857142857145
+    },
+    {
+      "year": "2012",
+      "success_rate": 0.8694860380412789,
+      "avg_kills": 1.5414811817078107,
+      "avg_wounded": 4.015176042088223,
+      "count": 4942,
+      "avg_damage": 2010.3888659793815
+    },
+    {
+      "year": "2013",
+      "success_rate": 0.8651582326861336,
+      "avg_kills": 1.7864240941752025,
+      "avg_wounded": 4.5824797431585385,
+      "count": 6541,
+      "avg_damage": -37.03437278525868
+    },
+    {
+      "year": "2014",
+      "success_rate": 0.8616945107398568,
+      "avg_kills": 1.5605011933174224,
+      "avg_wounded": 3.6189737470167063,
+      "count": 8380,
+      "avg_damage": 1195.7711906005222
+    },
+    {
+      "year": "2015",
+      "success_rate": 0.8425699538168976,
+      "avg_kills": 1.9373811464276012,
+      "avg_wounded": 4.3384949741917955,
+      "count": 7362,
+      "avg_damage": 220.60130008176617
+    },
+    {
+      "year": "2016",
+      "success_rate": 0.7993477027793534,
+      "avg_kills": 2.028502552467385,
+      "avg_wounded": 4.211287577992059,
+      "count": 7052,
+      "avg_damage": 68971.86010126582
+    },
+    {
+      "year": "2017",
+      "success_rate": 0.7650130548302873,
+      "avg_kills": 2.2006426993372163,
+      "avg_wounded": 3.242418156256276,
+      "count": 4979,
+      "avg_damage": -59.668335419274094
+    },
+    {
+      "year": "2018",
+      "success_rate": 0.8157586408904511,
+      "avg_kills": 1.736672524897481,
+      "avg_wounded": 3.23227885178676,
+      "count": 3414,
+      "avg_damage": 5934.110086887836
+    },
+    {
+      "year": "2019",
+      "success_rate": 0.8408149171270718,
+      "avg_kills": 1.7251381215469612,
+      "avg_wounded": 3.61982044198895,
+      "count": 2896,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2020",
+      "success_rate": 0.8295981452859351,
+      "avg_kills": 1.46483771251932,
+      "avg_wounded": 2.499227202472952,
+      "count": 2588,
+      "avg_damage": -69.49629692832765
+    }
+  ],
+  "armed_assault": [
+    {
+      "year": "1970",
+      "success_rate": 0.9047619047619048,
+      "avg_kills": 0.47619047619047616,
+      "avg_wounded": 0.47619047619047616,
+      "count": 42,
+      "avg_damage": 67333.33333333333
+    },
+    {
+      "year": "1971",
+      "success_rate": 0.9142857142857143,
+      "avg_kills": 0.37142857142857144,
+      "avg_wounded": 0.4,
+      "count": 35,
+      "avg_damage": 6769.2307692307695
+    },
+    {
+      "year": "1972",
+      "success_rate": 0.8,
+      "avg_kills": 0.8,
+      "avg_wounded": 1.0,
+      "count": 10,
+      "avg_damage": 2000.0
+    },
+    {
+      "year": "1973",
+      "success_rate": 0.8604651162790697,
+      "avg_kills": 0.7906976744186046,
+      "avg_wounded": 0.6511627906976745,
+      "count": 43,
+      "avg_damage": 28307.69230769231
+    },
+    {
+      "year": "1974",
+      "success_rate": 1.0,
+      "avg_kills": 0.7307692307692307,
+      "avg_wounded": 0.6923076923076923,
+      "count": 26,
+      "avg_damage": 20111.11111111111
+    },
+    {
+      "year": "1975",
+      "success_rate": 0.9696969696969697,
+      "avg_kills": 1.696969696969697,
+      "avg_wounded": 1.121212121212121,
+      "count": 33,
+      "avg_damage": 12500.0
+    },
+    {
+      "year": "1976",
+      "success_rate": 0.968421052631579,
+      "avg_kills": 1.3157894736842106,
+      "avg_wounded": 0.30526315789473685,
+      "count": 95,
+      "avg_damage": 6566.666666666667
+    },
+    {
+      "year": "1977",
+      "success_rate": 0.9543147208121827,
+      "avg_kills": 0.5329949238578681,
+      "avg_wounded": 0.4365482233502538,
+      "count": 197,
+      "avg_damage": 345804.978021978
+    },
+    {
+      "year": "1978",
+      "success_rate": 0.9540229885057471,
+      "avg_kills": 1.0229885057471264,
+      "avg_wounded": 1.0229885057471264,
+      "count": 174,
+      "avg_damage": 22909.12658227848
+    },
+    {
+      "year": "1979",
+      "success_rate": 0.9571045576407506,
+      "avg_kills": 1.386058981233244,
+      "avg_wounded": 1.5093833780160857,
+      "count": 373,
+      "avg_damage": 140651.73170731709
+    },
+    {
+      "year": "1980",
+      "success_rate": 0.9837962962962963,
+      "avg_kills": 5.300925925925926,
+      "avg_wounded": 1.1527777777777777,
+      "count": 432,
+      "avg_damage": 63854.42
+    },
+    {
+      "year": "1981",
+      "success_rate": 0.9758771929824561,
+      "avg_kills": 6.416666666666667,
+      "avg_wounded": 1.3421052631578947,
+      "count": 456,
+      "avg_damage": 59045.631363636356
+    },
+    {
+      "year": "1982",
+      "success_rate": 0.9847715736040609,
+      "avg_kills": 6.847715736040609,
+      "avg_wounded": 0.8324873096446701,
+      "count": 394,
+      "avg_damage": 67118.9
+    },
+    {
+      "year": "1983",
+      "success_rate": 0.9929078014184397,
+      "avg_kills": 11.652482269503546,
+      "avg_wounded": 1.9716312056737588,
+      "count": 423,
+      "avg_damage": 66629.59375
+    },
+    {
+      "year": "1984",
+      "success_rate": 0.9895522388059701,
+      "avg_kills": 9.605970149253732,
+      "avg_wounded": 1.8850746268656717,
+      "count": 670,
+      "avg_damage": 111441.46078431372
+    },
+    {
+      "year": "1985",
+      "success_rate": 0.9959758551307847,
+      "avg_kills": 7.99195171026157,
+      "avg_wounded": 1.567404426559356,
+      "count": 497,
+      "avg_damage": 132986.12857142856
+    },
+    {
+      "year": "1986",
+      "success_rate": 0.9902200488997555,
+      "avg_kills": 4.5354523227383865,
+      "avg_wounded": 1.6894865525672371,
+      "count": 409,
+      "avg_damage": 68216.84375
+    },
+    {
+      "year": "1987",
+      "success_rate": 0.9732620320855615,
+      "avg_kills": 4.557486631016043,
+      "avg_wounded": 1.6844919786096257,
+      "count": 748,
+      "avg_damage": 44084.50704225352
+    },
+    {
+      "year": "1988",
+      "success_rate": 0.9891304347826086,
+      "avg_kills": 4.36195652173913,
+      "avg_wounded": 1.8978260869565218,
+      "count": 920,
+      "avg_damage": 27117.021276595744
+    },
+    {
+      "year": "1989",
+      "success_rate": 0.9855985598559855,
+      "avg_kills": 4.286228622862287,
+      "avg_wounded": 1.3807380738073807,
+      "count": 1111,
+      "avg_damage": 37012.820512820515
+    },
+    {
+      "year": "1990",
+      "success_rate": 0.9897025171624714,
+      "avg_kills": 4.978260869565218,
+      "avg_wounded": 2.513729977116705,
+      "count": 874,
+      "avg_damage": 65752.4859813084
+    },
+    {
+      "year": "1991",
+      "success_rate": 0.9865824782951855,
+      "avg_kills": 4.5217048145224945,
+      "avg_wounded": 2.6700868192580898,
+      "count": 1267,
+      "avg_damage": 45827.58620689655
+    },
+    {
+      "year": "1992",
+      "success_rate": 0.9735449735449735,
+      "avg_kills": 4.634920634920635,
+      "avg_wounded": 3.18140589569161,
+      "count": 1323,
+      "avg_damage": 49580.0
+    },
+    {
+      "year": "1993",
+      "success_rate": 0.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.0,
+      "avg_damage": 0.0,
+      "count": 0
+    },
+    {
+      "year": "1994",
+      "success_rate": 0.9653401797175867,
+      "avg_kills": 5.540436456996149,
+      "avg_wounded": 2.349165596919127,
+      "count": 779,
+      "avg_damage": 113749.34782608696
+    },
+    {
+      "year": "1995",
+      "success_rate": 0.945280437756498,
+      "avg_kills": 2.9042407660738716,
+      "avg_wounded": 1.689466484268126,
+      "count": 731,
+      "avg_damage": 18900.0
+    },
+    {
+      "year": "1996",
+      "success_rate": 0.9681742043551089,
+      "avg_kills": 3.9061976549413737,
+      "avg_wounded": 2.9748743718592965,
+      "count": 597,
+      "avg_damage": 21000000.0
+    },
+    {
+      "year": "1997",
+      "success_rate": 0.9722572509457755,
+      "avg_kills": 7.437578814627995,
+      "avg_wounded": 2.769230769230769,
+      "count": 793,
+      "avg_damage": 443274.75
+    },
+    {
+      "year": "1998",
+      "success_rate": 0.9226804123711341,
+      "avg_kills": 5.922680412371134,
+      "avg_wounded": 2.747422680412371,
+      "count": 194,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1999",
+      "success_rate": 0.941358024691358,
+      "avg_kills": 4.135802469135802,
+      "avg_wounded": 3.5401234567901234,
+      "count": 324,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2000",
+      "success_rate": 0.966903073286052,
+      "avg_kills": 3.6501182033096926,
+      "avg_wounded": 2.6950354609929077,
+      "count": 423,
+      "avg_damage": 16098.8
+    },
+    {
+      "year": "2001",
+      "success_rate": 0.9417293233082706,
+      "avg_kills": 4.086466165413534,
+      "avg_wounded": 2.3834586466165413,
+      "count": 532,
+      "avg_damage": 122000.0
+    },
+    {
+      "year": "2002",
+      "success_rate": 0.9544072948328267,
+      "avg_kills": 3.945288753799392,
+      "avg_wounded": 3.094224924012158,
+      "count": 329,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2003",
+      "success_rate": 0.9411764705882353,
+      "avg_kills": 3.2683823529411766,
+      "avg_wounded": 2.452205882352941,
+      "count": 272,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2004",
+      "success_rate": 0.9461883408071748,
+      "avg_kills": 6.614349775784754,
+      "avg_wounded": 4.36322869955157,
+      "count": 223,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2005",
+      "success_rate": 0.9763948497854077,
+      "avg_kills": 2.8776824034334765,
+      "avg_wounded": 2.851931330472103,
+      "count": 466,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2006",
+      "success_rate": 0.9897360703812317,
+      "avg_kills": 3.332844574780059,
+      "avg_wounded": 2.193548387096774,
+      "count": 682,
+      "avg_damage": 300000.0
+    },
+    {
+      "year": "2007",
+      "success_rate": 0.9806451612903225,
+      "avg_kills": 3.4387096774193546,
+      "avg_wounded": 2.47741935483871,
+      "count": 775,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2008",
+      "success_rate": 0.9718574108818011,
+      "avg_kills": 2.49718574108818,
+      "avg_wounded": 2.4821763602251408,
+      "count": 1066,
+      "avg_damage": 36011.308333333334
+    },
+    {
+      "year": "2009",
+      "success_rate": 0.9666666666666667,
+      "avg_kills": 1.8453703703703703,
+      "avg_wounded": 1.2814814814814814,
+      "count": 1080,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2010",
+      "success_rate": 0.9774164408310749,
+      "avg_kills": 1.8590785907859078,
+      "avg_wounded": 1.057813911472448,
+      "count": 1107,
+      "avg_damage": 13800.0
+    },
+    {
+      "year": "2011",
+      "success_rate": 0.9737609329446064,
+      "avg_kills": 1.727405247813411,
+      "avg_wounded": 1.1574344023323615,
+      "count": 1372,
+      "avg_damage": 141092.66666666666
+    },
+    {
+      "year": "2012",
+      "success_rate": 0.9575848303393214,
+      "avg_kills": 2.3238522954091816,
+      "avg_wounded": 1.6506986027944113,
+      "count": 2004,
+      "avg_damage": 2839.4274774774776
+    },
+    {
+      "year": "2013",
+      "success_rate": 0.932167083184577,
+      "avg_kills": 2.132095680114245,
+      "avg_wounded": 1.6022848982506248,
+      "count": 2801,
+      "avg_damage": 102.33066666666667
+    },
+    {
+      "year": "2014",
+      "success_rate": 0.9391034677191993,
+      "avg_kills": 2.519594023118128,
+      "avg_wounded": 1.866365943050465,
+      "count": 3547,
+      "avg_damage": 131.37833785004517
+    },
+    {
+      "year": "2015",
+      "success_rate": 0.8693754197447952,
+      "avg_kills": 2.831430490261921,
+      "avg_wounded": 2.1225654801880456,
+      "count": 2978,
+      "avg_damage": 1151.2728837209302
+    },
+    {
+      "year": "2016",
+      "success_rate": 0.846364347146208,
+      "avg_kills": 2.7126661454261143,
+      "avg_wounded": 2.1544175136825645,
+      "count": 2558,
+      "avg_damage": 852.4634592445328
+    },
+    {
+      "year": "2017",
+      "success_rate": 0.8437923250564334,
+      "avg_kills": 2.7372460496613997,
+      "avg_wounded": 2.345372460496614,
+      "count": 2215,
+      "avg_damage": 2962.4265306122447
+    },
+    {
+      "year": "2018",
+      "success_rate": 0.856625961103573,
+      "avg_kills": 3.016282225237449,
+      "avg_wounded": 2.126639529624604,
+      "count": 2211,
+      "avg_damage": -63.552028218694886
+    },
+    {
+      "year": "2019",
+      "success_rate": 0.8686868686868687,
+      "avg_kills": 2.994949494949495,
+      "avg_wounded": 1.920314253647587,
+      "count": 1782,
+      "avg_damage": 221.0033686440678
+    },
+    {
+      "year": "2020",
+      "success_rate": 0.884884346422808,
+      "avg_kills": 3.2119419042495965,
+      "avg_wounded": 2.122108660570199,
+      "count": 1859,
+      "avg_damage": 462.31455607476636
+    }
+  ],
+  "assassination": [
+    {
+      "year": "1970",
+      "success_rate": 0.8181818181818182,
+      "avg_kills": 0.8181818181818182,
+      "avg_wounded": 1.0909090909090908,
+      "count": 22,
+      "avg_damage": 45000.0
+    },
+    {
+      "year": "1971",
+      "success_rate": 0.7142857142857143,
+      "avg_kills": 0.8571428571428571,
+      "avg_wounded": 1.1428571428571428,
+      "count": 14,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1972",
+      "success_rate": 0.1111111111111111,
+      "avg_kills": 0.12222222222222222,
+      "avg_wounded": 0.06666666666666667,
+      "count": 90,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1973",
+      "success_rate": 0.825,
+      "avg_kills": 0.95,
+      "avg_wounded": 0.2,
+      "count": 40,
+      "avg_damage": 2000.0
+    },
+    {
+      "year": "1974",
+      "success_rate": 0.6829268292682927,
+      "avg_kills": 0.8048780487804879,
+      "avg_wounded": 0.3902439024390244,
+      "count": 41,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1975",
+      "success_rate": 0.8153846153846154,
+      "avg_kills": 1.1538461538461537,
+      "avg_wounded": 0.2,
+      "count": 65,
+      "avg_damage": 20000.0
+    },
+    {
+      "year": "1976",
+      "success_rate": 0.7341772151898734,
+      "avg_kills": 1.139240506329114,
+      "avg_wounded": 0.34177215189873417,
+      "count": 79,
+      "avg_damage": 31500.0
+    },
+    {
+      "year": "1977",
+      "success_rate": 0.7619047619047619,
+      "avg_kills": 0.9523809523809523,
+      "avg_wounded": 0.7142857142857143,
+      "count": 105,
+      "avg_damage": 2250.0
+    },
+    {
+      "year": "1978",
+      "success_rate": 0.82,
+      "avg_kills": 0.912,
+      "avg_wounded": 0.34,
+      "count": 250,
+      "avg_damage": 4613.04347826087
+    },
+    {
+      "year": "1979",
+      "success_rate": 0.8027613412228797,
+      "avg_kills": 0.9704142011834319,
+      "avg_wounded": 0.33136094674556216,
+      "count": 507,
+      "avg_damage": 7147.058823529412
+    },
+    {
+      "year": "1980",
+      "success_rate": 0.840531561461794,
+      "avg_kills": 1.1661129568106312,
+      "avg_wounded": 0.42524916943521596,
+      "count": 602,
+      "avg_damage": 14000.0
+    },
+    {
+      "year": "1981",
+      "success_rate": 0.7745358090185677,
+      "avg_kills": 1.1750663129973475,
+      "avg_wounded": 0.47214854111405835,
+      "count": 377,
+      "avg_damage": 11400.0
+    },
+    {
+      "year": "1982",
+      "success_rate": 0.81875,
+      "avg_kills": 1.753125,
+      "avg_wounded": 0.53125,
+      "count": 320,
+      "avg_damage": 67500.0
+    },
+    {
+      "year": "1983",
+      "success_rate": 0.8181818181818182,
+      "avg_kills": 1.3727272727272728,
+      "avg_wounded": 0.28484848484848485,
+      "count": 330,
+      "avg_damage": 15000.0
+    },
+    {
+      "year": "1984",
+      "success_rate": 0.8341013824884793,
+      "avg_kills": 1.359447004608295,
+      "avg_wounded": 0.41013824884792627,
+      "count": 434,
+      "avg_damage": 11000.0
+    },
+    {
+      "year": "1985",
+      "success_rate": 0.8637992831541219,
+      "avg_kills": 1.3154121863799284,
+      "avg_wounded": 0.45161290322580644,
+      "count": 279,
+      "avg_damage": 10000.0
+    },
+    {
+      "year": "1986",
+      "success_rate": 0.8674351585014409,
+      "avg_kills": 1.2564841498559078,
+      "avg_wounded": 0.3314121037463977,
+      "count": 347,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1987",
+      "success_rate": 0.8252212389380531,
+      "avg_kills": 1.4668141592920354,
+      "avg_wounded": 0.33849557522123896,
+      "count": 452,
+      "avg_damage": 20416.666666666668
+    },
+    {
+      "year": "1988",
+      "success_rate": 0.8615960099750624,
+      "avg_kills": 1.546134663341646,
+      "avg_wounded": 0.28428927680798005,
+      "count": 802,
+      "avg_damage": 17350.0
+    },
+    {
+      "year": "1989",
+      "success_rate": 0.8706365503080082,
+      "avg_kills": 1.4353182751540041,
+      "avg_wounded": 0.41786447638603696,
+      "count": 974,
+      "avg_damage": 26956.521739130436
+    },
+    {
+      "year": "1990",
+      "success_rate": 0.8422273781902552,
+      "avg_kills": 1.3491879350348028,
+      "avg_wounded": 0.24477958236658934,
+      "count": 862,
+      "avg_damage": 22000.0
+    },
+    {
+      "year": "1991",
+      "success_rate": 0.7967032967032966,
+      "avg_kills": 1.3612637362637363,
+      "avg_wounded": 0.45879120879120877,
+      "count": 728,
+      "avg_damage": 41785.71428571428
+    },
+    {
+      "year": "1992",
+      "success_rate": 0.8080072793448589,
+      "avg_kills": 1.414012738853503,
+      "avg_wounded": 0.5468607825295724,
+      "count": 1099,
+      "avg_damage": 27272.727272727272
+    },
+    {
+      "year": "1993",
+      "success_rate": 0.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.0,
+      "avg_damage": 0.0,
+      "count": 0
+    },
+    {
+      "year": "1994",
+      "success_rate": 0.7883817427385892,
+      "avg_kills": 1.3278008298755186,
+      "avg_wounded": 0.8575380359612724,
+      "count": 723,
+      "avg_damage": 27777.777777777777
+    },
+    {
+      "year": "1995",
+      "success_rate": 0.855755894590846,
+      "avg_kills": 1.1705963938973647,
+      "avg_wounded": 0.34535367545076284,
+      "count": 721,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1996",
+      "success_rate": 0.8438177874186551,
+      "avg_kills": 1.646420824295011,
+      "avg_wounded": 0.7310195227765727,
+      "count": 461,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1997",
+      "success_rate": 0.8825301204819277,
+      "avg_kills": 1.75,
+      "avg_wounded": 0.5542168674698795,
+      "count": 332,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1998",
+      "success_rate": 0.6956521739130435,
+      "avg_kills": 1.7391304347826086,
+      "avg_wounded": 2.782608695652174,
+      "count": 23,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "1999",
+      "success_rate": 0.6101694915254238,
+      "avg_kills": 1.2372881355932204,
+      "avg_wounded": 2.23728813559322,
+      "count": 59,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2000",
+      "success_rate": 0.8217821782178217,
+      "avg_kills": 1.8613861386138615,
+      "avg_wounded": 1.811881188118812,
+      "count": 101,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2001",
+      "success_rate": 0.7222222222222222,
+      "avg_kills": 1.1507936507936507,
+      "avg_wounded": 0.5,
+      "count": 126,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2002",
+      "success_rate": 0.7183098591549296,
+      "avg_kills": 1.5352112676056338,
+      "avg_wounded": 0.9577464788732394,
+      "count": 71,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2003",
+      "success_rate": 0.8352941176470589,
+      "avg_kills": 1.5529411764705883,
+      "avg_wounded": 1.7058823529411764,
+      "count": 85,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2004",
+      "success_rate": 0.7474747474747475,
+      "avg_kills": 1.595959595959596,
+      "avg_wounded": 2.3737373737373737,
+      "count": 99,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2005",
+      "success_rate": 0.8828828828828829,
+      "avg_kills": 1.5495495495495495,
+      "avg_wounded": 1.8198198198198199,
+      "count": 222,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2006",
+      "success_rate": 0.8686131386861314,
+      "avg_kills": 1.7226277372262773,
+      "avg_wounded": 0.6642335766423357,
+      "count": 137,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2007",
+      "success_rate": 0.8805970149253731,
+      "avg_kills": 1.3432835820895523,
+      "avg_wounded": 1.164179104477612,
+      "count": 134,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2008",
+      "success_rate": 0.5769230769230769,
+      "avg_kills": 1.6682692307692308,
+      "avg_wounded": 2.7403846153846154,
+      "count": 208,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2009",
+      "success_rate": 0.5511111111111111,
+      "avg_kills": 1.808888888888889,
+      "avg_wounded": 2.8933333333333335,
+      "count": 225,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2010",
+      "success_rate": 0.5421348314606742,
+      "avg_kills": 1.2837078651685394,
+      "avg_wounded": 2.044943820224719,
+      "count": 356,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2011",
+      "success_rate": 0.5058823529411764,
+      "avg_kills": 1.4088235294117648,
+      "avg_wounded": 2.1441176470588235,
+      "count": 340,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2012",
+      "success_rate": 0.6461538461538462,
+      "avg_kills": 1.167032967032967,
+      "avg_wounded": 0.9076923076923077,
+      "count": 455,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2013",
+      "success_rate": 0.5388291517323776,
+      "avg_kills": 0.994026284348865,
+      "avg_wounded": 1.3142174432497014,
+      "count": 837,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2014",
+      "success_rate": 0.5823204419889503,
+      "avg_kills": 1.0784530386740332,
+      "avg_wounded": 0.9535911602209944,
+      "count": 905,
+      "avg_damage": -85.55783582089552
+    },
+    {
+      "year": "2015",
+      "success_rate": 0.5931108719052745,
+      "avg_kills": 1.3057050592034445,
+      "avg_wounded": 1.0129171151776104,
+      "count": 929,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2016",
+      "success_rate": 0.6202686202686203,
+      "avg_kills": 1.1257631257631258,
+      "avg_wounded": 0.9645909645909646,
+      "count": 819,
+      "avg_damage": -26.748599999999996
+    },
+    {
+      "year": "2017",
+      "success_rate": 0.5882352941176471,
+      "avg_kills": 0.9987995198079231,
+      "avg_wounded": 0.8127250900360145,
+      "count": 833,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2018",
+      "success_rate": 0.6286438529784537,
+      "avg_kills": 1.0595690747782003,
+      "avg_wounded": 1.0684410646387832,
+      "count": 789,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2019",
+      "success_rate": 0.6695778748180495,
+      "avg_kills": 1.2241630276564774,
+      "avg_wounded": 1.0189228529839884,
+      "count": 687,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2020",
+      "success_rate": 0.6436781609195402,
+      "avg_kills": 1.3448275862068966,
+      "avg_wounded": 1.2463054187192117,
+      "count": 609,
+      "avg_damage": -99.0
+    }
+  ],
+  "hostage_taking": [
+    {
+      "year": "1970",
+      "success_rate": 0.8484848484848485,
+      "avg_kills": 0.30303030303030304,
+      "avg_wounded": 0.09090909090909091,
+      "count": 33,
+      "avg_damage": 1000.0
+    },
+    {
+      "year": "1971",
+      "success_rate": 0.8461538461538461,
+      "avg_kills": 0.15384615384615385,
+      "avg_wounded": 0.07692307692307693,
+      "count": 13,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1972",
+      "success_rate": 1.0,
+      "avg_kills": 0.5,
+      "avg_wounded": 0.0,
+      "count": 8,
+      "avg_damage": 50.0
+    },
+    {
+      "year": "1973",
+      "success_rate": 0.90625,
+      "avg_kills": 0.15625,
+      "avg_wounded": 0.09375,
+      "count": 32,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1974",
+      "success_rate": 1.0,
+      "avg_kills": 0.4642857142857143,
+      "avg_wounded": 0.10714285714285714,
+      "count": 28,
+      "avg_damage": 2500.0
+    },
+    {
+      "year": "1975",
+      "success_rate": 0.95,
+      "avg_kills": 0.05,
+      "avg_wounded": 0.0,
+      "count": 20,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1976",
+      "success_rate": 0.9375,
+      "avg_kills": 0.21875,
+      "avg_wounded": 0.03125,
+      "count": 32,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1977",
+      "success_rate": 0.9565217391304348,
+      "avg_kills": 0.4782608695652174,
+      "avg_wounded": 0.043478260869565216,
+      "count": 46,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1978",
+      "success_rate": 0.8947368421052632,
+      "avg_kills": 0.3157894736842105,
+      "avg_wounded": 0.05263157894736842,
+      "count": 57,
+      "avg_damage": 2000.0
+    },
+    {
+      "year": "1979",
+      "success_rate": 0.875,
+      "avg_kills": 0.8295454545454546,
+      "avg_wounded": 0.25,
+      "count": 88,
+      "avg_damage": 15526.888888888889
+    },
+    {
+      "year": "1980",
+      "success_rate": 0.9102564102564102,
+      "avg_kills": 0.8974358974358975,
+      "avg_wounded": 0.1282051282051282,
+      "count": 78,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1981",
+      "success_rate": 0.9107142857142857,
+      "avg_kills": 0.8571428571428571,
+      "avg_wounded": 0.10714285714285714,
+      "count": 56,
+      "avg_damage": 25000.0
+    },
+    {
+      "year": "1982",
+      "success_rate": 0.8809523809523809,
+      "avg_kills": 0.5,
+      "avg_wounded": 0.07142857142857142,
+      "count": 42,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1983",
+      "success_rate": 0.9555555555555556,
+      "avg_kills": 0.6222222222222222,
+      "avg_wounded": 0.06666666666666667,
+      "count": 45,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1984",
+      "success_rate": 0.9761904761904762,
+      "avg_kills": 1.1666666666666667,
+      "avg_wounded": 0.07142857142857142,
+      "count": 42,
+      "avg_damage": 23494.666666666668
+    },
+    {
+      "year": "1985",
+      "success_rate": 0.9819819819819819,
+      "avg_kills": 0.26126126126126126,
+      "avg_wounded": 0.12612612612612611,
+      "count": 111,
+      "avg_damage": 130000.0
+    },
+    {
+      "year": "1986",
+      "success_rate": 0.9873417721518988,
+      "avg_kills": 0.9113924050632911,
+      "avg_wounded": 0.27848101265822783,
+      "count": 79,
+      "avg_damage": 1515000.0
+    },
+    {
+      "year": "1987",
+      "success_rate": 1.0,
+      "avg_kills": 0.7528089887640449,
+      "avg_wounded": 0.4044943820224719,
+      "count": 89,
+      "avg_damage": 40000.0
+    },
+    {
+      "year": "1988",
+      "success_rate": 0.9906542056074766,
+      "avg_kills": 0.7102803738317757,
+      "avg_wounded": 0.1308411214953271,
+      "count": 107,
+      "avg_damage": 15333.333333333334
+    },
+    {
+      "year": "1989",
+      "success_rate": 0.9692307692307692,
+      "avg_kills": 0.7769230769230769,
+      "avg_wounded": 0.015384615384615385,
+      "count": 130,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1990",
+      "success_rate": 0.9702380952380952,
+      "avg_kills": 2.3511904761904763,
+      "avg_wounded": 0.07738095238095238,
+      "count": 168,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1991",
+      "success_rate": 0.9684684684684685,
+      "avg_kills": 0.5225225225225225,
+      "avg_wounded": 0.08108108108108109,
+      "count": 222,
+      "avg_damage": 100000.0
+    },
+    {
+      "year": "1992",
+      "success_rate": 0.9574468085106383,
+      "avg_kills": 0.3262411347517731,
+      "avg_wounded": 0.0425531914893617,
+      "count": 141,
+      "avg_damage": 20000.0
+    },
+    {
+      "year": "1993",
+      "success_rate": 0.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.0,
+      "avg_damage": 0.0,
+      "count": 0
+    },
+    {
+      "year": "1994",
+      "success_rate": 0.9456521739130435,
+      "avg_kills": 0.6141304347826086,
+      "avg_wounded": 0.1358695652173913,
+      "count": 184,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1995",
+      "success_rate": 0.9574468085106383,
+      "avg_kills": 0.5886524822695035,
+      "avg_wounded": 0.2978723404255319,
+      "count": 141,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1996",
+      "success_rate": 0.9571428571428572,
+      "avg_kills": 0.6071428571428571,
+      "avg_wounded": 0.37142857142857144,
+      "count": 140,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1997",
+      "success_rate": 0.9929824561403509,
+      "avg_kills": 0.4070175438596491,
+      "avg_wounded": 0.11578947368421053,
+      "count": 285,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1998",
+      "success_rate": 1.0,
+      "avg_kills": 1.8387096774193548,
+      "avg_wounded": 0.7096774193548387,
+      "count": 31,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "1999",
+      "success_rate": 1.0,
+      "avg_kills": 0.648936170212766,
+      "avg_wounded": 0.5638297872340425,
+      "count": 94,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2000",
+      "success_rate": 0.981651376146789,
+      "avg_kills": 1.6238532110091743,
+      "avg_wounded": 1.2477064220183487,
+      "count": 109,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2001",
+      "success_rate": 1.0,
+      "avg_kills": 1.8195488721804511,
+      "avg_wounded": 0.5263157894736842,
+      "count": 133,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2002",
+      "success_rate": 0.9855072463768116,
+      "avg_kills": 1.0869565217391304,
+      "avg_wounded": 0.2898550724637681,
+      "count": 69,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2003",
+      "success_rate": 0.972972972972973,
+      "avg_kills": 0.8108108108108109,
+      "avg_wounded": 0.13513513513513514,
+      "count": 37,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2004",
+      "success_rate": 1.0,
+      "avg_kills": 0.7096774193548387,
+      "avg_wounded": 0.25806451612903225,
+      "count": 62,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2005",
+      "success_rate": 0.9791666666666666,
+      "avg_kills": 1.2604166666666667,
+      "avg_wounded": 0.3645833333333333,
+      "count": 96,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2006",
+      "success_rate": 0.9712230215827338,
+      "avg_kills": 1.6618705035971224,
+      "avg_wounded": 0.3381294964028777,
+      "count": 139,
+      "avg_damage": 100000.0
+    },
+    {
+      "year": "2007",
+      "success_rate": 0.9948186528497409,
+      "avg_kills": 2.0466321243523318,
+      "avg_wounded": 2.5025906735751295,
+      "count": 193,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2008",
+      "success_rate": 0.971830985915493,
+      "avg_kills": 0.5915492957746479,
+      "avg_wounded": 0.21971830985915494,
+      "count": 355,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2009",
+      "success_rate": 0.9850187265917603,
+      "avg_kills": 1.3146067415730338,
+      "avg_wounded": 1.2397003745318351,
+      "count": 267,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2010",
+      "success_rate": 0.9948717948717949,
+      "avg_kills": 0.7025641025641025,
+      "avg_wounded": 0.17692307692307693,
+      "count": 390,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2011",
+      "success_rate": 0.9943181818181818,
+      "avg_kills": 0.7784090909090909,
+      "avg_wounded": 0.11647727272727272,
+      "count": 352,
+      "avg_damage": 0.0
+    },
+    {
+      "year": "2012",
+      "success_rate": 0.9829787234042553,
+      "avg_kills": 1.5319148936170213,
+      "avg_wounded": 0.4765957446808511,
+      "count": 235,
+      "avg_damage": 316.37516129032264
+    },
+    {
+      "year": "2013",
+      "success_rate": 0.95,
+      "avg_kills": 1.6452380952380952,
+      "avg_wounded": 0.7642857142857142,
+      "count": 420,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2014",
+      "success_rate": 0.9657210401891253,
+      "avg_kills": 3.3049645390070923,
+      "avg_wounded": 1.3486997635933806,
+      "count": 846,
+      "avg_damage": -80.20222929936305
+    },
+    {
+      "year": "2015",
+      "success_rate": 0.9820359281437125,
+      "avg_kills": 2.0494011976047903,
+      "avg_wounded": 1.3967065868263473,
+      "count": 668,
+      "avg_damage": -72.64622950819673
+    },
+    {
+      "year": "2016",
+      "success_rate": 0.9645608628659477,
+      "avg_kills": 5.080123266563945,
+      "avg_wounded": 2.140215716486903,
+      "count": 649,
+      "avg_damage": 126.49590361445783
+    },
+    {
+      "year": "2017",
+      "success_rate": 0.9592592592592593,
+      "avg_kills": 2.8518518518518516,
+      "avg_wounded": 1.0333333333333334,
+      "count": 540,
+      "avg_damage": 16303.590163934427
+    },
+    {
+      "year": "2018",
+      "success_rate": 0.9695431472081218,
+      "avg_kills": 3.296108291032149,
+      "avg_wounded": 1.72419627749577,
+      "count": 591,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2019",
+      "success_rate": 0.9757709251101322,
+      "avg_kills": 2.856828193832599,
+      "avg_wounded": 1.7070484581497798,
+      "count": 454,
+      "avg_damage": -99.0
+    },
+    {
+      "year": "2020",
+      "success_rate": 0.9690949227373068,
+      "avg_kills": 3.6070640176600444,
+      "avg_wounded": 1.2781456953642385,
+      "count": 453,
+      "avg_damage": 2439.5456310679615
+    }
+  ],
+  "infrastructure_attack": [
+    {
+      "year": "1970",
+      "success_rate": 0.896969696969697,
+      "avg_kills": 0.05454545454545454,
+      "avg_wounded": 0.2,
+      "count": 165,
+      "avg_damage": 320334.8253968254
+    },
+    {
+      "year": "1971",
+      "success_rate": 0.8846153846153846,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.34615384615384615,
+      "count": 78,
+      "avg_damage": 43281.25
+    },
+    {
+      "year": "1972",
+      "success_rate": 0.9375,
+      "avg_kills": 0.0625,
+      "avg_wounded": 0.6875,
+      "count": 16,
+      "avg_damage": 48800.0
+    },
+    {
+      "year": "1973",
+      "success_rate": 1.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.03571428571428571,
+      "count": 28,
+      "avg_damage": 107875.0
+    },
+    {
+      "year": "1974",
+      "success_rate": 0.9117647058823529,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.23529411764705882,
+      "count": 34,
+      "avg_damage": 612360.4
+    },
+    {
+      "year": "1975",
+      "success_rate": 1.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.08333333333333333,
+      "count": 24,
+      "avg_damage": 5388.888888888889
+    },
+    {
+      "year": "1976",
+      "success_rate": 0.978494623655914,
+      "avg_kills": 0.010752688172043012,
+      "avg_wounded": 0.25806451612903225,
+      "count": 93,
+      "avg_damage": 59343.09302325582
+    },
+    {
+      "year": "1977",
+      "success_rate": 0.8816568047337278,
+      "avg_kills": 0.005917159763313609,
+      "avg_wounded": 0.09467455621301775,
+      "count": 169,
+      "avg_damage": 103889.32584269663
+    },
+    {
+      "year": "1978",
+      "success_rate": 0.9470588235294117,
+      "avg_kills": 2.5058823529411764,
+      "avg_wounded": 0.15294117647058825,
+      "count": 170,
+      "avg_damage": 100254.02362204724
+    },
+    {
+      "year": "1979",
+      "success_rate": 0.9032258064516129,
+      "avg_kills": 0.3548387096774194,
+      "avg_wounded": 0.21774193548387097,
+      "count": 124,
+      "avg_damage": 138188.0652173913
+    },
+    {
+      "year": "1980",
+      "success_rate": 0.9243697478991597,
+      "avg_kills": 0.16806722689075632,
+      "avg_wounded": 0.08403361344537816,
+      "count": 119,
+      "avg_damage": 572615.5555555555
+    },
+    {
+      "year": "1981",
+      "success_rate": 0.9298245614035088,
+      "avg_kills": 0.34210526315789475,
+      "avg_wounded": 0.5,
+      "count": 114,
+      "avg_damage": 195067.23076923078
+    },
+    {
+      "year": "1982",
+      "success_rate": 0.9125,
+      "avg_kills": 0.2,
+      "avg_wounded": 0.3375,
+      "count": 80,
+      "avg_damage": 97494.17647058824
+    },
+    {
+      "year": "1983",
+      "success_rate": 0.8941176470588236,
+      "avg_kills": 0.2235294117647059,
+      "avg_wounded": 0.15294117647058825,
+      "count": 85,
+      "avg_damage": 468170.66
+    },
+    {
+      "year": "1984",
+      "success_rate": 0.946969696969697,
+      "avg_kills": 0.6287878787878788,
+      "avg_wounded": 0.1590909090909091,
+      "count": 132,
+      "avg_damage": 400017.025
+    },
+    {
+      "year": "1985",
+      "success_rate": 0.9652173913043478,
+      "avg_kills": 0.6956521739130435,
+      "avg_wounded": 0.8782608695652174,
+      "count": 115,
+      "avg_damage": 201232.921875
+    },
+    {
+      "year": "1986",
+      "success_rate": 0.9389312977099237,
+      "avg_kills": 2.33587786259542,
+      "avg_wounded": 0.9694656488549618,
+      "count": 131,
+      "avg_damage": 238174.75609756098
+    },
+    {
+      "year": "1987",
+      "success_rate": 0.8067226890756303,
+      "avg_kills": 0.07563025210084033,
+      "avg_wounded": 0.05042016806722689,
+      "count": 119,
+      "avg_damage": 80280.91176470589
+    },
+    {
+      "year": "1988",
+      "success_rate": 0.8278145695364238,
+      "avg_kills": 0.18543046357615894,
+      "avg_wounded": 0.052980132450331126,
+      "count": 151,
+      "avg_damage": 267295.55555555556
+    },
+    {
+      "year": "1989",
+      "success_rate": 0.9409282700421941,
+      "avg_kills": 0.06751054852320675,
+      "avg_wounded": 0.12658227848101267,
+      "count": 237,
+      "avg_damage": 164125.3661971831
+    },
+    {
+      "year": "1990",
+      "success_rate": 0.9523809523809523,
+      "avg_kills": 0.05291005291005291,
+      "avg_wounded": 0.18518518518518517,
+      "count": 189,
+      "avg_damage": 164861.08823529413
+    },
+    {
+      "year": "1991",
+      "success_rate": 0.8525073746312685,
+      "avg_kills": 0.11504424778761062,
+      "avg_wounded": 0.35988200589970504,
+      "count": 339,
+      "avg_damage": 1661479.7297297297
+    },
+    {
+      "year": "1992",
+      "success_rate": 0.921443736730361,
+      "avg_kills": 0.24628450106157113,
+      "avg_wounded": 0.3991507430997877,
+      "count": 471,
+      "avg_damage": 197951.70588235295
+    },
+    {
+      "year": "1993",
+      "success_rate": 0.0,
+      "avg_kills": 0.0,
+      "avg_wounded": 0.0,
+      "avg_damage": 0.0,
+      "count": 0
+    },
+    {
+      "year": "1994",
+      "success_rate": 0.9184782608695652,
+      "avg_kills": 0.17391304347826086,
+      "avg_wounded": 0.42391304347826086,
+      "count": 184,
+      "avg_damage": 671930.3636363636
+    },
+    {
+      "year": "1995",
+      "success_rate": 0.9459459459459459,
+      "avg_kills": 0.12162162162162163,
+      "avg_wounded": 0.9358108108108109,
+      "count": 296,
+      "avg_damage": 88548.31034482758
+    },
+    {
+      "year": "1996",
+      "success_rate": 0.9485981308411215,
+      "avg_kills": 0.07476635514018691,
+      "avg_wounded": 0.0514018691588785,
+      "count": 214,
+      "avg_damage": 648691.6666666666
+    },
+    {
+      "year": "1997",
+      "success_rate": 0.9699248120300752,
+      "avg_kills": 0.3308270676691729,
+      "avg_wounded": 0.48872180451127817,
+      "count": 133,
+      "avg_damage": 407498.6
+    },
+    {
+      "year": "1998",
+      "success_rate": 0.9423076923076923,
+      "avg_kills": 0.75,
+      "avg_wounded": 0.21153846153846154,
+      "count": 52,
+      "avg_damage": 2572026.6666666665
+    },
+    {
+      "year": "1999",
+      "success_rate": 0.9285714285714286,
+      "avg_kills": 0.26785714285714285,
+      "avg_wounded": 0.625,
+      "count": 112,
+      "avg_damage": 354938.6666666667
+    },
+    {
+      "year": "2000",
+      "success_rate": 0.9523809523809523,
+      "avg_kills": 0.14285714285714285,
+      "avg_wounded": 0.1619047619047619,
+      "count": 105,
+      "avg_damage": 259089.2857142857
+    },
+    {
+      "year": "2001",
+      "success_rate": 0.9214285714285714,
+      "avg_kills": 0.9285714285714286,
+      "avg_wounded": 1.0357142857142858,
+      "count": 140,
+      "avg_damage": 788625.9444444445
+    },
+    {
+      "year": "2002",
+      "success_rate": 0.9555555555555556,
+      "avg_kills": 0.022222222222222223,
+      "avg_wounded": 0.06666666666666667,
+      "count": 45,
+      "avg_damage": 341633.6666666667
+    },
+    {
+      "year": "2003",
+      "success_rate": 0.9425287356321839,
+      "avg_kills": 0.022988505747126436,
+      "avg_wounded": 0.05747126436781609,
+      "count": 87,
+      "avg_damage": 1552050.2222222222
+    },
+    {
+      "year": "2004",
+      "success_rate": 0.9333333333333333,
+      "avg_kills": 0.4666666666666667,
+      "avg_wounded": 0.9,
+      "count": 30,
+      "avg_damage": 3121000.0
+    },
+    {
+      "year": "2005",
+      "success_rate": 0.9333333333333333,
+      "avg_kills": 0.2,
+      "avg_wounded": 2.4444444444444446,
+      "count": 45,
+      "avg_damage": 51700.857142857145
+    },
+    {
+      "year": "2006",
+      "success_rate": 0.9702970297029703,
+      "avg_kills": 0.26732673267326734,
+      "avg_wounded": 0.37623762376237624,
+      "count": 101,
+      "avg_damage": 488333.3333333333
+    },
+    {
+      "year": "2007",
+      "success_rate": 0.9603960396039604,
+      "avg_kills": 0.3564356435643564,
+      "avg_wounded": 2.8613861386138613,
+      "count": 101,
+      "avg_damage": 40000.0
+    },
+    {
+      "year": "2008",
+      "success_rate": 0.951310861423221,
+      "avg_kills": 0.10861423220973783,
+      "avg_wounded": 0.4232209737827715,
+      "count": 267,
+      "avg_damage": 960033.606
+    },
+    {
+      "year": "2009",
+      "success_rate": 0.976878612716763,
+      "avg_kills": 0.13005780346820808,
+      "avg_wounded": 0.12427745664739884,
+      "count": 346,
+      "avg_damage": 854959.4
+    },
+    {
+      "year": "2010",
+      "success_rate": 0.9556313993174061,
+      "avg_kills": 0.11604095563139932,
+      "avg_wounded": 0.32081911262798635,
+      "count": 293,
+      "avg_damage": 48792.11111111111
+    },
+    {
+      "year": "2011",
+      "success_rate": 0.9957627118644068,
+      "avg_kills": 0.18220338983050846,
+      "avg_wounded": 0.2754237288135593,
+      "count": 236,
+      "avg_damage": 260171.49666666667
+    },
+    {
+      "year": "2012",
+      "success_rate": 0.9832214765100671,
+      "avg_kills": 0.2785234899328859,
+      "avg_wounded": 0.3389261744966443,
+      "count": 298,
+      "avg_damage": 10337.128833922261
+    },
+    {
+      "year": "2013",
+      "success_rate": 0.9587073608617595,
+      "avg_kills": 0.24236983842010773,
+      "avg_wounded": 0.6427289048473968,
+      "count": 557,
+      "avg_damage": 43856.864088291746
+    },
+    {
+      "year": "2014",
+      "success_rate": 0.9448275862068966,
+      "avg_kills": 0.11586206896551725,
+      "avg_wounded": 0.2289655172413793,
+      "count": 725,
+      "avg_damage": 187351.53546218487
+    },
+    {
+      "year": "2015",
+      "success_rate": 0.9544807965860598,
+      "avg_kills": 0.13086770981507823,
+      "avg_wounded": 0.32574679943101,
+      "count": 703,
+      "avg_damage": 1550.4607772795216
+    },
+    {
+      "year": "2016",
+      "success_rate": 0.9630177514792899,
+      "avg_kills": 0.26331360946745563,
+      "avg_wounded": 0.27218934911242604,
+      "count": 676,
+      "avg_damage": 60283.481284829715
+    },
+    {
+      "year": "2017",
+      "success_rate": 0.9669749009247027,
+      "avg_kills": 0.21136063408190225,
+      "avg_wounded": 0.26420079260237783,
+      "count": 757,
+      "avg_damage": 11688.309157458563
+    },
+    {
+      "year": "2018",
+      "success_rate": 0.957345971563981,
+      "avg_kills": 0.4186413902053712,
+      "avg_wounded": 0.28751974723538704,
+      "count": 633,
+      "avg_damage": 3309.723047285464
+    },
+    {
+      "year": "2019",
+      "success_rate": 0.9722735674676525,
+      "avg_kills": 0.3364140480591497,
+      "avg_wounded": 0.23475046210720887,
+      "count": 541,
+      "avg_damage": 50923.32136276391
+    },
+    {
+      "year": "2020",
+      "success_rate": 0.96,
+      "avg_kills": 0.5076923076923077,
+      "avg_wounded": 0.25384615384615383,
+      "count": 650,
+      "avg_damage": 14490.242052117266
+    }
+  ]
+}

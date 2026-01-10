@@ -1,0 +1,83 @@
+{
+  "ISIL": [
+    {
+      "bin": "0",
+      "killed_count": 2496,
+      "wounded_count": 3992
+    },
+    {
+      "bin": "1",
+      "killed_count": 1197,
+      "wounded_count": 394
+    },
+    {
+      "bin": "2-10",
+      "killed_count": 2618,
+      "wounded_count": 2011
+    },
+    {
+      "bin": "11-100",
+      "killed_count": 912,
+      "wounded_count": 839
+    },
+    {
+      "bin": "100+",
+      "killed_count": 31,
+      "wounded_count": 18
+    }
+  ],
+  "taliban": [
+    {
+      "bin": "0",
+      "killed_count": 2601,
+      "wounded_count": 5326
+    },
+    {
+      "bin": "1",
+      "killed_count": 2281,
+      "wounded_count": 1246
+    },
+    {
+      "bin": "2-10",
+      "killed_count": 5904,
+      "wounded_count": 4421
+    },
+    {
+      "bin": "11-100",
+      "killed_count": 1187,
+      "wounded_count": 962
+    },
+    {
+      "bin": "100+",
+      "killed_count": 9,
+      "wounded_count": 27
+    }
+  ],
+  "SL": [
+    {
+      "bin": "0",
+      "killed_count": 2634,
+      "wounded_count": 3943
+    },
+    {
+      "bin": "1",
+      "killed_count": 736,
+      "wounded_count": 214
+    },
+    {
+      "bin": "2-10",
+      "killed_count": 879,
+      "wounded_count": 340
+    },
+    {
+      "bin": "11-100",
+      "killed_count": 315,
+      "wounded_count": 67
+    },
+    {
+      "bin": "100+",
+      "killed_count": 0,
+      "wounded_count": 0
+    }
+  ]
+}

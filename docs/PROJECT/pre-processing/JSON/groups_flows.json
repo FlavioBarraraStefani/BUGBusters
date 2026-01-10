@@ -1,0 +1,505 @@
+{
+  "ISIL": {
+    "nodes": [
+      {
+        "name": "Bombing/Explosion",
+        "type": "attack"
+      },
+      {
+        "name": "Unknown",
+        "type": "attack"
+      },
+      {
+        "name": "Armed Assault",
+        "type": "attack"
+      },
+      {
+        "name": "Hostage Taking (Kidnapping)",
+        "type": "attack"
+      },
+      {
+        "name": "Assassination",
+        "type": "attack"
+      },
+      {
+        "name": "Private Citizens & Property",
+        "type": "target"
+      },
+      {
+        "name": "Military",
+        "type": "target"
+      },
+      {
+        "name": "Police",
+        "type": "target"
+      },
+      {
+        "name": "Business",
+        "type": "target"
+      },
+      {
+        "name": "Terrorists/Non-State Militia",
+        "type": "target"
+      }
+    ],
+    "links": [
+      {
+        "source": 2,
+        "target": 8,
+        "value": 28
+      },
+      {
+        "source": 2,
+        "target": 6,
+        "value": 264
+      },
+      {
+        "source": 2,
+        "target": 7,
+        "value": 168
+      },
+      {
+        "source": 2,
+        "target": 5,
+        "value": 199
+      },
+      {
+        "source": 2,
+        "target": 9,
+        "value": 29
+      },
+      {
+        "source": 4,
+        "target": 8,
+        "value": 1
+      },
+      {
+        "source": 4,
+        "target": 6,
+        "value": 38
+      },
+      {
+        "source": 4,
+        "target": 7,
+        "value": 26
+      },
+      {
+        "source": 4,
+        "target": 5,
+        "value": 37
+      },
+      {
+        "source": 4,
+        "target": 9,
+        "value": 15
+      },
+      {
+        "source": 0,
+        "target": 8,
+        "value": 228
+      },
+      {
+        "source": 0,
+        "target": 6,
+        "value": 1038
+      },
+      {
+        "source": 0,
+        "target": 7,
+        "value": 499
+      },
+      {
+        "source": 0,
+        "target": 5,
+        "value": 1760
+      },
+      {
+        "source": 0,
+        "target": 9,
+        "value": 179
+      },
+      {
+        "source": 3,
+        "target": 8,
+        "value": 16
+      },
+      {
+        "source": 3,
+        "target": 6,
+        "value": 88
+      },
+      {
+        "source": 3,
+        "target": 7,
+        "value": 70
+      },
+      {
+        "source": 3,
+        "target": 5,
+        "value": 434
+      },
+      {
+        "source": 3,
+        "target": 9,
+        "value": 29
+      },
+      {
+        "source": 1,
+        "target": 8,
+        "value": 32
+      },
+      {
+        "source": 1,
+        "target": 6,
+        "value": 513
+      },
+      {
+        "source": 1,
+        "target": 7,
+        "value": 117
+      },
+      {
+        "source": 1,
+        "target": 5,
+        "value": 307
+      },
+      {
+        "source": 1,
+        "target": 9,
+        "value": 49
+      }
+    ]
+  },
+  "taliban": {
+    "nodes": [
+      {
+        "name": "Bombing/Explosion",
+        "type": "attack"
+      },
+      {
+        "name": "Armed Assault",
+        "type": "attack"
+      },
+      {
+        "name": "Unknown",
+        "type": "attack"
+      },
+      {
+        "name": "Hostage Taking (Kidnapping)",
+        "type": "attack"
+      },
+      {
+        "name": "Assassination",
+        "type": "attack"
+      },
+      {
+        "name": "Police",
+        "type": "target"
+      },
+      {
+        "name": "Military",
+        "type": "target"
+      },
+      {
+        "name": "Private Citizens & Property",
+        "type": "target"
+      },
+      {
+        "name": "Government (General)",
+        "type": "target"
+      },
+      {
+        "name": "Unknown",
+        "type": "target"
+      }
+    ],
+    "links": [
+      {
+        "source": 1,
+        "target": 8,
+        "value": 225
+      },
+      {
+        "source": 1,
+        "target": 6,
+        "value": 729
+      },
+      {
+        "source": 1,
+        "target": 5,
+        "value": 1445
+      },
+      {
+        "source": 1,
+        "target": 7,
+        "value": 376
+      },
+      {
+        "source": 1,
+        "target": 9,
+        "value": 2
+      },
+      {
+        "source": 4,
+        "target": 8,
+        "value": 320
+      },
+      {
+        "source": 4,
+        "target": 6,
+        "value": 24
+      },
+      {
+        "source": 4,
+        "target": 5,
+        "value": 225
+      },
+      {
+        "source": 4,
+        "target": 7,
+        "value": 81
+      },
+      {
+        "source": 0,
+        "target": 8,
+        "value": 416
+      },
+      {
+        "source": 0,
+        "target": 6,
+        "value": 822
+      },
+      {
+        "source": 0,
+        "target": 5,
+        "value": 829
+      },
+      {
+        "source": 0,
+        "target": 7,
+        "value": 906
+      },
+      {
+        "source": 0,
+        "target": 9,
+        "value": 349
+      },
+      {
+        "source": 3,
+        "target": 8,
+        "value": 148
+      },
+      {
+        "source": 3,
+        "target": 6,
+        "value": 153
+      },
+      {
+        "source": 3,
+        "target": 5,
+        "value": 285
+      },
+      {
+        "source": 3,
+        "target": 7,
+        "value": 318
+      },
+      {
+        "source": 3,
+        "target": 9,
+        "value": 1
+      },
+      {
+        "source": 2,
+        "target": 8,
+        "value": 140
+      },
+      {
+        "source": 2,
+        "target": 6,
+        "value": 1123
+      },
+      {
+        "source": 2,
+        "target": 5,
+        "value": 1174
+      },
+      {
+        "source": 2,
+        "target": 7,
+        "value": 289
+      },
+      {
+        "source": 2,
+        "target": 9,
+        "value": 17
+      }
+    ]
+  },
+  "SL": {
+    "nodes": [
+      {
+        "name": "Bombing/Explosion",
+        "type": "attack"
+      },
+      {
+        "name": "Armed Assault",
+        "type": "attack"
+      },
+      {
+        "name": "Assassination",
+        "type": "attack"
+      },
+      {
+        "name": "Facility/Infrastructure Attack",
+        "type": "attack"
+      },
+      {
+        "name": "Unknown",
+        "type": "attack"
+      },
+      {
+        "name": "Private Citizens & Property",
+        "type": "target"
+      },
+      {
+        "name": "Business",
+        "type": "target"
+      },
+      {
+        "name": "Government (General)",
+        "type": "target"
+      },
+      {
+        "name": "Police",
+        "type": "target"
+      },
+      {
+        "name": "Utilities",
+        "type": "target"
+      }
+    ],
+    "links": [
+      {
+        "source": 1,
+        "target": 6,
+        "value": 45
+      },
+      {
+        "source": 1,
+        "target": 7,
+        "value": 34
+      },
+      {
+        "source": 1,
+        "target": 8,
+        "value": 268
+      },
+      {
+        "source": 1,
+        "target": 5,
+        "value": 391
+      },
+      {
+        "source": 1,
+        "target": 9,
+        "value": 2
+      },
+      {
+        "source": 2,
+        "target": 6,
+        "value": 64
+      },
+      {
+        "source": 2,
+        "target": 7,
+        "value": 332
+      },
+      {
+        "source": 2,
+        "target": 8,
+        "value": 132
+      },
+      {
+        "source": 2,
+        "target": 5,
+        "value": 160
+      },
+      {
+        "source": 0,
+        "target": 6,
+        "value": 524
+      },
+      {
+        "source": 0,
+        "target": 7,
+        "value": 320
+      },
+      {
+        "source": 0,
+        "target": 8,
+        "value": 171
+      },
+      {
+        "source": 0,
+        "target": 5,
+        "value": 203
+      },
+      {
+        "source": 0,
+        "target": 9,
+        "value": 553
+      },
+      {
+        "source": 3,
+        "target": 6,
+        "value": 80
+      },
+      {
+        "source": 3,
+        "target": 7,
+        "value": 25
+      },
+      {
+        "source": 3,
+        "target": 8,
+        "value": 5
+      },
+      {
+        "source": 3,
+        "target": 5,
+        "value": 19
+      },
+      {
+        "source": 3,
+        "target": 9,
+        "value": 9
+      },
+      {
+        "source": 4,
+        "target": 6,
+        "value": 15
+      },
+      {
+        "source": 4,
+        "target": 7,
+        "value": 10
+      },
+      {
+        "source": 4,
+        "target": 8,
+        "value": 35
+      },
+      {
+        "source": 4,
+        "target": 5,
+        "value": 61
+      },
+      {
+        "source": 4,
+        "target": 9,
+        "value": 3
+      }
+    ]
+  }
+}

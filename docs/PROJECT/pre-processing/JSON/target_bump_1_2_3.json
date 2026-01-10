@@ -1,0 +1,967 @@
+{
+  "config": {
+    "ribbonPadding": 10,
+    "minYear": 1970,
+    "maxYear": 2020,
+    "binSize": 1
+  },
+  "target_keys": [
+    "military_police",
+    "government",
+    "business",
+    "citizens",
+    "transportations"
+  ],
+  "timeline": [
+    {
+      "label": "1970",
+      "year": 1970,
+      "start_year": 1970,
+      "values": {
+        "military_police": 166,
+        "government": 132,
+        "business": 134,
+        "citizens": 57,
+        "transportations": 2
+      },
+      "order": [
+        "military_police",
+        "business",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1971",
+      "year": 1971,
+      "start_year": 1971,
+      "values": {
+        "military_police": 140,
+        "government": 80,
+        "business": 128,
+        "citizens": 23,
+        "transportations": 4
+      },
+      "order": [
+        "military_police",
+        "business",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1972",
+      "year": 1972,
+      "start_year": 1972,
+      "values": {
+        "military_police": 169,
+        "government": 95,
+        "business": 76,
+        "citizens": 146,
+        "transportations": 3
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1973",
+      "year": 1973,
+      "start_year": 1973,
+      "values": {
+        "military_police": 118,
+        "government": 79,
+        "business": 80,
+        "citizens": 125,
+        "transportations": 2
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "business",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1974",
+      "year": 1974,
+      "start_year": 1974,
+      "values": {
+        "military_police": 101,
+        "government": 93,
+        "business": 176,
+        "citizens": 130,
+        "transportations": 7
+      },
+      "order": [
+        "business",
+        "citizens",
+        "military_police",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1975",
+      "year": 1975,
+      "start_year": 1975,
+      "values": {
+        "military_police": 116,
+        "government": 133,
+        "business": 202,
+        "citizens": 134,
+        "transportations": 25
+      },
+      "order": [
+        "business",
+        "citizens",
+        "government",
+        "military_police",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1976",
+      "year": 1976,
+      "start_year": 1976,
+      "values": {
+        "military_police": 175,
+        "government": 210,
+        "business": 209,
+        "citizens": 155,
+        "transportations": 15
+      },
+      "order": [
+        "government",
+        "business",
+        "military_police",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1977",
+      "year": 1977,
+      "start_year": 1977,
+      "values": {
+        "military_police": 189,
+        "government": 237,
+        "business": 401,
+        "citizens": 217,
+        "transportations": 40
+      },
+      "order": [
+        "business",
+        "government",
+        "citizens",
+        "military_police",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1978",
+      "year": 1978,
+      "start_year": 1978,
+      "values": {
+        "military_police": 330,
+        "government": 289,
+        "business": 415,
+        "citizens": 134,
+        "transportations": 35
+      },
+      "order": [
+        "business",
+        "military_police",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1979",
+      "year": 1979,
+      "start_year": 1979,
+      "values": {
+        "military_police": 507,
+        "government": 544,
+        "business": 574,
+        "citizens": 370,
+        "transportations": 94
+      },
+      "order": [
+        "business",
+        "government",
+        "military_police",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1980",
+      "year": 1980,
+      "start_year": 1980,
+      "values": {
+        "military_police": 511,
+        "government": 483,
+        "business": 564,
+        "citizens": 415,
+        "transportations": 109
+      },
+      "order": [
+        "business",
+        "military_police",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1981",
+      "year": 1981,
+      "start_year": 1981,
+      "values": {
+        "military_police": 711,
+        "government": 398,
+        "business": 386,
+        "citizens": 380,
+        "transportations": 125
+      },
+      "order": [
+        "military_police",
+        "government",
+        "business",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1982",
+      "year": 1982,
+      "start_year": 1982,
+      "values": {
+        "military_police": 606,
+        "government": 339,
+        "business": 371,
+        "citizens": 434,
+        "transportations": 118
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "business",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1983",
+      "year": 1983,
+      "start_year": 1983,
+      "values": {
+        "military_police": 976,
+        "government": 333,
+        "business": 379,
+        "citizens": 451,
+        "transportations": 131
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "business",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1984",
+      "year": 1984,
+      "start_year": 1984,
+      "values": {
+        "military_police": 867,
+        "government": 384,
+        "business": 491,
+        "citizens": 547,
+        "transportations": 221
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "business",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1985",
+      "year": 1985,
+      "start_year": 1985,
+      "values": {
+        "military_police": 814,
+        "government": 362,
+        "business": 399,
+        "citizens": 353,
+        "transportations": 148
+      },
+      "order": [
+        "military_police",
+        "business",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1986",
+      "year": 1986,
+      "start_year": 1986,
+      "values": {
+        "military_police": 681,
+        "government": 421,
+        "business": 509,
+        "citizens": 469,
+        "transportations": 150
+      },
+      "order": [
+        "military_police",
+        "business",
+        "citizens",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1987",
+      "year": 1987,
+      "start_year": 1987,
+      "values": {
+        "military_police": 765,
+        "government": 544,
+        "business": 491,
+        "citizens": 490,
+        "transportations": 189
+      },
+      "order": [
+        "military_police",
+        "government",
+        "business",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1988",
+      "year": 1988,
+      "start_year": 1988,
+      "values": {
+        "military_police": 980,
+        "government": 647,
+        "business": 496,
+        "citizens": 561,
+        "transportations": 211
+      },
+      "order": [
+        "military_police",
+        "government",
+        "citizens",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1989",
+      "year": 1989,
+      "start_year": 1989,
+      "values": {
+        "military_police": 1135,
+        "government": 712,
+        "business": 624,
+        "citizens": 732,
+        "transportations": 219
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1990",
+      "year": 1990,
+      "start_year": 1990,
+      "values": {
+        "military_police": 913,
+        "government": 549,
+        "business": 512,
+        "citizens": 721,
+        "transportations": 237
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1991",
+      "year": 1991,
+      "start_year": 1991,
+      "values": {
+        "military_police": 1185,
+        "government": 659,
+        "business": 897,
+        "citizens": 647,
+        "transportations": 197
+      },
+      "order": [
+        "military_police",
+        "business",
+        "government",
+        "citizens",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1992",
+      "year": 1992,
+      "start_year": 1992,
+      "values": {
+        "military_police": 1255,
+        "government": 771,
+        "business": 820,
+        "citizens": 910,
+        "transportations": 282
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "business",
+        "government",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1994",
+      "year": 1994,
+      "start_year": 1994,
+      "values": {
+        "military_police": 702,
+        "government": 563,
+        "business": 533,
+        "citizens": 724,
+        "transportations": 156
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1995",
+      "year": 1995,
+      "start_year": 1995,
+      "values": {
+        "military_police": 598,
+        "government": 423,
+        "business": 384,
+        "citizens": 775,
+        "transportations": 199
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1996",
+      "year": 1996,
+      "start_year": 1996,
+      "values": {
+        "military_police": 533,
+        "government": 513,
+        "business": 411,
+        "citizens": 614,
+        "transportations": 217
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1997",
+      "year": 1997,
+      "start_year": 1997,
+      "values": {
+        "military_police": 440,
+        "government": 519,
+        "business": 424,
+        "citizens": 810,
+        "transportations": 167
+      },
+      "order": [
+        "citizens",
+        "government",
+        "military_police",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1998",
+      "year": 1998,
+      "start_year": 1998,
+      "values": {
+        "military_police": 171,
+        "government": 142,
+        "business": 121,
+        "citizens": 275,
+        "transportations": 60
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "1999",
+      "year": 1999,
+      "start_year": 1999,
+      "values": {
+        "military_police": 257,
+        "government": 246,
+        "business": 172,
+        "citizens": 370,
+        "transportations": 58
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2000",
+      "year": 2000,
+      "start_year": 2000,
+      "values": {
+        "military_police": 367,
+        "government": 320,
+        "business": 210,
+        "citizens": 535,
+        "transportations": 80
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2001",
+      "year": 2001,
+      "start_year": 2001,
+      "values": {
+        "military_police": 385,
+        "government": 279,
+        "business": 200,
+        "citizens": 669,
+        "transportations": 92
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2002",
+      "year": 2002,
+      "start_year": 2002,
+      "values": {
+        "military_police": 288,
+        "government": 199,
+        "business": 154,
+        "citizens": 391,
+        "transportations": 93
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2003",
+      "year": 2003,
+      "start_year": 2003,
+      "values": {
+        "military_police": 364,
+        "government": 227,
+        "business": 145,
+        "citizens": 259,
+        "transportations": 62
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2004",
+      "year": 2004,
+      "start_year": 2004,
+      "values": {
+        "military_police": 351,
+        "government": 195,
+        "business": 120,
+        "citizens": 223,
+        "transportations": 51
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2005",
+      "year": 2005,
+      "start_year": 2005,
+      "values": {
+        "military_police": 649,
+        "government": 369,
+        "business": 157,
+        "citizens": 433,
+        "transportations": 70
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2006",
+      "year": 2006,
+      "start_year": 2006,
+      "values": {
+        "military_police": 694,
+        "government": 409,
+        "business": 241,
+        "citizens": 839,
+        "transportations": 111
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2007",
+      "year": 2007,
+      "start_year": 2007,
+      "values": {
+        "military_police": 1064,
+        "government": 371,
+        "business": 237,
+        "citizens": 958,
+        "transportations": 141
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2008",
+      "year": 2008,
+      "start_year": 2008,
+      "values": {
+        "military_police": 724,
+        "government": 805,
+        "business": 499,
+        "citizens": 1598,
+        "transportations": 224
+      },
+      "order": [
+        "citizens",
+        "government",
+        "military_police",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2009",
+      "year": 2009,
+      "start_year": 2009,
+      "values": {
+        "military_police": 564,
+        "government": 825,
+        "business": 541,
+        "citizens": 1666,
+        "transportations": 233
+      },
+      "order": [
+        "citizens",
+        "government",
+        "military_police",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2010",
+      "year": 2010,
+      "start_year": 2010,
+      "values": {
+        "military_police": 745,
+        "government": 990,
+        "business": 530,
+        "citizens": 1475,
+        "transportations": 219
+      },
+      "order": [
+        "citizens",
+        "government",
+        "military_police",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2011",
+      "year": 2011,
+      "start_year": 2011,
+      "values": {
+        "military_police": 1059,
+        "government": 913,
+        "business": 508,
+        "citizens": 1434,
+        "transportations": 217
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2012",
+      "year": 2012,
+      "start_year": 2012,
+      "values": {
+        "military_police": 3481,
+        "government": 948,
+        "business": 567,
+        "citizens": 1697,
+        "transportations": 197
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2013",
+      "year": 2013,
+      "start_year": 2013,
+      "values": {
+        "military_police": 4658,
+        "government": 1405,
+        "business": 891,
+        "citizens": 2469,
+        "transportations": 239
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2014",
+      "year": 2014,
+      "start_year": 2014,
+      "values": {
+        "military_police": 6328,
+        "government": 1738,
+        "business": 1106,
+        "citizens": 4331,
+        "transportations": 344
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2015",
+      "year": 2015,
+      "start_year": 2015,
+      "values": {
+        "military_police": 5091,
+        "government": 1319,
+        "business": 1135,
+        "citizens": 4222,
+        "transportations": 389
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2016",
+      "year": 2016,
+      "start_year": 2016,
+      "values": {
+        "military_police": 4406,
+        "government": 1117,
+        "business": 932,
+        "citizens": 4606,
+        "transportations": 229
+      },
+      "order": [
+        "citizens",
+        "military_police",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2017",
+      "year": 2017,
+      "start_year": 2017,
+      "values": {
+        "military_police": 3989,
+        "government": 1056,
+        "business": 790,
+        "citizens": 3172,
+        "transportations": 142
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2018",
+      "year": 2018,
+      "start_year": 2018,
+      "values": {
+        "military_police": 3532,
+        "government": 1078,
+        "business": 596,
+        "citizens": 2790,
+        "transportations": 131
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2019",
+      "year": 2019,
+      "start_year": 2019,
+      "values": {
+        "military_police": 2954,
+        "government": 922,
+        "business": 479,
+        "citizens": 2608,
+        "transportations": 136
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    },
+    {
+      "label": "2020",
+      "year": 2020,
+      "start_year": 2020,
+      "values": {
+        "military_police": 3408,
+        "government": 702,
+        "business": 360,
+        "citizens": 2440,
+        "transportations": 98
+      },
+      "order": [
+        "military_police",
+        "citizens",
+        "government",
+        "business",
+        "transportations"
+      ]
+    }
+  ]
+}
