@@ -15,7 +15,7 @@ let sliderRange = [1969, 2020];
 
 //ALLOW drag to rotate globe
 let needsUpdate = false;
-let updateGlobe = null;   // function to update globe rendering
+let updateGlobe = () => {};   // function to update globe rendering
 
 let baseScale = 1;
 const LEFT_CHART_LATERAL_PADDING = 10;
