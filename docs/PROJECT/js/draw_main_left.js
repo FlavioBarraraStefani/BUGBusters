@@ -227,6 +227,7 @@ function draw_main_left(categoryInfo, containerId) {
 
     const zoom = d3.zoom()
       .scaleExtent([0.85, 4])
+      .scaleExtent([0.2, 10])
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
 
