@@ -25,7 +25,7 @@ function precomputeColormap() {
   }
 }
 
-const BIN_RESOLUTION = window.innerWidth < 576 ? 6.0 : 3.0; 
+const BIN_RESOLUTION = window.innerWidth < 576 ? 4.5 : 3.0; 
 
 let allTassels = []; 
 const yearLookup = {}; 

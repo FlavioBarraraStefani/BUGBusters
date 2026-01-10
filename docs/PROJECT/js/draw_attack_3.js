@@ -238,7 +238,7 @@ async function draw_attack_3(data, choice, containerId) {
     tooltipGroup.style("display", null);
     tooltipTitle.text(`Weapon: ${d.label}`);
     const pct = (d.percentage !== undefined) ? d.percentage : (((d.value / totalValue) * 100).toFixed(1));
-    tooltipBody.text(`${d.value} attacks, ${pct}% of type '${choice}'`);
+    tooltipBody.text(`${d.value} attacks (${pct}% of the category)`);
 
     const titleBox = tooltipTitle.node().getBBox();
     const bodyBox = tooltipBody.node().getBBox();
@@ -275,7 +275,7 @@ async function draw_attack_3(data, choice, containerId) {
   const legendItems = legendLabels.map(label => items.find(d => d.label === label)).filter(item => item && item.value > 0);
 
   const legendGroup = g.append("g")
-    .attr("transform", `translate(${xOffsetStart + actualGridWidth + 20}, ${yOffsetStart})`);
+    .attr("transform", `translate(${xOffsetStart + actualGridWidth + 20}, 0)`);
 
   // Add legend title and give space for items below
   legendGroup.append("text")
@@ -310,4 +310,22 @@ async function draw_attack_3(data, choice, containerId) {
 
     currentY += 18;
   });
+
+  try {
+    const heuristicHeight = currentY; // accumulated while building legend
+    const node = legendGroup.node();
+    const legendBBox = (node && node.getBBox) ? node.getBBox() : null;
+    const measuredHeight = (legendBBox && legendBBox.height) ? legendBBox.height : 0;
+    const legendHeight = measuredHeight > 0 ? measuredHeight : heuristicHeight;
+
+    const legendX = xOffsetStart + actualGridWidth + 20;
+    const legendY = yOffsetStart + (actualGridHeight / 2) - (legendHeight / 2);
+    legendGroup.attr("transform", `translate(${legendX}, ${legendY})`);
+  } catch (err) {
+    //fallback
+    const legendX = xOffsetStart + actualGridWidth + 20;
+    const legendY = yOffsetStart + (actualGridHeight / 2) - (currentY / 2);
+    legendGroup.attr("transform", `translate(${legendX}, ${legendY})`);
+    console.warn("Could not measure legend bounding box; used heuristic:", err);
+  }
 }

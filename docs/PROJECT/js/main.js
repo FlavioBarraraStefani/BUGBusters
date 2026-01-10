@@ -30,58 +30,35 @@ const COLORS = {
   },
 
   RIGHT_CHART:{
-    axisLine: '#05253fff',    //axes
-    textPrimary: '#1565C0', //labels
+    axisLine: '#111213',  
+    textPrimary: '#0d6efd', //labels
   },
 
-  //EACH CATEGORY COLOR SET
-  /* old values
   groupColors: [
-    '#42A5F5',
+    '#009688', 
+    '#F9A825', 
+    '#6D4C41', 
+  ],
+  attackColors: [
+    '#AD1457', 
+    '#7E57C2', 
     '#66BB6A', 
-    '#EF5350'
+    '#FF7043', 
+    '#1570d8', 
   ],
-  attackColors: [
-    '#E15759',
-    '#F28E2B',
-    '#9467BD',
-    '#59A14F',
-    '#D37295' 
-  ],  
   targetColors: [
-    '#FF8A80', 
-    '#90CAF9', 
-    '#80DEEA', 
-    '#FFCC80', 
-    '#CE93D8'
-  ],
-  */
-
-  groupColors: [
-    '#5C6BC0', // 1. Indigo (Calming, deep blue)
-    '#009688', // 2. Persian Green (Rich Teal)
-    '#F9A825', // 3. Dark Yellow/Mustard (Readable, unlike neon yellow)
-  ],
-  attackColors: [
-    '#AD1457', // 4. Rose Red (Deep pinkish-red, not aggressive)
-    '#607D8B', // 5. Blue Grey (Neutral anchor)
-    '#7E57C2', // 7. Deep Lavender (Distinct from your other purples)
-    '#66BB6A', // 8. Fern Green (Soft natural green)
-    '#8D6E63', // 6. Cocoa Brown (Earth tone for contrast)
-  ],  
-  targetColors: [
-    '#EF6C00', // 9. Burnt Orange (Warm but not neon)
-    '#26C6DA', // 10. Cyan (Muted turquoise)
-    '#EC407A', // 11. Berry (Soft magenta)
-    '#78909C', // 12. Cool Grey (Secondary neutral)
-    '#558B2F'  // 13. Olive Green (Darker, military green)
+    '#EF6C00', 
+    '#26C6DA', 
+    '#EC407A', 
+    '#FFD54F', 
+    '#558B2F',
   ],
 
   defaultComparison: '#78909C',
 
   //COMMON COLORS
-  axisLine: '#05253fff', //'#64B5F6' old color   
-  textPrimary: '#1565C0', //labels
+  axisLine: '#64B5F6',  
+  textPrimary: '#0d6efd', //labels
 }
 
 //FONT SIZE OF EACH CHART LABEL
