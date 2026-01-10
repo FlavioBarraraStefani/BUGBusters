@@ -181,8 +181,15 @@ function globe_attack() {
     if (!needsUpdate) return;
     needsUpdate = false;
 
+    // Hide tooltip and clear hovered state to remove any lingering UI
+    if (tooltip) tooltip.style('opacity', 0);
+    hoveredCountry = null;
+
+    // Redraw country paths and reset any hover/highlight visuals
     g.selectAll('path.country')
       .attr('d', path)
+      .attr('stroke', ORIGINAL_STROKE)
+      .attr('stroke-width', ORIGINAL_WIDTH);
   };
 
   // Initial Render

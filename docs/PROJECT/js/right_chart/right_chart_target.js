@@ -90,7 +90,7 @@ function right_chart_target(svg) {
           .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
           .attr('y', preferredSize /2*3)    // Center vertically within the top margin
           .style('font-size', `${preferredSize}px`) 
-          .text("Target type ranking and count (5 years bins)")
+          .text("Targets of Attack Over Time (5-year bins)")
           .style('opacity', 0)
           .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
   

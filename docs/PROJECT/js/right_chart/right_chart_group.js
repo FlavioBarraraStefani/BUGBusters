@@ -102,7 +102,7 @@ function right_chart_group(svg) {
       .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
       .attr('y', MARGIN_TOP * 0.75)    // Center vertically within the top margin
       .style('font-size', `${fontSize}px`) 
-      .text("Probability Distribution of attacks")
+      .text("Attacks distribution by groups")
       .style('opacity', 0)
       .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
 

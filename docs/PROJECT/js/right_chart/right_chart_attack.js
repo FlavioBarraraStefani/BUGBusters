@@ -94,7 +94,7 @@ function right_chart_attack(svg) {
           .attr('x', RIGHT_CHART_WIDTH / 2) // Center of chart width
           .attr('y', preferredSize /2*3)    // Center vertically within the top margin
           .style('font-size', `${preferredSize}px`) 
-          .text("Cumulative count of Attacks by Type")
+          .text("Cumulative attacks by Type")
           .style('opacity', 0)
           .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
   

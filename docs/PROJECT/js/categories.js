@@ -33,6 +33,9 @@ function toggleButtons(isDisabled) {
 function selectCategory(category) {
   const buttons = document.querySelectorAll('.category-btn');
 
+  // Blur all buttons to fix mobile stuck :active/:focus state
+  buttons.forEach(btn => btn.blur());
+
   //cooldown to avoid problems with rapid clicking
   toggleButtons(true);
   setTimeout(() => {toggleButtons(false);}, transitionDurationMs * 2);
@@ -120,7 +123,14 @@ function setCanvasSizes() {
   // Don't calculate if main content is hidden
   if (mainContent.style.display === 'none') return;
 
-  // --- NEW: Check for Mobile Landscape Mode ---
+  // --- Use visualViewport API for accurate mobile viewport ---
+  // This accounts for browser chrome (URL bar) on mobile devices
+  const vv = window.visualViewport;
+  const viewportHeight = vv ? vv.height : window.innerHeight;
+  const viewportWidth = vv ? vv.width : window.innerWidth;
+  const viewportOffsetTop = vv ? vv.offsetTop : 0;
+
+  // --- Check for Mobile Landscape Mode ---
   // Matches the CSS media query we added earlier
   const isMobileLandscape = window.matchMedia("(max-height: 576px) and (orientation: landscape)").matches;
 
@@ -147,10 +157,11 @@ function setCanvasSizes() {
   }
 
   // Position and size main content between navbar and timeline
-  const mainContentTop = navbarHeight;
+  // Account for visualViewport offset (browser chrome like URL bar)
+  const mainContentTop = navbarHeight + viewportOffsetTop;
   const mainContentBottom = categoryHeight + timelineHeight;
-  const availableHeight = window.innerHeight - mainContentTop - mainContentBottom;
-  const availableWidth = window.innerWidth;
+  const availableHeight = viewportHeight - navbarHeight - mainContentBottom;
+  const availableWidth = viewportWidth;
 
   mainContent.style.position = 'fixed';
   mainContent.style.top = `${mainContentTop}px`;

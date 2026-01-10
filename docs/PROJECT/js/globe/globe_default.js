@@ -199,8 +199,17 @@ function globe_default() {
 
     g.selectAll('path.country').attr('d', path);
 
+    // Ensure any visible tooltip is hidden and hovered state cleared
+    if (tooltip) tooltip.style("display", "none");
+    hoveredTasselData = null;
+
     if (tasselSelection) {
-      tasselSelection.attr('d', path);
+      // Reset any visual highlight on tassels
+      tasselSelection
+        .attr('d', path)
+        .attr('stroke-width', 1)
+        .attr('stroke', 'black');
+
       const year = +slider.property('value');
       updateTassels(year, { transition: false });
     }

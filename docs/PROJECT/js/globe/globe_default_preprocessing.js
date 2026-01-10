@@ -154,7 +154,7 @@ let LEGEND_PADDING = 10;
 function createLegendGlobe() {
   // Determine orientation: vertical (width > height) or horizontal (height > width)
   
-  LEGEND_LENGTH = (!STACKED_LAYOUT_PREFERRED ? LEFT_CHART_HEIGHT : LEFT_CHART_WIDTH) * 0.6;
+  LEGEND_LENGTH = (!STACKED_LAYOUT_PREFERRED ? LEFT_CHART_HEIGHT : LEFT_CHART_WIDTH) * 0.8;
 
   // Get canvas-wrapper offset relative to canvas-left (legend's positioning parent)
   const canvasLeft = document.getElementById('canvas-left');
@@ -203,7 +203,7 @@ function createLegendGlobe() {
   }
 
 
-  const LEGEND_TITLE = "Cumulative # of attacks";
+  const LEGEND_TITLE = "Cumulative total of attacks";
     
     if (!STACKED_LAYOUT_PREFERRED) {
       legendSvg = legendGlobe.append('svg')

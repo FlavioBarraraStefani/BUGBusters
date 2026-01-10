@@ -216,6 +216,29 @@ footer {
   border-color: var(--color-primary);
 }
 
+/* Fix mobile touch states - only apply hover effects on devices that support hover */
+@media (hover: none) {
+  .category-btn:not(.active):hover,
+  .category-btn:not(.active):focus,
+  .category-btn:not(.active):active {
+    background-color: transparent;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  
+  .category-btn:not(.active):hover small,
+  .category-btn:not(.active):focus small,
+  .category-btn:not(.active):active small {
+    color: #000 !important;
+  }
+}
+
+/* Remove outline/focus ring on touch devices */
+.category-btn:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
 .category-btn small {
   color: #000 !important;
   font-weight: 400;

@@ -419,6 +419,13 @@ async function initChartsAfterAuth() {
 
     // Add resize listener
     window.addEventListener('resize', updateMainCanvases);
+    
+    // Add visualViewport resize listener for mobile browser chrome (URL bar) changes
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateMainCanvases);
+      window.visualViewport.addEventListener('scroll', updateMainCanvases);
+    }
+    
     // Set canvas sizes dynamically
     updateMainCanvases();
 
