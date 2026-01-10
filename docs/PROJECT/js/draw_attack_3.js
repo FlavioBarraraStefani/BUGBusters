@@ -306,7 +306,7 @@ async function draw_attack_3(data, choice, containerId) {
     itemG.append("text")
       .attr("x", 12).attr("y", 7)
       .text(item.label)
-      .style("font-size", "8px").style("fill", "#333");
+      .style("font-size", "10px").style("fill", "#333");
 
     currentY += 18;
   });
