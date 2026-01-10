@@ -50,7 +50,6 @@ function draw_attack_1(data, choice, containerId) {
   const pointRadius = Math.max(3, fontSize * 0.35);
   const hoverRadius = Math.max(7, fontSize * 0.8);
 
-  // Adjust radius to account for labels
   const labelSpace = fontSize *3;
   const centerX = CHART_WIDTH / 2;
   const centerY = CHART_HEIGHT / 2;
@@ -96,7 +95,6 @@ function draw_attack_1(data, choice, containerId) {
   shadowMerge.append('feMergeNode');
   shadowMerge.append('feMergeNode').attr('in', 'SourceGraphic');
   
-  //random bullshit normalization function
   function normalize(value, key) {
     let maxKey;
     if (key === 'success') maxKey = 'success_rate';
@@ -143,29 +141,23 @@ function draw_attack_1(data, choice, containerId) {
     const labelX = centerX + labelRadius * cosA;
     const labelY = centerY + labelRadius * sinA;
     
-    // Posizionamento personalizzato per ogni feature
     let anchor = 'middle';
     let xOffset = 0;
     let yOffsetTitle = 0;
     
-    // Posizionamenti specifici per feature
     if (feature.key === 'success') {
-      // Success Rate (alto) - reduced padding
       anchor = 'middle';
       xOffset = 0;
       yOffsetTitle = -fontSize * 0.15;
     } else if (feature.key === 'nkill') {
-      // Avg Kills (destra) - centered text, larger padding
       anchor = 'middle';
       xOffset = fontSize * 2;
       yOffsetTitle = 0;
     } else if (feature.key === 'propvalue') {
-      // Avg Damage (basso) - reduced padding
       anchor = 'middle';
       xOffset = 0;
       yOffsetTitle = fontSize * 0.3;
     } else if (feature.key === 'nwound') {
-      // Avg Wounded (sinistra) - centered text, larger padding
       anchor = 'middle';
       xOffset = -fontSize * 2;
       yOffsetTitle = 0;
@@ -178,33 +170,26 @@ function draw_attack_1(data, choice, containerId) {
       .attr('font-weight', '1000').attr('fill', COLORS.textPrimary)
       .attr('letter-spacing', '0.3').style('pointer-events', 'none');
 
-    // Rimuovi simbolo del dollaro da Avg Damage
     let cleanLabel = feature.label;
     const words = cleanLabel.split(' ');
 
-    // Logica per andare a capo:
-    // - Top/Bottom (success, propvalue): single line
-    // - Sides (nkill, nwound): two lines
+ 
     const isSideLabel = (feature.key === 'nkill' || feature.key === 'nwound');
     
     if (words.length > 1 && isSideLabel) {
-        // Side labels: split into two lines
         let firstLineDy = '-0.3em';
         let secondLineDy = '1.1em';
         
-        // PRIMA RIGA (spostata leggermente in alto)
         textLabel.append('tspan')
             .attr('x', labelX + xOffset)
             .attr('dy', firstLineDy)
             .text(words[0]);
 
-        // SECONDA RIGA (il resto della frase, spostato sotto)
         textLabel.append('tspan')
             .attr('x', labelX + xOffset)
             .attr('dy', secondLineDy)
             .text(words.slice(1).join(' '));
     } else {
-        // Top/Bottom labels or single word: keep as single line
         textLabel.text(cleanLabel);
     }
 
@@ -223,28 +208,26 @@ function draw_attack_1(data, choice, containerId) {
     const maxLx = centerX + maxLabelRadius * cosA;
     const maxLy = centerY + maxLabelRadius * sinA - 1;
     
-    // Posizionamento valori massimi personalizzato per feature
     let maxValAnchor = 'middle';
     let maxValXOffset = 0;
     let maxValYOffset = 0;
 
     if (feature.key === 'success') {
-      // Success Rate (alto)
       maxValAnchor = 'middle';
       maxValXOffset = 0;
       maxValYOffset = -maxValOffset;
     } else if (feature.key === 'nkill') {
-      // Avg Kills (destra)
+
       maxValAnchor = 'start';
       maxValXOffset = maxValOffset;
       maxValYOffset = 0;
     } else if (feature.key === 'propvalue') {
-      // Avg Damage (basso)
+
       maxValAnchor = 'middle';
       maxValXOffset = 0;
       maxValYOffset = maxValOffset * 1.3;
     } else if (feature.key === 'nwound') {
-      // Avg Wounded (sinistra)
+
       maxValAnchor = 'end';
       maxValXOffset = -maxValOffset;
       maxValYOffset = 0;
@@ -333,7 +316,7 @@ function draw_attack_1(data, choice, containerId) {
     });
   });
   
-  // Legend with font-relative sizing
+
   const legendRectWidth = fontSize * 0.8;
   const legendRectHeight = fontSize * 0.8;
   const legendSpacing = fontSize * 0.9;
