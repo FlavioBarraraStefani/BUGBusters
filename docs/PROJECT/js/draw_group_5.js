@@ -12,16 +12,17 @@ function draw_group_5(data, choice, containerId) {
   svg.selectAll('*').remove();
 
   // 1. SETUP DIMENSIONS
-  // Use global CHART_MARGIN
-  const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
-  const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom - chartLabelFontSize * 3; // Extra space for x-axis title
+  // Aumentato 'top' a 65 per dare spazio alla legenda
+  const localMargin = { ...CHART_MARGIN, top: 65, bottom: 50 };
+  const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
+  const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
 
   svg
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
   
-  const g = svg.append('g').attr('transform', `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
+  const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
 
   // 2. DATA CHECK
   const groupData = data[choice];
@@ -36,6 +37,15 @@ function draw_group_5(data, choice, containerId) {
      return;
   }
 
+  // MAPPING BIN -> LABEL
+  const binLabels = {
+      "0": "None",
+      "1": "Single",
+      "2-10": "Few",
+      "11-100": "Many",
+      "100+": "Massive"
+  };
+
   // 3. SCALES
   const x0 = d3.scaleBand()
     .domain(groupData.map(d => d.bin))
@@ -49,6 +59,7 @@ function draw_group_5(data, choice, containerId) {
     .padding(0.05);
 
   const maxY = d3.max(groupData, d => Math.max(d.killed_count, d.wounded_count));
+  
   const y = d3.scaleLinear()
     .domain([0, maxY * 1.1])
     .rangeRound([innerHeight, 0]);
@@ -83,7 +94,6 @@ function draw_group_5(data, choice, containerId) {
     .attr("x", d => x1(d.key) + x1.bandwidth() / 2)
     .attr("y", d => y(d.value) - 4)
     .attr("text-anchor", "middle")
-    // Slightly smaller than standard chartLabelFontSize
     .style("font-size", `${Math.max(8, chartLabelFontSize - 3)}px`) 
     .style("fill", COLORS.textPrimary) 
     .style("font-weight", "bold")
@@ -153,8 +163,8 @@ function draw_group_5(data, choice, containerId) {
   // X Axis
   g.append("g")
     .attr("transform", `translate(0,${innerHeight})`)
-    .call(d3.axisBottom(x0))
-    .attr("color", COLORS.axisLine) // Color of the line and ticks
+    .call(d3.axisBottom(x0).tickFormat(d => binLabels[d] || d)) 
+    .attr("color", COLORS.axisLine)
     .selectAll("text")
       .style("font-size", `${chartLabelFontSize}px`)
       .style("fill", COLORS.textPrimary);
@@ -162,15 +172,16 @@ function draw_group_5(data, choice, containerId) {
   // X Title
   g.append("text")
     .attr("x", innerWidth / 2)
-    .attr("y", CHART_HEIGHT - chartLabelFontSize *3)
+    .attr("y", innerHeight + 35)
     .attr("text-anchor", "middle")
     .style("font-size", `${chartLabelFontSize}px`)
     .style("fill", COLORS.textPrimary)
-    .text("Casualties per Attack (Bin)");
+    .text("Casualty Scale (People)"); 
 
   // 7. LEGEND (CENTERED & HORIZONTAL)
   const legendGroup = g.append("g")
-    .attr("transform", `translate(${innerWidth / 2}, -10)`); // Inside top margin
+    // Spostata più in alto (-30) per allontanarla dalle barre
+    .attr("transform", `translate(${innerWidth / 2}, -30)`); 
 
   const createLegendItem = (key, label, colorHex, xOffset) => {
       const item = legendGroup.append("g")
