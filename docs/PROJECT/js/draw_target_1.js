@@ -11,7 +11,6 @@ function draw_target_1(data, choice, containerId) {
   
   svg.selectAll('*').remove();
   
-  // 1. SETUP DIMENSIONS & MARGINS
   const localMargin = { ...CHART_MARGIN, left: 120, right: 20 }; 
   const innerWidth = CHART_WIDTH - localMargin.left - localMargin.right;
   const innerHeight = CHART_HEIGHT - localMargin.top - localMargin.bottom;
@@ -21,7 +20,6 @@ function draw_target_1(data, choice, containerId) {
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
     
-  // Background rect for click reset
   svg.append("rect")
      .attr("width", CHART_WIDTH)
      .attr("height", CHART_HEIGHT)
@@ -30,7 +28,6 @@ function draw_target_1(data, choice, containerId) {
 
   const g = svg.append('g').attr('transform', `translate(${localMargin.left},${localMargin.top})`);
 
-  // Font Size Config (Global or default)
   const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize : 10;
 
   // Region Abbreviations
@@ -50,7 +47,6 @@ function draw_target_1(data, choice, containerId) {
   };
   const getShortName = (name) => regionAbbreviations[name] || name;
 
-  // 2. DATA PROCESSING
   const allCategories = Array.from(new Set(data.map(d => d.category)));
   const regionsMap = d3.group(data, d => d.region_txt);
   
@@ -86,7 +82,6 @@ function draw_target_1(data, choice, containerId) {
 
   const globalAvg = globalTotal > 0 ? (globalChoiceTotal / globalTotal) : 0;
 
-  // 3. LAYOUT CALCULATION
   const continentsGroups = d3.group(processedData, d => d.continent);
   const numberOfContinents = continentsGroups.size;
   const totalRegions = processedData.length;
@@ -113,10 +108,9 @@ function draw_target_1(data, choice, containerId) {
       currentY += barStep;
   });
   
-  // 4. SCALES & COLOR
+
   const x = d3.scaleLinear().domain([0, 1]).range([0, innerWidth]);
 
-  // Color mapping: map CATEGORIES.target pairs to COLORS.targetColors; other categories use COLORS.defaultComparison
   const color = (() => {
       const map = new Map();
       const tableau = d3.schemeTableau10;
@@ -131,7 +125,6 @@ function draw_target_1(data, choice, containerId) {
           if (!map.has(k)) map.set(k, defaultOther);
       });
 
-      // Explicit fallback for a generic 'others' key
       if (!map.has('others')) map.set('others', defaultOther);
 
       return d3.scaleOrdinal()
@@ -143,7 +136,6 @@ function draw_target_1(data, choice, containerId) {
   const stackKeys = [choice, ...otherCategories];
   const stackedData = d3.stack().keys(stackKeys)(processedData);
 
-  // 5. DRAW BARS & INTERACTION
   const seriesGroups = g.selectAll("g.series")
       .data(stackedData)
       .enter().append("g")
@@ -178,7 +170,6 @@ function draw_target_1(data, choice, containerId) {
           .attr("width", d => x(d[1]) - x(d[0]))
           .attr("height", barHeight)
           .style("cursor", "pointer")
-          // EVENTS
           .on("mouseover", function(event, d) {
               if (!activeSeries) updateVisuals(seriesKey);
               tooltipGroup.style("display", null);
@@ -186,7 +177,6 @@ function draw_target_1(data, choice, containerId) {
           .on("mousemove", function(event, d) {
               const val = (d.data[seriesKey] * 100).toFixed(1);
               
-              // Text Content
               tooltipText.text("");
               tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").style("font-weight", "bold").text(`Target: ${seriesKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`);
               tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text(`Continent: ${d.data.continent}`);
@@ -194,7 +184,6 @@ function draw_target_1(data, choice, containerId) {
               tooltipText.append("tspan").attr("x", 8).attr("dy", "1.1em").text("Percentage: ");
               tooltipText.append("tspan").attr("font-weight", "bold").text(`${val}%`);
 
-              // Resize Rect
               const bbox = tooltipText.node().getBBox();
               const bgWidth = bbox.width + 16;
               const bgHeight = bbox.height + 10;
@@ -203,24 +192,20 @@ function draw_target_1(data, choice, containerId) {
                   .attr("width", bgWidth)
                   .attr("height", bgHeight);
 
-              // --- DYNAMIC POSITIONING (Boundary Detection) ---
               const [mx, my] = d3.pointer(event, svg.node());
               const offset = 5;
               
               let tx = mx + offset;
               let ty = my + offset;
 
-              // Check Right Edge: If tooltip goes past width, flip to left
               if (tx + bgWidth > CHART_WIDTH) {
                   tx = mx - bgWidth - offset;
               }
 
-              // Check Bottom Edge: If tooltip goes past height, flip up
               if (ty + bgHeight > CHART_HEIGHT) {
                   ty = my - bgHeight - offset;
               }
               
-              // Safety check for top/left
               if (tx < 0) tx = offset;
               if (ty < 0) ty = offset;
 
@@ -232,7 +217,6 @@ function draw_target_1(data, choice, containerId) {
           });
   });
 
-  // 6. AXES
   g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x).ticks(5, "%"))
@@ -240,7 +224,6 @@ function draw_target_1(data, choice, containerId) {
       .style("font-size", `${FONT_SIZE}px`)
       .style("fill", COLORS.textPrimary);
 
-  // Region Labels
   const yAxisGroup = g.append("g").attr("class", "y-axis-regions");
   yAxisGroup.selectAll("text")
       .data(processedData)
@@ -253,7 +236,6 @@ function draw_target_1(data, choice, containerId) {
       .style("fill", COLORS.textPrimary)
       .text(d => getShortName(d.region));
 
-  // 7. GLOBAL AVG LINE
   if (globalAvg > 0) {
       const avgX = x(globalAvg);
       
@@ -274,7 +256,6 @@ function draw_target_1(data, choice, containerId) {
           .text(`Global Avg: ${(globalAvg * 100).toFixed(1)}%`);
   }
 
-  // 8. TOOLTIP STRUCTURE (Last to be on top)
   const tooltipGroup = svg.append("g")
       .attr("class", "tooltip-container")
       .style("display", "none")
@@ -291,7 +272,6 @@ function draw_target_1(data, choice, containerId) {
   const tooltipText = tooltipGroup.append("text")
       .attr("x", 0)
       .attr("y", 0)
-      // Diminuisco la size del tooltip rispetto al font principale del grafico
       .style("font-size", `${Math.max(8, FONT_SIZE - 2)}px`)
       .style("fill", "#333");
 }

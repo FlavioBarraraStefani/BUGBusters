@@ -11,10 +11,8 @@ function draw_target_2(data, choice, containerId) {
 
   svg.selectAll('*').remove();
 
-  // 1. SETUP DIMENSIONI
   const width = CHART_WIDTH;
   const height = CHART_HEIGHT;
-  // Radius base: Aumentato leggermente recuperando spazio dai margini
   const radius = Math.min(width, height) / 2 - 35; 
 
   svg
@@ -28,16 +26,13 @@ function draw_target_2(data, choice, containerId) {
   const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize - 1 : 9;
   const duration = 750;
 
-  // 2. DATA PREP
   const rawData = JSON.parse(JSON.stringify(data[choice]));
   const hierarchy = d3.hierarchy(rawData);
 
-  // 3. TREE CONFIG
   const tree = d3.tree()
     .size([2 * Math.PI, radius])
     .separation((a, b) => (a.parent == b.parent ? 10 : 30) / a.depth);
 
-  // 4. SCALES & COLORS
   const colorMap = {};
   const CATEGORIES_LIST = ["military_police", "government", "business", "citizens", "transportations"];
   CATEGORIES_LIST.forEach((key, i) => {
@@ -49,7 +44,6 @@ function draw_target_2(data, choice, containerId) {
       .domain([0, maxValue])
       .range([2, 10]); 
 
-  // 5. INITIAL COLLAPSE
   function collapse(d) {
       if (d.children) {
           d._children = d.children;
@@ -70,16 +64,12 @@ function draw_target_2(data, choice, containerId) {
 
   update(root);
 
-  // ---------------------------------------------------------
-  // CORE UPDATE FUNCTION
-  // ---------------------------------------------------------
   function update(source) {
       
       const treeData = tree(root);
       const nodes = treeData.descendants();
       const links = treeData.links();
 
-      // --- LAYOUT OVERRIDE ---
       nodes.forEach(d => {
           d.r = sizeScale(d.data.value); 
           
@@ -92,7 +82,6 @@ function draw_target_2(data, choice, containerId) {
           }
       });
 
-      // A. CAMERA PAN LOGIC
       const expandedCategory = root.children ? root.children.find(d => d.children) : null;
       
       let newTx = width / 2;
@@ -109,7 +98,6 @@ function draw_target_2(data, choice, containerId) {
        .attr("transform", `translate(${newTx},${newTy})`);
 
 
-      // B. NODES
       const node = g.selectAll('g.node')
           .data(nodes, d => d.data.name);
 
@@ -127,7 +115,6 @@ function draw_target_2(data, choice, containerId) {
           .on("mousemove", moveTooltip)
           .on("mouseout", hideTooltip);
 
-      // --- LABEL LOGIC (ADAPTIVE) ---
       
       const getLabelX = (d) => {
           const padding = 5; // Ridotto padding
@@ -135,7 +122,6 @@ function draw_target_2(data, choice, containerId) {
           return d.x < Math.PI === !d.children ? offset : -offset;
       };
 
-      // 1. Outline
       nodeEnter.append('text')
           .attr("class", "outline")
           .attr("dy", "0.31em")
@@ -148,7 +134,6 @@ function draw_target_2(data, choice, containerId) {
           .style("stroke-width", 3)
           .style("opacity", 0);
 
-      // 2. Text
       nodeEnter.append('text')
           .attr("class", "main-label")
           .attr("dy", "0.31em")
@@ -160,7 +145,6 @@ function draw_target_2(data, choice, containerId) {
           .style("fill", COLORS.textPrimary)
           .style("opacity", 0);
 
-      // UPDATE NODES
       const nodeUpdate = nodeEnter.merge(node);
 
       nodeUpdate.transition().duration(duration)
@@ -171,23 +155,19 @@ function draw_target_2(data, choice, containerId) {
           .attr('r', d => d.r) 
           .style("fill", d => getNodeColor(d));
 
-      // Applicazione Testo con Smart Truncate (Tolleranza Aumentata)
       nodeUpdate.selectAll('text')
           .each(function(d) {
               const el = d3.select(this);
               const fullName = d.data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
               
-              // Calcola spazio disponibile
               const angle = d.x - Math.PI / 2;
               
-              // Spingiamo i margini al limite (5px dal bordo invece di 20)
               const edgePadding = 5; 
               
               const kx = (width / 2 - edgePadding) / Math.abs(Math.cos(angle)); 
               const ky = (height / 2 - edgePadding) / Math.abs(Math.sin(angle));
               const maxDist = Math.min(kx, ky);
               
-              // Aggiungiamo una tolleranza extra (es. +15px) per permettere al testo di andare un pelo oltre o riempire spazi vuoti
               const tolerance = 15;
               const availableWidth = Math.max(0, maxDist - d.y - d.r - 5 + tolerance);
               
@@ -202,7 +182,6 @@ function draw_target_2(data, choice, containerId) {
               return 0; 
           });
 
-      // EXIT
       const nodeExit = node.exit().transition().duration(duration)
           .attr('transform', d => `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y},0)`)
           .remove();
@@ -210,7 +189,6 @@ function draw_target_2(data, choice, containerId) {
       nodeExit.select('circle').attr('r', 1e-6);
       nodeExit.selectAll('text').style('opacity', 1e-6);
 
-      // C. LINKS
       const link = g.selectAll('path.link')
           .data(links, d => d.target.data.name);
 
@@ -241,14 +219,12 @@ function draw_target_2(data, choice, containerId) {
       });
   }
 
-  // --- HELPERS ---
 
   function smartTruncate(textEl, str, maxWidth) {
       textEl.text(str);
       let computedLen = textEl.node().getComputedTextLength();
       
       if (computedLen === 0) {
-          // Stima più conservativa (5.5px per char) per evitare falsi positivi
           computedLen = str.length * 5.5;
       }
 
@@ -277,7 +253,6 @@ function draw_target_2(data, choice, containerId) {
       return "#ccc";
   }
 
-  // --- TOOLTIP LOGIC ---
   const tooltipGroup = svg.append("g")
       .attr("class", "tooltip-container")
       .style("display", "none")

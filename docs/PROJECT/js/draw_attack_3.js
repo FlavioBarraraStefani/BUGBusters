@@ -1,4 +1,3 @@
-// 1. SHARED CONFIGURATION
 const ATTACK_3_CONFIG = {
   "Explosives": { url: "https://api.iconify.design/mdi:bomb.svg?color=white", color: "#D32F2F" },
   "Firearms": { url: "https://api.iconify.design/mdi:pistol.svg?color=white", color: "#0f1113ff" },
@@ -10,7 +9,6 @@ const ATTACK_3_CONFIG = {
   "Unknown": { url: "https://api.iconify.design/mdi:help.svg?color=white", color: "#d0d0d0ff" }
 };
 
-// Global promise storage to ensure we only load once and everyone waits for the same result
 window._attack3_preload_promise = null;
 
 window.addEventListener('resize', () => {
@@ -19,21 +17,16 @@ window.addEventListener('resize', () => {
   }
 });
 
-// Trigger preload on load, but don't worry about awaiting it here
 window.addEventListener('load', () => {
   preload_attack_3();
 });
 
-// 2. PRELOAD FUNCTION (Returns a Promise)
 function preload_attack_3() {
-  // If already loading or loaded, return the existing promise
   if (window._attack3_preload_promise) {
     return window._attack3_preload_promise;
   }
 
-  // Assign the sequence to the global promise
   window._attack3_preload_promise = (async () => {
-    // Check DOM just in case
     if (document.getElementById("attack3-svg-cache")) return;
 
     const hiddenContainer = d3.select("body").append("svg")
@@ -76,18 +69,14 @@ function preload_attack_3() {
   return window._attack3_preload_promise;
 }
 
-// 3. DRAW FUNCTION (Async)
 async function draw_attack_3(data, choice, containerId) {
-  // Store arguments immediately for resize logic
   window._draw_attack_3_lastCall = [data, choice, containerId];
 
-  // *** CRITICAL CHANGE: Ensure preload is done ***
-  // If preload hasn't started, start it. If it has, wait for it.
+
   if (!window._attack3_preload_promise) {
     preload_attack_3();
   }
   await window._attack3_preload_promise;
-  // **********************************************
 
   const container = d3.select(`#${containerId}`);
   if (container.empty()) return;
@@ -98,7 +87,6 @@ async function draw_attack_3(data, choice, containerId) {
   }
   svg.selectAll('*').remove();
 
-  // SETUP DIMENSIONS
   const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
   const innerHeight = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
 
@@ -113,7 +101,6 @@ async function draw_attack_3(data, choice, containerId) {
   const fallback = ATTACK_3_CONFIG["Others"];
   const internalPadding = 4;
 
-  // DATA PREP
   const categoryData = data.find(d => d.category === choice);
   if (!categoryData || !categoryData.data || categoryData.data.length === 0) {
     g.append("text").text("No Data").attr("x", innerWidth / 2).attr("y", innerHeight / 2);
@@ -127,7 +114,6 @@ async function draw_attack_3(data, choice, containerId) {
 
   const defs = svg.append("defs");
 
-  // GRID CALCULATIONS (10x10)
   const cols = 10;
   const rows = 10;
   const totalCells = 100;
@@ -174,7 +160,6 @@ async function draw_attack_3(data, choice, containerId) {
     d.y = yOffsetStart + (d.row * cellSize);
   });
 
-  // MASKS
   const labelsInGridData = new Set(gridData.map(d => d.label));
   
   labelsInGridData.forEach(label => {
@@ -195,7 +180,6 @@ async function draw_attack_3(data, choice, containerId) {
       .attr("height", 1);
   });
 
-  // DRAW CELLS
   const cellGroup = g.append("g");
 
   const cells = cellGroup.selectAll(".cell")
@@ -212,7 +196,6 @@ async function draw_attack_3(data, choice, containerId) {
     .style("cursor", "pointer")
     .style("opacity", 1);
 
-  // TOOLTIP
   const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
   const tooltipRect = tooltipGroup.append("rect").attr("fill", "white").attr("stroke", "#333").attr("rx", 4);
   const tooltipTitle = tooltipGroup.append("text").attr("x", 8).attr("y", 14).style("font-size", `${10}px`).style("font-weight", "700").style("fill", "#333");
@@ -270,14 +253,12 @@ async function draw_attack_3(data, choice, containerId) {
     .on("mousemove", handleCellMouseMove)
     .on("mouseout", unhighlight);
 
-  // LEGEND
   const legendLabels = Array.from(labelsInGridData).sort();
   const legendItems = legendLabels.map(label => items.find(d => d.label === label)).filter(item => item && item.value > 0);
 
   const legendGroup = g.append("g")
     .attr("transform", `translate(${xOffsetStart + actualGridWidth + 20}, 0)`);
 
-  // Add legend title and give space for items below
   legendGroup.append("text")
     .attr("x", 0)
     .attr("y", 0)
@@ -286,7 +267,6 @@ async function draw_attack_3(data, choice, containerId) {
     .style("font-weight", "700")
     .style("fill", "#333");
 
-  // start items below the title (spacing ~= title height + 6px)
   let currentY = 16;
   legendItems.forEach(item => {
     const conf = ATTACK_3_CONFIG[item.label] || fallback;
@@ -312,7 +292,7 @@ async function draw_attack_3(data, choice, containerId) {
   });
 
   try {
-    const heuristicHeight = currentY; // accumulated while building legend
+    const heuristicHeight = currentY;
     const node = legendGroup.node();
     const legendBBox = (node && node.getBBox) ? node.getBBox() : null;
     const measuredHeight = (legendBBox && legendBBox.height) ? legendBBox.height : 0;
@@ -322,7 +302,6 @@ async function draw_attack_3(data, choice, containerId) {
     const legendY = yOffsetStart + (actualGridHeight / 2) - (legendHeight / 2);
     legendGroup.attr("transform", `translate(${legendX}, ${legendY})`);
   } catch (err) {
-    //fallback
     const legendX = xOffsetStart + actualGridWidth + 20;
     const legendY = yOffsetStart + (actualGridHeight / 2) - (currentY / 2);
     legendGroup.attr("transform", `translate(${legendX}, ${legendY})`);

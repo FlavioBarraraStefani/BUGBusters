@@ -6,7 +6,7 @@ window.addEventListener('resize', () => {
 });
 
 function draw_attack_2(data, choice, containerId) {
-  // Save state for resize
+
   window._draw_attack_2_lastCall = [data, choice, containerId];
   
   const container = d3.select(`#${containerId}`);  
@@ -15,10 +15,10 @@ function draw_attack_2(data, choice, containerId) {
   const svg = container.select('svg');
   if (svg.empty()) return;
   
-  // Clear existing content
+
   svg.selectAll('*').remove();
   
-  // Dimensions 
+
   const innerWidth = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
   const innerHeight = CHART_HEIGHT - 2*CHART_MARGIN.top - CHART_MARGIN.bottom;
   
@@ -34,12 +34,12 @@ function draw_attack_2(data, choice, containerId) {
   const g = svg.append('g')
     .attr('transform', `translate(${CHART_WIDTH/2},${CHART_HEIGHT/2+0.75*CHART_MARGIN.top})`);
 
-  // 1. DATA & COLORS
+
   const chartData = data[choice] || [];
   const typeIndex = CATEGORIES.attack.indexOf(choice);
   const baseColor = COLORS.attackColors[typeIndex]
 
-  // Global maximums (safe access)
+
   const gm = data && data.meta && data.meta.global_max_values ? data.meta.global_max_values : {};
   const globalMaxValues = {
     'success_rate': gm.success_rate,
@@ -50,7 +50,6 @@ function draw_attack_2(data, choice, containerId) {
 
   const fontSize =  isSmallScreen() ? 10 : 15;
 
-  // 2. UI CONTROLS — create a sibling div before the SVG so controls sit above the canvas
   let controlsWrapper = container.select('.chart-controls');
   if (controlsWrapper.empty()) {
     controlsWrapper = container.insert('div', 'svg')
@@ -97,7 +96,6 @@ function draw_attack_2(data, choice, containerId) {
     });
   }
 
-  // 3. TOOLTIP (append to body to avoid SVG/container clipping)
   let tooltip = d3.select('body').select('.d3-tooltip');
   if (tooltip.empty()) {
     tooltip = d3.select('body').append('div')
@@ -113,7 +111,6 @@ function draw_attack_2(data, choice, containerId) {
       .style('z-index', '10000');
   }
 
-  // 4. SCALES & LAYERS
   const x = d3.scaleBand()
     .range([0, 2 * Math.PI])
     .align(0)
@@ -127,9 +124,7 @@ function draw_attack_2(data, choice, containerId) {
   const tickLayer = g.append("g").attr('class', 'label-ticks');
   const labelLayer = g.append("g");
 
-  // Labels - FIXED ROTATION
   const labelData = x.domain().filter(d => (parseInt(d) - 1969) % 5 === 0);
-  // Draw radial tick lines from innerRadius to just past the label position
   tickLayer.selectAll('line')
     .data(labelData)
     .join('line')
@@ -169,8 +164,8 @@ function draw_attack_2(data, choice, containerId) {
           "transform",
           `rotate(${rotateAngle}) translate(${radius + 12},0) rotate(${-rotateAngle})`
         )
-        .attr("text-anchor", "middle")          // horizontal center
-        .attr("dominant-baseline", "middle");   // vertical center
+        .attr("text-anchor", "middle")          
+        .attr("dominant-baseline", "middle");   
     })
     .text(d => d)
     .style("font-size", `${labelFontSize /1.6}px`)
@@ -178,22 +173,17 @@ function draw_attack_2(data, choice, containerId) {
     .style("font-weight", "bold");
 
 
-  // 5. UPDATE FUNCTION
   function updateChart(metric) {
-    // Get all values for this metric
     const values = chartData.map(d => d[metric] || 0).filter(v => v !== null && !isNaN(v));
-    // Prefer global max if provided, otherwise fall back to data max
     const globalMax = globalMaxValues[metric];
     const maxVal = (globalMax != null && !isNaN(globalMax)) ? globalMax : (d3.max(values) || 1);
     
-    // Set domain from 0 to max, range already set to [innerRadius, radius]
     y.domain([0, maxVal]);
 
     const colorScale = d3.scaleSequential()
       .domain([0, maxVal])
       .interpolator(d3.interpolateRgb("#d3c9c9", baseColor));
 
-    // Grid (animated transitions on metric change)
     const yTicks = y.ticks(5);
     const grid = gridLayer.selectAll("circle").data(yTicks, d => d);
 
@@ -261,7 +251,6 @@ function draw_attack_2(data, choice, containerId) {
         d3.select(event.currentTarget)
           .style("stroke", "#333")
           .style("stroke-width", 2);        
-        // Fixed: Get mouse position relative to the page
         const mouseX = event.pageX;
         const mouseY = event.pageY;
         
@@ -272,7 +261,6 @@ function draw_attack_2(data, choice, containerId) {
           .style("top", (mouseY + 10) + "px");
       })
       .on("mousemove", (event) => {
-        // Update tooltip position on move
         const mouseX = event.pageX;
         const mouseY = event.pageY;
         
