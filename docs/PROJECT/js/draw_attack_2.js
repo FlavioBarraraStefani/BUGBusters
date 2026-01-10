@@ -191,7 +191,7 @@ function draw_attack_2(data, choice, containerId) {
 
     const colorScale = d3.scaleSequential()
       .domain([0, maxVal])
-      .interpolator(d3.interpolateRgb("#ffffff", baseColor));
+      .interpolator(d3.interpolateRgb("#d3c9c9", baseColor));
 
     // Grid (animated transitions on metric change)
     const yTicks = y.ticks(5);
