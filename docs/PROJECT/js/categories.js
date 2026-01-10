@@ -123,20 +123,7 @@ function setCanvasSizes() {
   // Don't calculate if main content is hidden
   if (mainContent.style.display === 'none') return;
 
-  // --- Use visualViewport API for accurate mobile viewport ---
-  // This accounts for browser chrome (URL bar) on mobile devices
-  const vv = window.visualViewport;
-  const viewportHeight = vv ? vv.height : window.innerHeight;
-  const viewportWidth = vv ? vv.width : window.innerWidth;
-  const viewportOffsetTop = vv ? vv.offsetTop : 0;
-
-  // --- Check for Mobile Landscape Mode ---
-  // Matches the CSS media query we added earlier
-  const isMobileLandscape = window.matchMedia("(max-height: 576px) and (orientation: landscape)").matches;
-
-  // Get heights of fixed elements
-  // If isMobileLandscape is true, force height to 0. Otherwise, use real height.
-  const navbarHeight = isMobileLandscape ? 0 : navbar.offsetHeight;
+  const navbarHeight = navbar.offsetHeight;
   const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
 
@@ -157,11 +144,10 @@ function setCanvasSizes() {
   }
 
   // Position and size main content between navbar and timeline
-  // Account for visualViewport offset (browser chrome like URL bar)
-  const mainContentTop = navbarHeight + viewportOffsetTop;
+  const mainContentTop = navbarHeight;
   const mainContentBottom = categoryHeight + timelineHeight;
-  const availableHeight = viewportHeight - navbarHeight - mainContentBottom;
-  const availableWidth = viewportWidth;
+  const availableHeight = window.innerHeight - mainContentTop - mainContentBottom;
+  const availableWidth = window.innerWidth;
 
   mainContent.style.position = 'fixed';
   mainContent.style.top = `${mainContentTop}px`;
