@@ -201,39 +201,35 @@ function draw_main_left(categoryInfo, containerId) {
     //----------//
     // Enable drag to rotate globe
     //----------//
-
     const drag = d3.drag()
-      .filter((event) => {
-        // Allow drag ONLY for single touch or mouse
-        return !event.touches || event.touches.length === 1;
-      })
-      .on('drag', function (event) {
-        const rotate = projection.rotate();
-        let k = 50 / projection.scale();
-        const limitAngle = [-30, 30];
+    .on('drag', function (event) {
+      const rotate = projection.rotate();
+      let k = 50 / projection.scale();
+      const limitAngle = [-30,30];
 
-        let nextY = rotate[1] - event.dy * k;
-        if (nextY > limitAngle[1]) nextY = limitAngle[1];
-        if (nextY < limitAngle[0]) nextY = limitAngle[0];
+      let nextY = rotate[1] - event.dy * k;
+      if (nextY > limitAngle[1]) nextY = limitAngle[1];
+      if (nextY < limitAngle[0]) nextY = limitAngle[0];
 
-        window.globeRotation = [rotate[0] + event.dx * k, nextY];
-        
-        projection.rotate(window.globeRotation);
-        needsUpdate = true;
-        isRotating = false;
-        requestAnimationFrame(updateGlobe);
-      });
-
-
+      window.globeRotation = [rotate[0] + event.dx * k, nextY];
+      
+      projection.rotate(window.globeRotation);
+      needsUpdate = true;
+      isRotating = false;
+      requestAnimationFrame(updateGlobe);
+    });
+    
+    // Attach drag to SVG
     svg.call(drag);
 
-    baseScale = projection.scale();
-
+    //----------//
+    // Enable zoom to scale globe
+    //----------//
+    baseScale = projection.scale(); // store initial scale
     const zoom = d3.zoom()
-      .scaleExtent([0.85, 4])
+      .scaleExtent([0.85, 4]) // keep lower bound at initial scale (k >= 1)
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
-
         const t = projection.translate();
         g.select('circle.ocean-bg')
           .attr('r', projection.scale())
@@ -243,10 +239,7 @@ function draw_main_left(categoryInfo, containerId) {
         needsUpdate = true;
         requestAnimationFrame(updateGlobe);
       });
-
     svg.call(zoom);
-    svg.on('dblclick.zoom', null);
-
 
     //----------//
     // Auto-rotation loop
