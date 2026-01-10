@@ -277,7 +277,17 @@ async function draw_attack_3(data, choice, containerId) {
   const legendGroup = g.append("g")
     .attr("transform", `translate(${xOffsetStart + actualGridWidth + 20}, ${yOffsetStart})`);
 
-  let currentY = 0;
+  // Add legend title and give space for items below
+  legendGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 0)
+    .text("Weapon usage %")
+    .style("font-size", "10px")
+    .style("font-weight", "700")
+    .style("fill", "#333");
+
+  // start items below the title (spacing ~= title height + 6px)
+  let currentY = 16;
   legendItems.forEach(item => {
     const conf = ATTACK_3_CONFIG[item.label] || fallback;
     const itemG = legendGroup.append("g")

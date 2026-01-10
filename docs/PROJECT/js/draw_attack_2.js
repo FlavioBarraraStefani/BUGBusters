@@ -167,13 +167,13 @@ function draw_attack_2(data, choice, containerId) {
       d3.select(this)
         .attr(
           "transform",
-          `rotate(${rotateAngle}) translate(${radius + 10},0) rotate(${-rotateAngle})`
+          `rotate(${rotateAngle}) translate(${radius + 12},0) rotate(${-rotateAngle})`
         )
         .attr("text-anchor", "middle")          // horizontal center
         .attr("dominant-baseline", "middle");   // vertical center
     })
     .text(d => d)
-    .style("font-size", `${labelFontSize / 2}px`)
+    .style("font-size", `${labelFontSize /1.6}px`)
     .style("fill", COLORS.textPrimary)
     .style("font-weight", "bold");
 

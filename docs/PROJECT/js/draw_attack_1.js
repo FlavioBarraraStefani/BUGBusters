@@ -114,7 +114,8 @@ function draw_attack_1(data, choice, containerId) {
       .attr('r', levelRadius)
       .attr('fill', 'none')
       .attr('stroke', COLORS.axisLine)
-      .attr('stroke-width', 2.5)
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4 2')
       .attr('stroke-opacity', 0.1 + (i * 0.2))
       .style('pointer-events', 'none');
   }
@@ -131,7 +132,7 @@ function draw_attack_1(data, choice, containerId) {
       .attr('y1', centerY)
       .attr('x2', x).attr('y2', y)
       .attr('stroke', COLORS.axisLine)
-      .attr('stroke-width', 2.8)
+      .attr('stroke-width', 1)
       .attr('stroke-opacity', 0.65)
       .style('pointer-events', 'none');
     
@@ -274,7 +275,7 @@ function draw_attack_1(data, choice, containerId) {
   g.append('path')
     .datum(avgCoords).attr('d', avgLine)
     .attr('fill', COLORS.defaultComparison).attr('fill-opacity', 0.1)
-    .attr('stroke', COLORS.defaultComparison).attr('stroke-width', 2.2)
+    .attr('stroke', COLORS.defaultComparison).attr('stroke-width', 2)
     .attr('filter', 'url(#dropshadow)');
   
   selectedData.forEach((attackType) => {
@@ -294,7 +295,7 @@ function draw_attack_1(data, choice, containerId) {
     g.append('path')
       .datum(pathCoords).attr('d', avgLine)
       .attr('fill', mainColor).attr('fill-opacity', 0.15)
-      .attr('stroke', mainColor).attr('stroke-width', 2.5)
+      .attr('stroke', mainColor).attr('stroke-width', 2)
       .attr('stroke-opacity', 1).attr('stroke-linejoin', 'round')
       .attr('filter', 'url(#glow)');
 
@@ -310,7 +311,7 @@ function draw_attack_1(data, choice, containerId) {
       const pt = g.append('circle')
         .attr('cx', coord[0]).attr('cy', coord[1]).attr('r', pointRadius)
         .attr('fill', mainColor)
-        .attr('stroke', mainColor).attr('stroke-width', 2.5)
+        .attr('stroke', mainColor).attr('stroke-width', 1)
         .style('cursor', 'pointer').attr('filter', 'url(#glow)');
 
       pt.on('mouseover', function() {
@@ -326,7 +327,7 @@ function draw_attack_1(data, choice, containerId) {
          .text(fmt(actualValue));
       })
       .on('mouseout', function() {
-        d3.select(this).attr('r', pointRadius).attr('stroke-width', 2.5);
+        d3.select(this).attr('r', pointRadius).attr('stroke-width', 1);
         g.selectAll('.hover-label').remove();
       });
     });

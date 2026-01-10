@@ -260,17 +260,16 @@ function draw_target_1(data, choice, containerId) {
       g.append("line")
           .attr("x1", avgX).attr("x2", avgX)
           .attr("y1", 0).attr("y2", innerHeight)
-          .attr("stroke", "#d32f2f")
-          .attr("stroke-width", 2)
-          .attr("stroke-dasharray", "5,5")
+          .attr("stroke", 'black')
+          .attr("stroke-width", 1)
+          .attr("stroke-dasharray", "1,1")
           .style("pointer-events", "none");
 
       g.append("text")
           .attr("x", avgX + 5)
-          .attr("y", -5)
+          .attr("y", -10)
           .style("font-size", "10px")
-          .style("fill", "#d32f2f")
-          .style("font-weight", "bold")
+          .style("fill", 'black')
           .style("text-anchor", "middle")
           .text(`Global Avg: ${(globalAvg * 100).toFixed(1)}%`);
   }
