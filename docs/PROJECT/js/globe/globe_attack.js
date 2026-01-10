@@ -175,8 +175,6 @@ function globe_attack() {
       .each(function(d) {
         updateCountryShape(d3.select(this), d, year, transition);
       });
-
-    console.log(transition)
   };
 
   updateGlobe = () => {
