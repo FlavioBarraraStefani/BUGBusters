@@ -226,12 +226,10 @@ function draw_main_left(categoryInfo, containerId) {
     baseScale = projection.scale(); // store initial scale
 
     const zoom = d3.zoom()
-      .filter((event) => {                 // ← added
-        return !event.button && !event.ctrlKey;
-      })
-      .scaleExtent([0.5, 4])               // ← changed
+      .scaleExtent([0.85, 4])
       .on('zoom', function (event) {
         projection.scale(baseScale * event.transform.k);
+
         const t = projection.translate();
         g.select('circle.ocean-bg')
           .attr('r', projection.scale())
@@ -242,10 +240,9 @@ function draw_main_left(categoryInfo, containerId) {
         requestAnimationFrame(updateGlobe);
       });
 
-    svg
-      .style('touch-action', 'none')        // ← added
-      .style('-webkit-tap-highlight-color', 'transparent') // ← added
-      .call(zoom);
+    svg.call(zoom);
+    svg.on('dblclick.zoom', null);
+
 
 
     //----------//
