@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Continuous Globe Cartogram (Fixed)</title>
+    <style>
+        body {
+            margin: 0;
+            background: #1a1a1a;
+            font-family: sans-serif;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #loading {
+            position: absolute;
+            z-index: 10;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        canvas {
+            cursor: grab;
+        }
+        canvas:active {
+            cursor: grabbing;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.20/topojson.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cartogram/0.4.0/cartogram.min.js"></script>
+</head>
+<body>
+
+    <div id="loading">
+        <h2>Running Physics Engine...</h2>
+        <p>Calculating continuous border distortion.</p>
+        <small>Please wait...</small>
+    </div>
+
+    <script>
+        // 1. Setup Canvas & Dimensions
+        var width = window.innerWidth,
+            height = window.innerHeight;
+
+        var canvas = d3.select("body").append("canvas")
+            .attr("width", width)
+            .attr("height", height);
+
+        var context = canvas.node().getContext("2d");
+
+        // 2. Define Projections (D3 v3 Syntax)
+        
+        // The "Math" Projection: Equirectangular
+        // We use this to flatten the world so the cartogram engine can distort it.
+        var mapProjection = d3.geo.equirectangular()
+            .translate([width / 2, height / 2])
+            .scale(width / 6.28)
+            .precision(0.1);
+
+        // The "Visual" Projection: Orthographic (The Globe)
+        var globeProjection = d3.geo.orthographic()
+            .scale(250)
+            .translate([width / 2, height / 2])
+            .clipAngle(90) // Shows only front hemisphere
+            .rotate([0, -30]);
+
+        // Path generator for the Globe
+        var globePath = d3.geo.path()
+            .projection(globeProjection)
+            .context(context);
+
+        // 3. Initialize Cartogram Engine
+        var cartogram = d3.cartogram()
+            .projection(mapProjection)
+            .properties(function(d) { return d.properties; })
+            .value(function(d) { return d.properties.value; });
+
+        // 4. Load & Process Data
+        d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, world) {
+            if (error) throw error;
+
+            // Get Countries (Filter out Antarctica as it causes distortion issues)
+            var countries = topojson.feature(world, world.objects.countries).features
+                .filter(function(d) { return d.id !== "010"; });
+
+            // SIMULATED DATA: Assign random values (1-100) to each country
+            countries.forEach(function(d) {
+                d.properties.value = Math.random() * 100 + 1;
+            });
+
+            // Delay execution slightly to let the "Loading" text render
+            setTimeout(function() {
+                
+                // --- STEP A: Run the Cartogram Algorithm ---
+                // This returns features with coordinates distorted in "pixel space" (x,y)
+                var distortedFeatures = cartogram(world, world.objects.countries.geometries);
+
+                // --- STEP B: Inverse Project (Pixels -> Lat/Lon) ---
+                // We need to take the distorted X/Y pixels and convert them back to 
+                // Latitude/Longitude so we can wrap them around the globe.
+                
+                distortedFeatures.features.forEach(function(feature) {
+                    
+                    // Recursive function to handle Polygon and MultiPolygon rings
+                    function unprojectCoordinates(coords) {
+                        // If it's a simple coordinate pair [x,y]
+                        if (typeof coords[0] === "number") {
+                            return mapProjection.invert(coords);
+                        }
+                        // If it's an array of coordinates (a ring or polygon)
+                        return coords.map(unprojectCoordinates);
+                    }
+
+                    // Apply the inversion
+                    feature.geometry.coordinates = unprojectCoordinates(feature.geometry.coordinates);
+                });
+
+                // Remove loading screen
+                d3.select("#loading").style("opacity", 0);
+
+                // --- STEP C: Setup Rendering ---
+                var colorScale = d3.scale.linear()
+                    .domain([0, 100])
+                    .range(["#2E86AB", "#D90429"]); // Blue to Red
+
+                // Render Loop
+                d3.timer(function() {
+                    // Auto Rotation
+                    var rotate = globeProjection.rotate();
+                    globeProjection.rotate([rotate[0] + 0.2, rotate[1]]);
+                    
+                    // Draw
+                    render(distortedFeatures, colorScale);
+                });
+
+                // Drag Interaction (D3 v3 Syntax)
+                var drag = d3.behavior.drag()
+                    .on("drag", function() {
+                        var dx = d3.event.dx;
+                        var dy = d3.event.dy;
+                        var r = globeProjection.rotate();
+                        globeProjection.rotate([r[0] + dx * 0.5, r[1] - dy * 0.5]);
+                    });
+                canvas.call(drag);
+
+            }, 100);
+        });
+
+        // 5. Render Function
+        function render(features, colorScale) {
+            context.clearRect(0, 0, width, height);
+
+            // Water (Sphere background)
+            context.beginPath();
+            globePath({type: "Sphere"});
+            context.fillStyle = "#111";
+            context.fill();
+            context.strokeStyle = "#444";
+            context.lineWidth = 1;
+            context.stroke();
+
+            // Distorted Land
+            features.features.forEach(function(d) {
+                context.beginPath();
+                globePath(d);
+                context.fillStyle = colorScale(d.properties.value);
+                context.fill();
+                context.strokeStyle = "rgba(255,255,255,0.3)";
+                context.lineWidth = 0.5;
+                context.stroke();
+            });
+
+            // Atmosphere / Gloss
+            context.beginPath();
+            globePath({type: "Sphere"});
+            var gradient = context.createRadialGradient(
+                width/2, height/2, 
+                globeProjection.scale(), 
+                width/2, height/2, 
+                globeProjection.scale() * 1.2
+            );
+            gradient.addColorStop(0, "rgba(255,255,255,0)");
+            gradient.addColorStop(1, "rgba(255,255,255,0.1)");
+            context.fillStyle = gradient;
+            context.fill();
+        }
+    </script>
+</body>
+</html>

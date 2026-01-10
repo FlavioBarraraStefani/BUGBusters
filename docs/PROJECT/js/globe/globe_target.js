@@ -1,187 +1,207 @@
-let allTargetEvents = [];
-let maxKillsGlobal = 0;
-
 // ==========================================
-// 1. DATA PREPARATION
+// 1. DATA PREPARATION & PRECOMPUTATION
 // ==========================================
 
-function precomputeTargetData(rawData) {
-  const K = 50; //max:50
-  allTargetEvents = [];
-  maxKillsGlobal = 0;
+async function precomputeTargetData(rawData) {
+  window._targetData = window._targetData || {};
+  window._cartoCache = window._cartoCache || {};
+  if (!rawData) return;
 
-  CATEGORIES.target.forEach((cat, index) => {
-    const rawEvents = rawData[cat] || [];
-    
-    // 1. Extract the FIRST K elements immediately (no sorting)
-    const slicedEvents = rawEvents.slice(0, K);
+  // 1. Parse Data
+  const binKeys = [];
+  Object.keys(rawData).forEach(yearKey => {
+    const year = parseInt(yearKey, 10);
+    binKeys.push(year);
+    window._targetData[year] = window._targetData[year] || {};
 
-    // 2. Process and flatten
-    slicedEvents.forEach(d => {
-      // Validate coordinates
-      if (isNaN(d.lat) || isNaN(d.long)) return;
-
-      const victims = (+d.victims) || 0;
-      if (victims > maxKillsGlobal) maxKillsGlobal = victims;
-
-      allTargetEvents.push({
-        year: +d.year,
-        lat: +d.lat,
-        long: +d.long,
-        victims: victims,
-        category: cat,
-        catIndex: index, 
-        id: `${cat}_${d.lat}_${d.long}_${d.year}` 
+    const countryList = rawData[yearKey];
+    if (Array.isArray(countryList)) {
+      countryList.forEach(item => {
+        const countryName = Object.keys(item)[0];
+        if (countryName) {
+          window._targetData[year][countryName] = item[countryName];
+        }
       });
-    });
+    }
   });
+  
+  // Sort keys for floor lookup later
+  window._targetDataBins = binKeys.sort((a, b) => a - b);
+
+  // 2. Ensure Topogram is loaded
+  if (typeof d3.cartogram !== 'function') {
+      await loadTopogram();
+  }
+
+  // 3. Precompute Geometries
+  console.log("Starting Cartogram Precomputation...");
+
+  // Safety check
+  if (!window.globe_data || !window.globe_data.objects || !window.globe_data.objects.countries) {
+      console.warn("Globe data not loaded yet. Skipping precomputation.");
+      return;
+  }
+
+  // --- FIX: Create the 'countries' GeoJSON object locally ---
+  // We need this to iterate over features and calculate min/max values
+  const countries = topojson.feature(window.globe_data, window.globe_data.objects.countries);
+
+  // We also need the raw geometries for the cartogram function
+  let geometries = window.globe_data.objects.countries;
+  if (geometries.geometries) geometries = geometries.geometries;
+
+  window._targetDataBins.forEach(year => {
+    // Determine Scale for this bin
+    const lookupValue = (feature) => {
+        const name = feature.properties.name || feature.properties.NAME || feature.id;
+        const data = window._targetData[year][name];
+        return data ? data.attacks : 0;
+    };
+
+    // Now 'countries' is defined, so this works
+    let values = countries.features.map(f => lookupValue(f)).filter(v => v > 0);
+    
+    if (values.length === 0) {
+        window._cartoCache[year] = null;
+        return;
+    }
+
+    const scale = d3.scaleLinear()
+        .domain([d3.min(values), d3.max(values)])
+        .range([1, 100]); 
+
+    const carto = d3.cartogram()
+        .projection(projection)
+        .value(d => {
+            const name = (d.properties && (d.properties.name || d.properties.NAME)) || d.id;
+            const data = window._targetData[year][name];
+            return data ? scale(data.attacks) : 1;
+        });
+
+    try {
+        const ret = carto(window.globe_data, geometries);
+        window._cartoCache[year] = ret.features;
+    } catch (e) {
+        console.warn(`Skipping bin ${year} due to cartogram error`, e);
+        window._cartoCache[year] = null;
+    }
+  });
+
+  console.log("Cartogram Precomputation Complete.");
+}
+// Helper to load library if missing
+function loadTopogram() {
+    return new Promise((resolve, reject) => {
+        if (window.topogram || typeof d3.cartogram === 'function') {
+             if(window.topogram) d3.cartogram = window.topogram.cartogram;
+             return resolve();
+        }
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com/topogram@latest/build/topogram.js';
+        s.onload = () => {
+            if (window.topogram) d3.cartogram = window.topogram.cartogram;
+            resolve();
+        };
+        document.head.appendChild(s);
+    });
 }
 
 // ==========================================
 // 2. VISUALIZATION LOGIC
 // ==========================================
+
 function globe_target() {
- 
-  let defs = g.select('defs.neon-defs');
-  if (defs.empty()) {
-    defs = g.append('defs').attr('class', 'neon-defs');
-    
-    // 1. Define Base Color Gradients
-    CATEGORIES.target.forEach((cat, i) => {
-      const color = COLORS.targetColors[i] || '#ffffff';
-      const gradId = `neon-grad-${i}`;
-      
-      const grad = defs.append('radialGradient')
-        .attr('id', gradId)
-        .attr('cx', '50%').attr('cy', '50%').attr('r', '50%'); 
-
-      // Core: Bright Color
-      grad.append('stop').attr('offset', '0%')
-        .attr('stop-color', d3.color(color).brighter(0.5)) 
-        .attr('stop-opacity', 1);
-
-      // Edge: Darker Color
-      grad.append('stop').attr('offset', '100%')
-        .attr('stop-color', d3.color(color).darker(1.5))
-        .attr('stop-opacity', 1);
-    });
-
-    // 2. Define Generic Highlight Gradient
-    const hGrad = defs.append('radialGradient')
-      .attr('id', 'highlight-grad')
-      .attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-
-    hGrad.append('stop').attr('offset', '0%').attr('stop-color', '#fff').attr('stop-opacity', 0.9);
-    hGrad.append('stop').attr('offset', '100%').attr('stop-color', '#fff').attr('stop-opacity', 0);
-  }
-
-  // --- SCALES ---
-  const safeMax = maxKillsGlobal || 100;
-  // NOTE: You might need to adjust this range if bubbles start too big/small
-  const radiusScale = d3.scaleSqrt().domain([0, safeMax]).range([8, 40]); 
-
-  let ballGroup = g.select('g.target-balls');
-  if (ballGroup.empty()) {
-    ballGroup = g.append('g').attr('class', 'target-balls');
-  }
-
-  // --- DRAW FUNCTION ---
-  function drawBalls(currentYear, { transition = false } = {}) {
-    
-    const activeData = allTargetEvents.filter(d => d.year <= currentYear);
-
-    // --- NEW: Calculate Scale Factor ---
-    // 250 is the default D3 projection scale. 
-    // This ensures bubbles grow when you zoom in (scale > 250)
-    const currentScale = projection.scale();
-    const scaleFactor = currentScale / 250; 
-
-    const groups = ballGroup.selectAll('g.target-group')
-      .data(activeData, d => d.id);
-
-    groups.exit().remove();
-
-    const enter = groups.enter().append('g')
-      .attr('class', 'target-group')
-      .style('pointer-events', 'none');
-
-    // 1. Main Body
-    enter.append('circle')
-      .attr('class', 'body')
-      .attr('fill', d => `url(#neon-grad-${d.catIndex})`)
-      .attr('stroke', '#000')
-      .attr('stroke-width', 0.5)
-      .attr('stroke-opacity', 0.3);
-
-    // 2. Highlight
-    enter.append('ellipse') 
-      .attr('class', 'reflection')
-      .attr('fill', 'url(#highlight-grad)')
-      .style('mix-blend-mode', 'screen'); 
-
-    const merged = enter.merge(groups);
-
-    // Get center of globe for parallax calc
-    const [cx, cy] = projection.translate(); 
-
-    merged.each(function(d) {
-      const gEl = d3.select(this);
-      
-      const isVisible = isFront(d.long, d.lat);
-      if (!isVisible) {
-        gEl.attr('display', 'none');
-        return;
-      }
-      
-      const p = projection([d.long, d.lat]);
-      if (!p) return;
-      
-      gEl.attr('display', 'block')
-        .attr('transform', `translate(${p[0]}, ${p[1]})`);
-
-      // --- NEW: Apply Scale Factor to Radius ---
-      const r = radiusScale(d.victims) * scaleFactor;
-
-      // Reflection Calculations (using the Scaled R)
-      const dx = (p[0] - cx) / cx; 
-      const dy = (p[1] - cy) / cy; 
-      
-      const reflectX = (-r * 0.35) - (dx * r * 0.4);
-      const reflectY = (-r * 0.35) - (dy * r * 0.4);
-
-      const body = gEl.select('.body');
-      const reflect = gEl.select('.reflection');
-
-      if (transition) {
-         if (Math.abs((parseFloat(body.attr('r'))||0) - r) > 0.5) {
-            body.transition().duration(500).attr('r', r);
-            reflect.transition().duration(500)
-                   .attr('rx', r * 0.4).attr('ry', r * 0.3)
-                   .attr('cx', reflectX).attr('cy', reflectY);
-         }
-      } else {
-         body.attr('r', r);
-         reflect
-           .attr('rx', r * 0.4)
-           .attr('ry', r * 0.3)
-           .attr('cx', reflectX)
-           .attr('cy', reflectY);
-      }
-    });
-  }
-
-  stepAnimation = () => {
-    const year = +slider.property('value');
-    drawBalls(year, { transition: true });
+  
+  // Helper: Find the correct bin (floor of year)
+  const getBinForYear = (currentYear) => {
+      if (!window._targetDataBins) return null;
+      // Find the largest bin key <= currentYear
+      const validBins = window._targetDataBins.filter(bin => bin <= currentYear);
+      return validBins.length > 0 ? validBins[validBins.length - 1] : null;
   };
 
+  // Helper: Get data for a specific feature and bin
+  const lookupData = (feature, binYear) => {
+    if (!binYear || !window._targetData[binYear]) return null;
+    const name = feature.properties.name || feature.properties.NAME || feature.id;
+    return window._targetData[binYear][name] || null;
+  };
+
+  // --- Main Update Function ---
+  const updateCountryShapesForYear = (currentYear, animate = false) => {
+    
+    const binYear = getBinForYear(currentYear);
+    
+    // Determine which features to render:
+    // 1. The distorted features from cache (if they exist for this bin)
+    // 2. Or the original features if no cache/data exists
+    let featuresToRender = countries.features; // Default to standard geometry
+    if (binYear && window._cartoCache && window._cartoCache[binYear]) {
+        featuresToRender = window._cartoCache[binYear];
+    }
+
+    // Bind the chosen features to the path elements
+    const selection = g.selectAll('path.country').data(featuresToRender);
+
+    // Function to apply attributes (geometry AND color)
+    const applyVisuals = (sel) => {
+        sel
+          .attr('d', path) // Update shape (supports rotation via global projection)
+          .attr('fill', d => {
+            // Logic: Color based on the Target in the active BIN
+            const data = lookupData(d, binYear);
+            
+            // Check if we have data and a color for that target
+            if (data && COLORS.targetColors && COLORS.targetColors[data.target]) {
+                return COLORS.targetColors[data.target];
+            }
+            // Fallback color
+            return (COLORS.targetColors && COLORS.targetColors.default) ? COLORS.targetColors.default : '#cccccc';
+          })
+          .attr('stroke', '#333')
+          .attr('stroke-width', 0.5);
+    };
+
+    if (animate) {
+        // Transition both shape and color smoothly
+        selection.transition().duration(1000).ease(d3.easeLinear).call(applyVisuals);
+    } else {
+        applyVisuals(selection);
+    }
+  };
+
+  // --- Reset Function ---
+  // Restores original geometry and default colors
+  window.resetCountries = () => {
+      // Re-bind original features
+      const selection = g.selectAll('path.country').data(countries.features);
+      
+      selection
+          .transition().duration(750)
+          .attr('d', path)
+          .attr('fill', COLORS.GLOBE.country.fill)
+          .attr('stroke', COLORS.GLOBE.country.stroke)
+          .attr('stroke-width', 0.75);
+          
+      // Remove any specific event listeners if needed
+      selection.on('click', null); 
+  };
+
+  // --- Interface Methods ---
+
+  // Called by the slider or play loop
+  stepAnimation = (transition = true) => {
+    const sliderVal = document.getElementById('slider') ? document.getElementById('slider').value : 1974; 
+    updateCountryShapesForYear(+sliderVal, transition);
+  };
+
+  // Called when the globe rotates (needs to re-project the current features)
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
+    // We just re-apply the 'd' attribute. 
+    // The data bound to the elements is already the correct geometry (distorted or normal).
     g.selectAll('path.country').attr('d', path);
-    const year = +slider.property('value');
-    // Ensure we redraw bubbles when the globe updates (zooms/rotates)
-    drawBalls(year, { transition: false });
   };
 
   rotateOnStart = true;
