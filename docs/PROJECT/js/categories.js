@@ -123,12 +123,7 @@ function setCanvasSizes() {
   // Don't calculate if main content is hidden
   if (mainContent.style.display === 'none') return;
 
-  // Compute navbar height/top offset in a way that works on mobile
-  // Use getBoundingClientRect so we measure the navbar relative to the
-  // viewport (handles browser UI on mobile where window.innerHeight changes)
-  const navbarRect = navbar.getBoundingClientRect();
-  const navbarStyle = window.getComputedStyle(navbar);
-  const navbarHeight = navbarRect.height || navbar.offsetHeight;
+  const navbarHeight = navbar.offsetHeight;
   const categoryHeight = categoryHeader ? categoryHeader.offsetHeight : 0;
   const timelineHeight = timelineContainer ? timelineContainer.offsetHeight : 0;
 
@@ -149,9 +144,7 @@ function setCanvasSizes() {
   }
 
   // Position and size main content between navbar and timeline
-  // If the navbar is fixed, use its height; if it's relative (mobile collapse),
-  // use its bottom position in the viewport so the fixed main content sits below it.
-  const mainContentTop = (navbarStyle.position === 'fixed') ? navbarHeight : navbarRect.bottom;
+  const mainContentTop = navbarHeight;
   const mainContentBottom = categoryHeight + timelineHeight;
   const availableHeight = window.innerHeight - mainContentTop - mainContentBottom;
   const availableWidth = window.innerWidth;
