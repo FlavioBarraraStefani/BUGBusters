@@ -205,10 +205,14 @@ function draw_main_left(categoryInfo, containerId) {
     .filter(function(event) {
       const se = event.sourceEvent;
       if (!se) return true;
-      // If this is a touch event, only allow drag when there's a single touch
+      // TouchEvent: allow only single-touch drags
       if (se.touches) return se.touches.length === 1;
-      // If this is a PointerEvent, allow only mouse/pen (not multi-touch)
-      if (se.pointerType) return se.pointerType === 'mouse' || se.pointerType === 'pen';
+      // PointerEvent: allow mouse/pen; allow touch only for the primary pointer
+      if (se.pointerType) {
+        if (se.pointerType === 'mouse' || se.pointerType === 'pen') return true;
+        if (se.pointerType === 'touch') return !!se.isPrimary;
+        return true;
+      }
       return true;
     })
     .on('drag', function (event) {
@@ -233,6 +237,7 @@ function draw_main_left(categoryInfo, containerId) {
 
     // Ensure the SVG allows pointer/touch gestures to be handled (enables pinch-to-zoom)
     svg.style('touch-action', 'none');
+    
 
     //----------//
     // Enable zoom to scale globe
