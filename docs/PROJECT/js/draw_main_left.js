@@ -235,8 +235,14 @@ function draw_main_left(categoryInfo, containerId) {
     // Attach drag to SVG
     svg.call(drag);
 
-    // Ensure the SVG allows pointer/touch gestures to be handled (enables pinch-to-zoom)
-    svg.style('touch-action', 'none');
+    // Ensure the SVG and its wrapper allow pointer/touch gestures to be handled (enables pinch-to-zoom)
+    // Set on the wrapper because some mobile browsers ignore touch-action on SVG elements.
+    const wrapper = container.select('.canvas-wrapper');
+    wrapper.style('touch-action', 'none');
+    svg.style('touch-action', 'none')
+      .style('-webkit-user-select', 'none')
+      .style('-webkit-touch-callout', 'none')
+      .style('-ms-touch-action', 'none');
     
 
     //----------//
