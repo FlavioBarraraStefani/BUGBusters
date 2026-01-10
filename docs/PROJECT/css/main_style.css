@@ -82,7 +82,11 @@ section {
 
 @media (max-width: 991.98px) {
   .navbar {
-    position: relative;
+    /* keep navbar fixed on small screens to avoid it sliding under the browser UI */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1030;
   }
 

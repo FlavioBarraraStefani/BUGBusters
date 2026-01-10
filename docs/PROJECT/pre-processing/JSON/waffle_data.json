@@ -1,0 +1,132 @@
+[
+    {
+        "category": "Bombing/Explosion",
+        "total_events": 97745,
+        "data": [
+            {
+                "label": "Explosives",
+                "value": 96686
+            },
+            {
+                "label": "Firearms",
+                "value": 757
+            },
+            {
+                "label": "Incendiary",
+                "value": 212
+            },
+            {
+                "label": "Chemical",
+                "value": 73
+            },
+            {
+                "label": "Others",
+                "value": 17
+            }
+        ]
+    },
+    {
+        "category": "Armed Assault",
+        "total_events": 49409,
+        "data": [
+            {
+                "label": "Firearms",
+                "value": 42606
+            },
+            {
+                "label": "Incendiary",
+                "value": 2519
+            },
+            {
+                "label": "Explosives",
+                "value": 2490
+            },
+            {
+                "label": "Melee",
+                "value": 1776
+            },
+            {
+                "label": "Others",
+                "value": 18
+            }
+        ]
+    },
+    {
+        "category": "Assassination",
+        "total_events": 19893,
+        "data": [
+            {
+                "label": "Firearms",
+                "value": 15105
+            },
+            {
+                "label": "Explosives",
+                "value": 3769
+            },
+            {
+                "label": "Melee",
+                "value": 822
+            },
+            {
+                "label": "Incendiary",
+                "value": 161
+            },
+            {
+                "label": "Others",
+                "value": 36
+            }
+        ]
+    },
+    {
+        "category": "Facility/Infrastructure Attack",
+        "total_events": 11597,
+        "data": [
+            {
+                "label": "Incendiary",
+                "value": 9874
+            },
+            {
+                "label": "Firearms",
+                "value": 1341
+            },
+            {
+                "label": "Sabotage Equipment",
+                "value": 179
+            },
+            {
+                "label": "Melee",
+                "value": 119
+            },
+            {
+                "label": "Others",
+                "value": 84
+            }
+        ]
+    },
+    {
+        "category": "Hostage Taking (Kidnapping)",
+        "total_events": 8056,
+        "data": [
+            {
+                "label": "Firearms",
+                "value": 6692
+            },
+            {
+                "label": "Melee",
+                "value": 803
+            },
+            {
+                "label": "Explosives",
+                "value": 288
+            },
+            {
+                "label": "Incendiary",
+                "value": 223
+            },
+            {
+                "label": "Others",
+                "value": 50
+            }
+        ]
+    }
+]

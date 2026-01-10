@@ -1,0 +1,434 @@
+[
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"Unknown",
+        "count":3429
+    },
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"business",
+        "count":1505
+    },
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"citizens",
+        "count":8418
+    },
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"government",
+        "count":3414
+    },
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"military_police",
+        "count":6308
+    },
+    {
+        "continent":"Africa",
+        "region_txt":"Sub-Saharan Africa",
+        "category":"transportations",
+        "count":672
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"Unknown",
+        "count":2285
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"business",
+        "count":1193
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"citizens",
+        "count":1508
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"government",
+        "count":1338
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"military_police",
+        "count":3656
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"Central America & Caribbean",
+        "category":"transportations",
+        "count":406
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"Unknown",
+        "count":1167
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"business",
+        "count":949
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"citizens",
+        "count":565
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"government",
+        "count":641
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"military_police",
+        "count":486
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"North America",
+        "category":"transportations",
+        "count":39
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"Unknown",
+        "count":4177
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"business",
+        "count":3584
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"citizens",
+        "count":3398
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"government",
+        "count":3320
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"military_police",
+        "count":4254
+    },
+    {
+        "continent":"Americas",
+        "region_txt":"South America",
+        "category":"transportations",
+        "count":1113
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"Unknown",
+        "count":94
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"business",
+        "count":36
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"citizens",
+        "count":82
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"government",
+        "count":161
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"military_police",
+        "count":172
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Central Asia",
+        "category":"transportations",
+        "count":35
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"Unknown",
+        "count":160
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"business",
+        "count":106
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"citizens",
+        "count":112
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"government",
+        "count":168
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"military_police",
+        "count":152
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"East Asia",
+        "category":"transportations",
+        "count":149
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"Unknown",
+        "count":10984
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"business",
+        "count":3534
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"citizens",
+        "count":12277
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"government",
+        "count":6746
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"military_police",
+        "count":18924
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"South Asia",
+        "category":"transportations",
+        "count":2260
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"Unknown",
+        "count":2333
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"business",
+        "count":1880
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"citizens",
+        "count":2867
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"government",
+        "count":2548
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"military_police",
+        "count":4388
+    },
+    {
+        "continent":"Asia",
+        "region_txt":"Southeast Asia",
+        "category":"transportations",
+        "count":482
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"Unknown",
+        "count":763
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"business",
+        "count":444
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"citizens",
+        "count":909
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"government",
+        "count":859
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"military_police",
+        "count":2050
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Eastern Europe",
+        "category":"transportations",
+        "count":301
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"Unknown",
+        "count":2483
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"business",
+        "count":4285
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"citizens",
+        "count":3600
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"government",
+        "count":2911
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"military_police",
+        "count":3591
+    },
+    {
+        "continent":"Europe",
+        "region_txt":"Western Europe",
+        "category":"transportations",
+        "count":458
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"Unknown",
+        "count":10098
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"business",
+        "count":4582
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"citizens",
+        "count":18209
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"government",
+        "count":5443
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"military_police",
+        "count":18672
+    },
+    {
+        "continent":"Middle East & North Africa",
+        "region_txt":"Middle East & North Africa",
+        "category":"transportations",
+        "count":1248
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"Unknown",
+        "count":77
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"business",
+        "count":71
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"citizens",
+        "count":40
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"government",
+        "count":81
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"military_police",
+        "count":46
+    },
+    {
+        "continent":"Oceania",
+        "region_txt":"Australasia & Oceania",
+        "category":"transportations",
+        "count":10
+    }
+]

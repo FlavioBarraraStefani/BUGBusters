@@ -1,0 +1,101 @@
+{
+  "ISIL": {
+    "region": "Middle East & North Africa",
+    "data": [
+      {
+        "country": "Iraq",
+        "count": 6182
+      },
+      {
+        "country": "Syrian Arab Republic",
+        "count": 818
+      },
+      {
+        "country": "Turkey",
+        "count": 82
+      },
+      {
+        "country": "Lebanon",
+        "count": 55
+      },
+      {
+        "country": "Saudi Arabia",
+        "count": 14
+      },
+      {
+        "country": "Tunisia",
+        "count": 9
+      },
+      {
+        "country": "Jordan",
+        "count": 6
+      },
+      {
+        "country": "Egypt",
+        "count": 3
+      },
+      {
+        "country": "West Bank and Gaza Strip",
+        "count": 3
+      },
+      {
+        "country": "Libya",
+        "count": 2
+      },
+      {
+        "country": "Bahrain",
+        "count": 2
+      },
+      {
+        "country": "Iran",
+        "count": 2
+      },
+      {
+        "country": "Israel",
+        "count": 1
+      },
+      {
+        "country": "Yemen",
+        "count": 1
+      }
+    ]
+  },
+  "taliban": {
+    "region": "South Asia",
+    "data": [
+      {
+        "country": "Afghanistan",
+        "count": 11926
+      },
+      {
+        "country": "Pakistan",
+        "count": 54
+      }
+    ]
+  },
+  "SL": {
+    "region": "South America",
+    "data": [
+      {
+        "country": "Peru",
+        "count": 4550
+      },
+      {
+        "country": "Bolivia",
+        "count": 6
+      },
+      {
+        "country": "Colombia",
+        "count": 4
+      },
+      {
+        "country": "Brazil",
+        "count": 2
+      },
+      {
+        "country": "Argentina",
+        "count": 1
+      }
+    ]
+  }
+}

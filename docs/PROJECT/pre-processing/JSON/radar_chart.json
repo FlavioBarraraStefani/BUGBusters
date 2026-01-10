@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "description": "Dati per Radar Chart D3.js",
+    "features": [
+      {
+        "key": "success",
+        "label": "Success Rate"
+      },
+      {
+        "key": "nkill",
+        "label": "Avg Kills"
+      },
+      {
+        "key": "nwound",
+        "label": "Avg Wounded"
+      },
+      {
+        "key": "propvalue",
+        "label": "Avg Damage ($)"
+      }
+    ],
+    "global_max_values": {
+      "success_rate": 0.9703125,
+      "avg_kills": 3.4677302720780983,
+      "avg_wounded": 4.3637531434045655,
+      "avg_damage": 271926.0242064166
+    },
+    "global_average": {
+      "success_rate": 0.8795551695746816,
+      "avg_kills": 2.0260367909951165,
+      "avg_wounded": 2.92594430596754,
+      "avg_damage": 183931.78292632505
+    }
+  },
+  "data": [
+    {
+      "attack_type": "Bombing/Explosion",
+      "metrics": {
+        "success_rate": 0.8681675176085087,
+        "avg_kills": 1.7136916360944492,
+        "avg_wounded": 4.3637531434045655,
+        "avg_damage": 271926.0242064166
+      }
+    },
+    {
+      "attack_type": "Armed Assault",
+      "metrics": {
+        "success_rate": 0.9328165958600741,
+        "avg_kills": 3.4677302720780983,
+        "avg_wounded": 2.014507818855645,
+        "avg_damage": 20450.140680784538
+      }
+    },
+    {
+      "attack_type": "Assassination",
+      "metrics": {
+        "success_rate": 0.7333499129569758,
+        "avg_kills": 1.288187018154688,
+        "avg_wounded": 0.804973887092763,
+        "avg_damage": 1299.0983991935484
+      }
+    },
+    {
+      "attack_type": "Hostage Taking (Kidnapping)",
+      "metrics": {
+        "success_rate": 0.9703125,
+        "avg_kills": 1.9941666666666666,
+        "avg_wounded": 0.8930208333333334,
+        "avg_damage": 6493.40502631579
+      }
+    },
+    {
+      "attack_type": "Facility/Infrastructure Attack",
+      "metrics": {
+        "success_rate": 0.945351867940921,
+        "avg_kills": 0.29139878366637706,
+        "avg_wounded": 0.35560382276281494,
+        "avg_damage": 108469.43478739912
+      }
+    }
+  ]
+}

@@ -1,0 +1,469 @@
+{
+  "ISIL": {
+    "config": {
+      "ribbonPadding": 2
+    },
+    "timeline": [
+      {
+        "label": "2013-2015",
+        "values": {
+          "Private Citizens & Property": 44.91,
+          "Military": 25.35,
+          "Police": 17.34,
+          "Business": 6.7,
+          "Terrorists/Non-State Militia": 5.71
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Military",
+          "Police",
+          "Business",
+          "Terrorists/Non-State Militia"
+        ]
+      },
+      {
+        "label": "2016-2018",
+        "values": {
+          "Private Citizens & Property": 47.28,
+          "Military": 33.72,
+          "Police": 11.19,
+          "Business": 3.99,
+          "Terrorists/Non-State Militia": 3.83
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Military",
+          "Police",
+          "Business",
+          "Terrorists/Non-State Militia"
+        ]
+      },
+      {
+        "label": "2019-2021",
+        "values": {
+          "Private Citizens & Property": 31.66,
+          "Military": 39.38,
+          "Police": 17.19,
+          "Business": 5.82,
+          "Terrorists/Non-State Militia": 5.95
+        },
+        "order": [
+          "Military",
+          "Private Citizens & Property",
+          "Police",
+          "Terrorists/Non-State Militia",
+          "Business"
+        ]
+      }
+    ],
+    "top_targets": [
+      "Private Citizens & Property",
+      "Military",
+      "Police",
+      "Business",
+      "Terrorists/Non-State Militia"
+    ]
+  },
+  "taliban": {
+    "config": {
+      "ribbonPadding": 2
+    },
+    "timeline": [
+      {
+        "label": "1995-1997",
+        "values": {
+          "Police": 100.0,
+          "Military": 0.0,
+          "Private Citizens & Property": 0.0,
+          "Government (General)": 0.0,
+          "Unknown": 0.0
+        },
+        "order": [
+          "Police",
+          "Military",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2001-2003",
+        "values": {
+          "Police": 10.26,
+          "Military": 33.33,
+          "Private Citizens & Property": 33.33,
+          "Government (General)": 20.51,
+          "Unknown": 2.56
+        },
+        "order": [
+          "Military",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Police",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2004-2006",
+        "values": {
+          "Police": 35.97,
+          "Military": 18.18,
+          "Private Citizens & Property": 19.37,
+          "Government (General)": 26.09,
+          "Unknown": 0.4
+        },
+        "order": [
+          "Police",
+          "Government (General)",
+          "Private Citizens & Property",
+          "Military",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2007-2009",
+        "values": {
+          "Police": 30.18,
+          "Military": 8.36,
+          "Private Citizens & Property": 33.09,
+          "Government (General)": 27.27,
+          "Unknown": 1.09
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Police",
+          "Government (General)",
+          "Military",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2010-2012",
+        "values": {
+          "Police": 29.21,
+          "Military": 25.7,
+          "Private Citizens & Property": 23.33,
+          "Government (General)": 20.09,
+          "Unknown": 1.67
+        },
+        "order": [
+          "Police",
+          "Military",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2013-2015",
+        "values": {
+          "Police": 45.99,
+          "Military": 20.25,
+          "Private Citizens & Property": 17.89,
+          "Government (General)": 11.58,
+          "Unknown": 4.3
+        },
+        "order": [
+          "Police",
+          "Military",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2016-2018",
+        "values": {
+          "Police": 39.32,
+          "Military": 27.47,
+          "Private Citizens & Property": 19.4,
+          "Government (General)": 9.17,
+          "Unknown": 4.64
+        },
+        "order": [
+          "Police",
+          "Military",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Unknown"
+        ]
+      },
+      {
+        "label": "2019-2021",
+        "values": {
+          "Police": 34.62,
+          "Military": 38.93,
+          "Private Citizens & Property": 15.23,
+          "Government (General)": 8.16,
+          "Unknown": 3.07
+        },
+        "order": [
+          "Military",
+          "Police",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Unknown"
+        ]
+      }
+    ],
+    "top_targets": [
+      "Police",
+      "Military",
+      "Private Citizens & Property",
+      "Government (General)",
+      "Unknown"
+    ]
+  },
+  "SL": {
+    "config": {
+      "ribbonPadding": 2
+    },
+    "timeline": [
+      {
+        "label": "1977-1979",
+        "values": {
+          "Private Citizens & Property": 50.0,
+          "Business": 0.0,
+          "Government (General)": 0.0,
+          "Police": 0.0,
+          "Utilities": 50.0
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Utilities",
+          "Business",
+          "Government (General)",
+          "Police"
+        ]
+      },
+      {
+        "label": "1980-1982",
+        "values": {
+          "Private Citizens & Property": 17.65,
+          "Business": 24.57,
+          "Government (General)": 21.8,
+          "Police": 19.03,
+          "Utilities": 16.96
+        },
+        "order": [
+          "Business",
+          "Government (General)",
+          "Police",
+          "Private Citizens & Property",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "1983-1985",
+        "values": {
+          "Private Citizens & Property": 33.88,
+          "Business": 17.2,
+          "Government (General)": 13.8,
+          "Police": 19.67,
+          "Utilities": 15.45
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Police",
+          "Business",
+          "Utilities",
+          "Government (General)"
+        ]
+      },
+      {
+        "label": "1986-1988",
+        "values": {
+          "Private Citizens & Property": 20.05,
+          "Business": 22.89,
+          "Government (General)": 27.56,
+          "Police": 16.06,
+          "Utilities": 13.44
+        },
+        "order": [
+          "Government (General)",
+          "Business",
+          "Private Citizens & Property",
+          "Police",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "1989-1991",
+        "values": {
+          "Private Citizens & Property": 20.47,
+          "Business": 19.19,
+          "Government (General)": 23.84,
+          "Police": 13.35,
+          "Utilities": 23.15
+        },
+        "order": [
+          "Government (General)",
+          "Utilities",
+          "Private Citizens & Property",
+          "Business",
+          "Police"
+        ]
+      },
+      {
+        "label": "1992-1994",
+        "values": {
+          "Private Citizens & Property": 22.86,
+          "Business": 33.06,
+          "Government (General)": 13.88,
+          "Police": 26.12,
+          "Utilities": 4.08
+        },
+        "order": [
+          "Business",
+          "Police",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "1995-1997",
+        "values": {
+          "Private Citizens & Property": 37.33,
+          "Business": 25.33,
+          "Government (General)": 12.0,
+          "Police": 24.0,
+          "Utilities": 1.33
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Business",
+          "Police",
+          "Government (General)",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "1998-2000",
+        "values": {
+          "Private Citizens & Property": 100.0,
+          "Business": 0.0,
+          "Government (General)": 0.0,
+          "Police": 0.0,
+          "Utilities": 0.0
+        },
+        "order": [
+          "Private Citizens & Property",
+          "Business",
+          "Government (General)",
+          "Police",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "2001-2003",
+        "values": {
+          "Private Citizens & Property": 0.0,
+          "Business": 0.0,
+          "Government (General)": 33.33,
+          "Police": 33.33,
+          "Utilities": 33.33
+        },
+        "order": [
+          "Government (General)",
+          "Police",
+          "Utilities",
+          "Private Citizens & Property",
+          "Business"
+        ]
+      },
+      {
+        "label": "2004-2006",
+        "values": {
+          "Private Citizens & Property": 0.0,
+          "Business": 0.0,
+          "Government (General)": 0.0,
+          "Police": 100.0,
+          "Utilities": 0.0
+        },
+        "order": [
+          "Police",
+          "Private Citizens & Property",
+          "Business",
+          "Government (General)",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "2007-2009",
+        "values": {
+          "Private Citizens & Property": 20.0,
+          "Business": 0.0,
+          "Government (General)": 0.0,
+          "Police": 60.0,
+          "Utilities": 20.0
+        },
+        "order": [
+          "Police",
+          "Private Citizens & Property",
+          "Utilities",
+          "Business",
+          "Government (General)"
+        ]
+      },
+      {
+        "label": "2010-2012",
+        "values": {
+          "Private Citizens & Property": 0.0,
+          "Business": 75.0,
+          "Government (General)": 0.0,
+          "Police": 25.0,
+          "Utilities": 0.0
+        },
+        "order": [
+          "Business",
+          "Police",
+          "Private Citizens & Property",
+          "Government (General)",
+          "Utilities"
+        ]
+      },
+      {
+        "label": "2013-2015",
+        "values": {
+          "Private Citizens & Property": 9.09,
+          "Business": 27.27,
+          "Government (General)": 36.36,
+          "Police": 9.09,
+          "Utilities": 18.18
+        },
+        "order": [
+          "Government (General)",
+          "Business",
+          "Utilities",
+          "Private Citizens & Property",
+          "Police"
+        ]
+      },
+      {
+        "label": "2016-2018",
+        "values": {
+          "Private Citizens & Property": 33.33,
+          "Business": 0.0,
+          "Government (General)": 0.0,
+          "Police": 66.67,
+          "Utilities": 0.0
+        },
+        "order": [
+          "Police",
+          "Private Citizens & Property",
+          "Business",
+          "Government (General)",
+          "Utilities"
+        ]
+      }
+    ],
+    "top_targets": [
+      "Private Citizens & Property",
+      "Business",
+      "Government (General)",
+      "Police",
+      "Utilities"
+    ]
+  }
+}
