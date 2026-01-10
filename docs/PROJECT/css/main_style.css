@@ -410,28 +410,6 @@ svg {
   background-color: transparent;
 }
 
-/* ===========================
-   ROTATIONAL MEDIA QUERIES
-   =========================== */
-
-/*hide them when in landscape mode on small height screens*/
-#navbar, #footer {
-  transition: transform 0.4s ease-in-out;
-  position: relative; 
-  z-index: 1030;     
-}
-
-@media (max-height: 576px) and (orientation: landscape) {
-  
-  #navbar {
-    transform: translateY(-100%);
-  }
-
-  #footer {
-    transform: translateY(100%);
-  }
-}
-
 /*===========================
   fading scroll animation
    =========================== */
