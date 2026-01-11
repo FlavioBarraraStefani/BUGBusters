@@ -327,7 +327,7 @@ async function initChartsAfterAuth() {
     },
     {
       file: 
-        "PROJECT/CATEGORIES/globe_targets.json",
+        "PROJECT/CATEGORIES/globe_targets_events.json",
       func: (data) => {
         precomputeTargetData(data);
       }, choice: null, container: "body"

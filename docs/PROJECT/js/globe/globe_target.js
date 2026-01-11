@@ -1,207 +1,222 @@
+let allTargetEvents = [];
+let maxKillsGlobal = 0;
+
 // ==========================================
-// 1. DATA PREPARATION & PRECOMPUTATION
+// 1. DATA PREPARATION
 // ==========================================
 
-async function precomputeTargetData(rawData) {
-  window._targetData = window._targetData || {};
-  window._cartoCache = window._cartoCache || {};
-  if (!rawData) return;
+function precomputeTargetData(rawData) {
+  allTargetEvents = [];
+  maxKillsGlobal = 0;
 
-  // 1. Parse Data
-  const binKeys = [];
-  Object.keys(rawData).forEach(yearKey => {
-    const year = parseInt(yearKey, 10);
-    binKeys.push(year);
-    window._targetData[year] = window._targetData[year] || {};
+  CATEGORIES.target.forEach((cat, index) => {
+    const rawEvents = rawData[cat] || [];
 
-    const countryList = rawData[yearKey];
-    if (Array.isArray(countryList)) {
-      countryList.forEach(item => {
-        const countryName = Object.keys(item)[0];
-        if (countryName) {
-          window._targetData[year][countryName] = item[countryName];
-        }
+    rawEvents.forEach(d => {
+      if (isNaN(d.lat) || isNaN(d.long)) return;
+
+      const victims = (+d.victims) || 0;
+      if (victims > maxKillsGlobal) maxKillsGlobal = victims;
+
+      allTargetEvents.push({
+        year: +d.year,
+        lat: +d.lat,
+        long: +d.long,
+        victims: victims,
+        category: cat,
+        catIndex: index,
+        summary: d.summary || 'No description available.',
+        id: `${cat}_${d.lat}_${d.long}_${d.year}`
       });
-    }
-  });
-  
-  // Sort keys for floor lookup later
-  window._targetDataBins = binKeys.sort((a, b) => a - b);
-
-  // 2. Ensure Topogram is loaded
-  if (typeof d3.cartogram !== 'function') {
-      await loadTopogram();
-  }
-
-  // 3. Precompute Geometries
-  console.log("Starting Cartogram Precomputation...");
-
-  // Safety check
-  if (!window.globe_data || !window.globe_data.objects || !window.globe_data.objects.countries) {
-      console.warn("Globe data not loaded yet. Skipping precomputation.");
-      return;
-  }
-
-  // --- FIX: Create the 'countries' GeoJSON object locally ---
-  // We need this to iterate over features and calculate min/max values
-  const countries = topojson.feature(window.globe_data, window.globe_data.objects.countries);
-
-  // We also need the raw geometries for the cartogram function
-  let geometries = window.globe_data.objects.countries;
-  if (geometries.geometries) geometries = geometries.geometries;
-
-  window._targetDataBins.forEach(year => {
-    // Determine Scale for this bin
-    const lookupValue = (feature) => {
-        const name = feature.properties.name || feature.properties.NAME || feature.id;
-        const data = window._targetData[year][name];
-        return data ? data.attacks : 0;
-    };
-
-    // Now 'countries' is defined, so this works
-    let values = countries.features.map(f => lookupValue(f)).filter(v => v > 0);
-    
-    if (values.length === 0) {
-        window._cartoCache[year] = null;
-        return;
-    }
-
-    const scale = d3.scaleLinear()
-        .domain([d3.min(values), d3.max(values)])
-        .range([1, 100]); 
-
-    const carto = d3.cartogram()
-        .projection(projection)
-        .value(d => {
-            const name = (d.properties && (d.properties.name || d.properties.NAME)) || d.id;
-            const data = window._targetData[year][name];
-            return data ? scale(data.attacks) : 1;
-        });
-
-    try {
-        const ret = carto(window.globe_data, geometries);
-        window._cartoCache[year] = ret.features;
-    } catch (e) {
-        console.warn(`Skipping bin ${year} due to cartogram error`, e);
-        window._cartoCache[year] = null;
-    }
-  });
-
-  console.log("Cartogram Precomputation Complete.");
-}
-// Helper to load library if missing
-function loadTopogram() {
-    return new Promise((resolve, reject) => {
-        if (window.topogram || typeof d3.cartogram === 'function') {
-             if(window.topogram) d3.cartogram = window.topogram.cartogram;
-             return resolve();
-        }
-        const s = document.createElement('script');
-        s.src = 'https://unpkg.com/topogram@latest/build/topogram.js';
-        s.onload = () => {
-            if (window.topogram) d3.cartogram = window.topogram.cartogram;
-            resolve();
-        };
-        document.head.appendChild(s);
     });
+  });
 }
 
 // ==========================================
 // 2. VISUALIZATION LOGIC
 // ==========================================
-
 function globe_target() {
-  
-  // Helper: Find the correct bin (floor of year)
-  const getBinForYear = (currentYear) => {
-      if (!window._targetDataBins) return null;
-      // Find the largest bin key <= currentYear
-      const validBins = window._targetDataBins.filter(bin => bin <= currentYear);
-      return validBins.length > 0 ? validBins[validBins.length - 1] : null;
-  };
 
-  // Helper: Get data for a specific feature and bin
-  const lookupData = (feature, binYear) => {
-    if (!binYear || !window._targetData[binYear]) return null;
-    const name = feature.properties.name || feature.properties.NAME || feature.id;
-    return window._targetData[binYear][name] || null;
-  };
+  // --- 1. Set Global Opacity for this View ---
+  // Dim the ocean and countries as requested
+  // --- 2. Tooltip Setup ---
+  let tooltip = d3.select('#target-tooltip');
+  if (tooltip.empty()) {
+    tooltip = d3.select('body').append('div')
+      .attr('id', 'target-tooltip')
+      .style('position', 'absolute')
+      .style('background', 'rgba(0, 0, 0, 0.9)')
+      .style('color', '#fff')
+      .style('padding', '10px')
+      .style('border-radius', '4px')
+      .style('pointer-events', 'none') 
+      .style('opacity', 0)
+      .style('z-index', 100)
+      .style('font-family', 'sans-serif')
+      .style('font-size', `${labelFontSize}px`) 
+      .style('max-width', '300px')
+      .style('line-height', '1.4')
+      .style('box-shadow', '0 2px 4px rgba(0,0,0,0.5)');
+  }
 
-  // --- Main Update Function ---
-  const updateCountryShapesForYear = (currentYear, animate = false) => {
+  // --- 3. Scales & Groups ---
+  const safeMax = maxKillsGlobal || 100;
+  // Increased range for "bigger" balls
+  const radiusScale = d3.scaleSqrt().domain([0, safeMax]).range([6, 30]);
+
+  let ballGroup = g.select('g.target-balls');
+  if (ballGroup.empty()) {
+    ballGroup = g.append('g').attr('class', 'target-balls');
+  }
+
+  // --- 4. Helper: Render Tooltip ---
+// --- 4. Helper: Render Tooltip ---
+// --- 4. Helper: Render Tooltip ---
+  const renderTooltip = (event, d) => {
+    const color = COLORS.targetColors[d.catIndex] || '#fff';
     
-    const binYear = getBinForYear(currentYear);
+    const html = `
+      <div style="border-left: 3px solid ${color}; padding-left: 8px;">
+        <strong style="color:${color}; text-transform:uppercase; font-size:0.9em;">
+          ${d.category}
+        </strong>
+        <div style="margin-top:4px; font-weight:bold;">
+          ${d.victims} Victims (${d.year})
+        </div>
+        <div style="margin-top:6px; opacity:0.8; font-size:0.95em;">
+          ${d.summary}
+        </div>
+      </div>
+    `;
+
+    // 1. Set HTML and opacity first to measure dimensions
+    tooltip.html(html).style('opacity', 1);
+
+    // 2. Measure dimensions
+    const tooltipNode = tooltip.node();
+    const tooltipWidth = tooltipNode.getBoundingClientRect().width;
+    const pageWidth = window.innerWidth;
+    const gap = 15; // Space between cursor and tooltip
+
+    // 3. X-Axis Logic
+    // Default: To the right of the cursor
+    let leftPos = event.pageX + gap;
     
-    // Determine which features to render:
-    // 1. The distorted features from cache (if they exist for this bin)
-    // 2. Or the original features if no cache/data exists
-    let featuresToRender = countries.features; // Default to standard geometry
-    if (binYear && window._cartoCache && window._cartoCache[binYear]) {
-        featuresToRender = window._cartoCache[binYear];
+    // Check Right Overflow: If it goes off the right edge, try putting it on the left
+    if (leftPos + tooltipWidth > pageWidth - 10) { 
+        leftPos = event.pageX - tooltipWidth - gap;
     }
 
-    // Bind the chosen features to the path elements
-    const selection = g.selectAll('path.country').data(featuresToRender);
+    // Check Left Overflow: If flipping to the left made it go off-screen (cursor too close to left edge),
+    // force it to start at a safe left margin (e.g., 10px).
+    if (leftPos < 10) {
+        leftPos = 10;
+    }
 
-    // Function to apply attributes (geometry AND color)
-    const applyVisuals = (sel) => {
-        sel
-          .attr('d', path) // Update shape (supports rotation via global projection)
-          .attr('fill', d => {
-            // Logic: Color based on the Target in the active BIN
-            const data = lookupData(d, binYear);
-            
-            // Check if we have data and a color for that target
-            if (data && COLORS.targetColors && COLORS.targetColors[data.target]) {
-                return COLORS.targetColors[data.target];
-            }
-            // Fallback color
-            return (COLORS.targetColors && COLORS.targetColors.default) ? COLORS.targetColors.default : '#cccccc';
-          })
-          .attr('stroke', '#333')
+    // 4. Y-Axis Logic
+    // Put it under the hovering position
+    let topPos = event.pageY + gap;
+
+    // 5. Apply positions
+    tooltip
+      .style('left', leftPos + 'px')
+      .style('top', topPos + 'px');
+  };
+
+  // --- 5. Draw Function ---
+  function drawBalls(currentYear, { transition = false } = {}) {
+    
+    const activeData = allTargetEvents.filter(d => d.year <= currentYear);
+
+    const currentScale = projection.scale();
+    const scaleFactor = currentScale / 250;
+
+    const circles = ballGroup.selectAll('circle.target-circle')
+      .data(activeData, d => d.id);
+
+    circles.exit().remove();
+
+    // ENTER
+    const enter = circles.enter().append('circle')
+      .attr('class', 'target-circle')
+      .attr('fill', d => COLORS.targetColors[d.catIndex] || '#ccc')
+      .attr('stroke', '#000')
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 1) // Full Opacity
+      .attr('cursor', 'pointer');
+
+    // UPDATE + ENTER
+    const merged = enter.merge(circles);
+
+    merged.each(function(d) {
+      const el = d3.select(this);
+
+      if (!isFront(d.long, d.lat)) {
+        el.attr('display', 'none');
+        return;
+      }
+
+      const p = projection([d.long, d.lat]);
+      if (!p) return;
+
+      const r = radiusScale(d.victims) * scaleFactor;
+
+      el.attr('display', 'block')
+        .attr('cx', p[0])
+        .attr('cy', p[1]);
+
+      if (transition) {
+         el.transition().duration(playIntervalMs).attr('r', r);
+      } else {
+         el.attr('r', r);
+      }
+    });
+
+    // --- Interaction Events ---
+    merged
+      .on('mousemove', function(event, d) {
+        d3.select(this)
+          .attr('stroke', '#fff')
+          .attr('stroke-width', 2);
+        
+        renderTooltip(event, d);
+      })
+      .on('mouseout', function() {
+        d3.select(this)
+          .attr('stroke', '#000')
           .attr('stroke-width', 0.5);
-    };
 
-    if (animate) {
-        // Transition both shape and color smoothly
-        selection.transition().duration(1000).ease(d3.easeLinear).call(applyVisuals);
-    } else {
-        applyVisuals(selection);
-    }
-  };
+        tooltip.style('opacity', 0);
+      })
+      .on('click', function(event, d) {
+        stopAnimation(); 
+        // Corrected ShowModal Call
+        showModal('target', d.category); 
+      });
+  }
 
-  // --- Reset Function ---
-  // Restores original geometry and default colors
-  window.resetCountries = () => {
-      // Re-bind original features
-      const selection = g.selectAll('path.country').data(countries.features);
-      
-      selection
-          .transition().duration(750)
-          .attr('d', path)
-          .attr('fill', COLORS.GLOBE.country.fill)
-          .attr('stroke', COLORS.GLOBE.country.stroke)
-          .attr('stroke-width', 0.75);
-          
-      // Remove any specific event listeners if needed
-      selection.on('click', null); 
-  };
-
-  // --- Interface Methods ---
-
-  // Called by the slider or play loop
+  // =============================
+  // 6. GLOBAL FUNCTIONS OVERWRITE
+  // =============================
+  
   stepAnimation = (transition = true) => {
-    const sliderVal = document.getElementById('slider') ? document.getElementById('slider').value : 1974; 
-    updateCountryShapesForYear(+sliderVal, transition);
+    const year = +slider.property('value');
+    drawBalls(year, { transition : transition });
   };
 
-  // Called when the globe rotates (needs to re-project the current features)
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
-    // We just re-apply the 'd' attribute. 
-    // The data bound to the elements is already the correct geometry (distorted or normal).
+
+    // 1. Redraw Countries
     g.selectAll('path.country').attr('d', path);
+
+    // 2. Hide Tooltip
+    if (tooltip) tooltip.style('opacity', 0);
+
+    // 3. Redraw Bubbles
+    const year = +slider.property('value');
+    drawBalls(year, { transition: false });
   };
 
   rotateOnStart = true;

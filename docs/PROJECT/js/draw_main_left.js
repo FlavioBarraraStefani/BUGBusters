@@ -333,11 +333,12 @@ function draw_main_left(categoryInfo, containerId) {
 
         d3.select("body").select("#globe-tooltip").remove()        
       } else if (previousCat === 'target') {
-        g.selectAll('defs.neon-defs').remove(); 
         g.select('g.target-balls') 
-          .transition().duration(transitionDurationMs)
-          .attr('opacity', 0)
-          .on('end', function () { d3.select(this).remove(); });
+        .transition().duration(transitionDurationMs)
+        .attr('opacity', 0)
+        .on('end', function () { d3.select(this).remove(); });
+
+        d3.select("body").select("#target-tooltip").remove()
       }
     }
 
