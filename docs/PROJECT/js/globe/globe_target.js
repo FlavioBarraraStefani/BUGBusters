@@ -2,7 +2,7 @@ let allTargetEvents = [];
 let maxKillsGlobal = 0;
 
 // ==========================================
-// 1. DATA PREPARATION
+// pre-processing
 // ==========================================
 
 function precomputeTargetData(rawData) {
@@ -33,13 +33,10 @@ function precomputeTargetData(rawData) {
 }
 
 // ==========================================
-// 2. VISUALIZATION LOGIC
+// globe view
 // ==========================================
 function globe_target() {
 
-  // --- 1. Set Global Opacity for this View ---
-  // Dim the ocean and countries as requested
-  // --- 2. Tooltip Setup ---
   let tooltip = d3.select('#target-tooltip');
   if (tooltip.empty()) {
     tooltip = d3.select('body').append('div')
@@ -59,9 +56,7 @@ function globe_target() {
       .style('box-shadow', '0 2px 4px rgba(0,0,0,0.5)');
   }
 
-  // --- 3. Scales & Groups ---
   const safeMax = maxKillsGlobal || 100;
-  // Increased range for "bigger" balls
   const radiusScale = d3.scaleSqrt().domain([0, safeMax]).range([6, 30]);
 
   let ballGroup = g.select('g.target-balls');
@@ -69,9 +64,6 @@ function globe_target() {
     ballGroup = g.append('g').attr('class', 'target-balls');
   }
 
-  // --- 4. Helper: Render Tooltip ---
-// --- 4. Helper: Render Tooltip ---
-// --- 4. Helper: Render Tooltip ---
   const renderTooltip = (event, d) => {
     const color = COLORS.targetColors[d.catIndex] || '#fff';
     
@@ -89,41 +81,30 @@ function globe_target() {
       </div>
     `;
 
-    // 1. Set HTML and opacity first to measure dimensions
     tooltip.html(html).style('opacity', 1);
 
-    // 2. Measure dimensions
     const tooltipNode = tooltip.node();
     const tooltipWidth = tooltipNode.getBoundingClientRect().width;
     const pageWidth = window.innerWidth;
     const gap = 15; // Space between cursor and tooltip
 
-    // 3. X-Axis Logic
-    // Default: To the right of the cursor
     let leftPos = event.pageX + gap;
     
-    // Check Right Overflow: If it goes off the right edge, try putting it on the left
     if (leftPos + tooltipWidth > pageWidth - 10) { 
         leftPos = event.pageX - tooltipWidth - gap;
     }
 
-    // Check Left Overflow: If flipping to the left made it go off-screen (cursor too close to left edge),
-    // force it to start at a safe left margin (e.g., 10px).
     if (leftPos < 10) {
         leftPos = 10;
     }
 
-    // 4. Y-Axis Logic
-    // Put it under the hovering position
     let topPos = event.pageY + gap;
-
-    // 5. Apply positions
     tooltip
       .style('left', leftPos + 'px')
       .style('top', topPos + 'px');
   };
 
-  // --- 5. Draw Function ---
+  // =============================
   function drawBalls(currentYear, { transition = false } = {}) {
     
     const activeData = allTargetEvents.filter(d => d.year <= currentYear);
@@ -145,7 +126,7 @@ function globe_target() {
       .attr('opacity', 1) // Full Opacity
       .attr('cursor', 'pointer');
 
-    // UPDATE + ENTER
+
     const merged = enter.merge(circles);
 
     merged.each(function(d) {
@@ -190,15 +171,10 @@ function globe_target() {
       })
       .on('click', function(event, d) {
         stopAnimation(); 
-        // Corrected ShowModal Call
         showModal('target', d.category); 
       });
   }
 
-  // =============================
-  // 6. GLOBAL FUNCTIONS OVERWRITE
-  // =============================
-  
   stepAnimation = (transition = true) => {
     const year = +slider.property('value');
     drawBalls(year, { transition : transition });
@@ -208,13 +184,10 @@ function globe_target() {
     if (!needsUpdate) return;
     needsUpdate = false;
 
-    // 1. Redraw Countries
     g.selectAll('path.country').attr('d', path);
 
-    // 2. Hide Tooltip
     if (tooltip) tooltip.style('opacity', 0);
 
-    // 3. Redraw Bubbles
     const year = +slider.property('value');
     drawBalls(year, { transition: false });
   };

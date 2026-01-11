@@ -65,11 +65,9 @@ function right_chart_group(svg) {
   const minYear = sliderRange[0];
   const pre = window._precomputed_group;
 
-  // --- NEW: Define Top Margin ---
   const fontSize = labelFontSize * (isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen()) ? 1 : 1.5);
-  const MARGIN_TOP = fontSize * 2; // Increased top margin for title
+  const MARGIN_TOP = fontSize * 2;
   
-  // --- State for Tooltip Persistence ---
   let lastMouseOverlayX = null; 
   let lastMousePageCoords = null; 
   
@@ -78,8 +76,6 @@ function right_chart_group(svg) {
   if (container.empty()) {
     container = svg.append('g').attr('class', 'groups-container');
   }
-
-  // --- NEW: Add/Update Title ---
   let title = container.select('.main-chart-title');
 
   
@@ -91,7 +87,6 @@ function right_chart_group(svg) {
     return pre.snapshots[y] || [];
   };
   
-  // --- Core Render Function ---
   container._updateRidges = (duration = 0) => {
     //creatae title if not exists
     if (title.empty()) {
@@ -113,24 +108,19 @@ function right_chart_group(svg) {
       .attr('transform', 'translate(0, 0)');
   }
   
-
-
-    // 1. Get current state
     const maxYearNow = +slider.property('value') || years[years.length - 1];
     const minYear = sliderRange[0]; 
     const data = getSeriesData(maxYearNow);
     
-    // 2. Setup Scales & Dimensions
+    // Setup Scales & Dimensions
     const xStart = leftPadAxis;
     const xEnd = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN;
     const axisY = RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN;
     
-    // Scale
     const x = d3.scaleLinear()
     .domain([minYear, maxYearNow])
     .range([xStart, xEnd]);
     
-    // Handle collapsed axis edge case
     const axisCollapsed = maxYearNow == minYear;
     const lineX1 = axisCollapsed ? xStart : x(minYear);
     const lineX2 = axisCollapsed ? xEnd : x(maxYearNow);
@@ -139,15 +129,12 @@ function right_chart_group(svg) {
     // Layout
     const smallGap = 10;
     const labelPadding = 5;
-    // When labels are on top (not stacked), gap must include label height + padding
     const labelOnTop = !STACKED_LAYOUT_PREFERRED;
-    // Use a larger gap to accommodate the label when labels are placed on top.
-    // In stacked layout, use a small gap between groups so they don't touch.
     const groupGap = labelOnTop ? (labelPadding + fontSize) : smallGap;
     const totalGaps = (data.length * groupGap) + (2 * smallGap);
     const rectHeight = Math.max(0, (axisY - MARGIN_TOP - totalGaps) / data.length);
 
-    // 3. Bind Data & Render Groups
+
     container.selectAll('g.groups')
       .data(data, d => d.name)
       .join(
@@ -158,7 +145,6 @@ function right_chart_group(svg) {
           g.append('line').attr('class', 'group-empty-line');
           g.append('text').attr('class', 'group-label').style('font-family', 'sans-serif');
           
-          // Enter Animation
           g.style('opacity', 0)
            .attr('transform', `translate(0, -${RIGHT_CHART_HEIGHT})`);
 
@@ -203,9 +189,8 @@ function right_chart_group(svg) {
           .text(labelName)
           .attr('fill', color)
           .style('font-size', `${fontSize}px`)
-          .style('cursor', 'pointer'); // Ensure cursor indicates clickability
+          .style('cursor', 'pointer');
 
-        // DIRECT LABEL CLICK HANDLER (Crucial for Stacked Layout)
         labelText.on('click', function(event) {
              stopAnimation();
              showModal("group", d.name);
@@ -217,7 +202,6 @@ function right_chart_group(svg) {
             .attr('x', xStart - 10).attr('y', yBottom).attr('dy', 0)
             .attr('text-anchor', 'end').style('opacity', 1);
         } else {
-          // Label positioned 5px below previous rect (or title), centered above current rect
           labelText.transition().duration(duration)
             .attr('x', lineX1 + bgWidth / 2).attr('y', yTop - labelPadding).attr('dy', 0)
             .attr('dominant-baseline', 'auto')
@@ -288,7 +272,6 @@ function right_chart_group(svg) {
       }
     }
 
-    // Ensure Overlay is on top of lines/areas (BUT labels might be outside or under)
     overlay.raise();
 
     // Helper: Update Tooltip

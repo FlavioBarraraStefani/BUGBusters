@@ -1,5 +1,4 @@
 function right_chart_target(svg) {
-  // --- Constants & Config ---
   const pre = window._precomputed_target;
   const KEYS = pre.keys;
   const ribbonPadding = pre.config.ribbonPadding || 10;
@@ -10,10 +9,7 @@ function right_chart_target(svg) {
     colorMap[key] = COLORS.targetColors[i];
   });
 
-  // --- 1. Layout Calculations ---
-  // initial fallback; will be set properly after computing legend rows
-
-  // Use same preferredSize logic as attack chart and precompute legend rows
+  // ---Layout Calculations ---
   const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.2);
   const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
 
@@ -47,7 +43,6 @@ function right_chart_target(svg) {
     rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 100;
   }
 
-  // --- 2. Container Setup ---
   let container = svg.select('.targets-container');
   if (container.empty()) {
     container = svg.append('g').attr('class', 'targets-container');
@@ -60,9 +55,6 @@ function right_chart_target(svg) {
     return el;
   };
 
-  // --- 3. Groups (Order matters for Z-index) ---
-
-  // A. Overlay (Bottom - Catch background clicks to reset)
   let overlay = container.select('.interaction-overlay');
   if (overlay.empty()) {
     overlay = container.append('rect')
@@ -71,15 +63,8 @@ function right_chart_target(svg) {
       .style('pointer-events', 'all');
   }
 
-  // B. Ribbons (Above Overlay)
   const ribbonsGroup = container.selectChild('g.ribbons-group', 'g').attr('class', 'ribbons-group');
-
-  // C. Labels (Above Ribbons)
   const labelsGroup = container.selectChild('g.labels-group', 'g').attr('class', 'labels-group');
-
-  // D. Axis (Above everything for readability)
-  // Y axis removed — thresholds (dotted lines) will be used as reference lines
-
   let title = container.select('.main-chart-title');
         //creatae title if not exists
       if (title.empty()) {
@@ -114,28 +99,22 @@ function right_chart_target(svg) {
     return totalVal + totalPad;
   };
 
-  // --- 4. Core Update Function ---
   container._updateBump = (duration = 0) => {
-    // A. Read State
     const maxYearNow = +slider.property('value');
     const minYear = sliderRange[0];
     const isStart = maxYearNow === minYear;
 
-    // B. Slice Data
     const slicedTimeline = pre.timeline.filter(d => d.year <= maxYearNow);
 
-    // Fallback for visual rendering
     const visualTimeline = (isStart && slicedTimeline.length === 0 && pre.timeline.length > 0) ?
       [pre.timeline[0]] :
       slicedTimeline;
 
-    // C. Scales
     const xEnd = (visualTimeline.length === 1) ? minYear + 0.1 : maxYearNow;
     const x = d3.scaleLinear()
       .domain([minYear, xEnd])
       .range([leftPadAxis, rightPadAxis]);
 
-    // D. Y-Axis Scale
     const firstBinMax = (pre.timeline.length > 0) ? getStackHeight(pre.timeline[0]) : 100;
     const currentMaxStack = isStart ? firstBinMax : (d3.max(slicedTimeline, getStackHeight) || firstBinMax);
     const yMax = currentMaxStack * 1.05;
@@ -151,11 +130,9 @@ function right_chart_target(svg) {
       .attr('width', Math.max(0, rightPadAxis - leftPadAxis))
       .attr('height', (RIGHT_CHART_HEIGHT - RIGHT_CHART_MARGIN) - (RIGHT_CHART_MARGIN + MARGIN_TOP));
 
-    // Y axis removed: ensure it's not present
     container.selectAll('.y-axis-target').remove();
 
     // --- HORIZONTAL THRESHOLD LINES ---
-    // thresholds for targets chart
     const thresholds = [1000, 2000, 5000, 10000, 25000, 50000];
     const availableThresholds = thresholds.filter(t => t <= yMax).sort((a, b) => a - b);
     const thresholdsToShow = availableThresholds.slice(-3);
@@ -203,7 +180,6 @@ function right_chart_target(svg) {
     // Ensure thresholds sit behind ribbons and labels
     container.selectAll('.threshold-group').lower();
 
-    // --- F. Prepare Data (Ribbons & Labels) ---
     if (visualTimeline.length === 0) {
       ribbonsGroup.selectAll('*').remove();
       labelsGroup.selectAll('*').remove();
@@ -244,7 +220,6 @@ function right_chart_target(svg) {
       return { key, values, labelY };
     });
 
-    // --- G. Render Ribbons ---
     const area = d3.area()
       .x(d => x(d.x))
       .y0(d => y(d.y0)-3)
@@ -289,7 +264,6 @@ function right_chart_target(svg) {
       }
     }
 
-    // Apply Overlay Logic (Resets on click/hover)
     overlay
       .on('mousemove', () => updateVisuals(null))
       .on('click', () => {
@@ -297,7 +271,6 @@ function right_chart_target(svg) {
         updateVisuals(null);
       });
 
-    // --- APPLY RIBBONS ---
     const ribbons = ribbonsGroup.selectAll('.ribbon')
       .data(seriesData, d => d.key)
       .join(
@@ -327,7 +300,6 @@ function right_chart_target(svg) {
         exit => exit.remove()
       );
 
-    // --- H. Render Labels ---
     if (!showLegend && seriesData.length > 0) {
       labelsGroup.attr('transform', `translate(0, 0)`);
 
@@ -384,7 +356,6 @@ function right_chart_target(svg) {
       labelsGroup.selectAll('*').remove();
     }
 
-    // --- J. Legend Logic ---
     if (showLegend) {
       const legendFontSize = labelFontSize * (isSmallScreen() ? 0.75 : 1);
       let legendGroup = container.select('.top-legend');
@@ -436,7 +407,6 @@ function right_chart_target(svg) {
       const itemSpacing = 15;
       const lineHeight = legendFontSize + 8;
 
-      // Build an array of legend item elements and widths
       const items = [];
       legendItems.each(function() {
         const el = d3.select(this);
@@ -444,7 +414,6 @@ function right_chart_target(svg) {
         items.push({ element: el, width: w });
       });
 
-      // Greedy pack into the minimal number of rows given availableWidth
       const availW = RIGHT_CHART_WIDTH - 2 * RIGHT_CHART_MARGIN;
       const rowsPacked = [];
       let curRow = [];
@@ -466,7 +435,6 @@ function right_chart_target(svg) {
       const totalItems = items.length;
       const numCols = Math.ceil(totalItems / numRows);
 
-      // Distribute items into columns (top-to-bottom, left-to-right)
       const columns = Array.from({ length: numCols }, () => []);
       let ci = 0;
       for (let i = 0; i < totalItems; i++) {
@@ -523,7 +491,6 @@ function right_chart_target(svg) {
     }
   };
 
-  // 4. Trigger
   stepAnimationRight = (transition = true) => {
     const duration = transition ? playIntervalMs : 0;
     xAxis._updateAxis(0);
@@ -542,7 +509,6 @@ function precompute_target(raw) {
     return;
   }
 
-  // Create a quick lookup map by year for O(1) access
   const lookup = {};
   raw.timeline.forEach((item, index) => {
     lookup[item.year] = index;

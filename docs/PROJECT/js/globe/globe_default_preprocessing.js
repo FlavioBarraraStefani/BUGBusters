@@ -13,9 +13,6 @@ function precomputeColormap() {
     .range(COLORMAP)
     .interpolate(d3.interpolateRgb);
   
-  // Generate K interpolated colors with power distribution
-  // Using exponent < 1 means: low indices cover MORE of the color spectrum
-  // This gives better differentiation for lower values
   INTERPOLATED_COLORMAP = [];
   for (let i = 0; i < COLORMAP_STEPS; i++) {
     const normalizedIdx = i / (COLORMAP_STEPS - 1);
@@ -46,7 +43,7 @@ function getResampledEdge(lat, longStart, longEnd, steps = 4) {
 }
 
 // ==========================================
-// 1. PRECOMPUTE LOGIC
+// PRECOMPUTE LOGIC
 // ==========================================
 
 function precomputeGlobeData(data) {
@@ -145,18 +142,14 @@ function precomputeGlobeData(data) {
 let showColormapLegend = null;
 let hideColormapLegend = null;
   
-  // Legend dimensions
 let LEGEND_MARGIN = 10;
 let LEGEND_THICKNESS = 15;  // width if vertical, height if horizontal
 let LEGEND_LENGTH;
 let LEGEND_PADDING = 10;
 
-function createLegendGlobe() {
-  // Determine orientation: vertical (width > height) or horizontal (height > width)
-  
+function createLegendGlobe() { 
   LEGEND_LENGTH = (!STACKED_LAYOUT_PREFERRED ? LEFT_CHART_HEIGHT : LEFT_CHART_WIDTH) * 0.8;
 
-  // Get canvas-wrapper offset relative to canvas-left (legend's positioning parent)
   const canvasLeft = document.getElementById('canvas-left');
   const canvasWrapper = canvasLeft?.querySelector('.canvas-wrapper');
   let wrapperOffsetLeft = 0;
@@ -166,12 +159,10 @@ function createLegendGlobe() {
     wrapperOffsetTop = canvasWrapper.offsetTop;
   }
 
-  // Title dimensions
   const TITLE_FONT_SIZE = labelFontSize;
   let TITLE_HEIGHT = 30;  // Space for title (increased for larger font)
   const VERTICAL_LEGEND_WIDTH = 100;  // Width for vertical legend to allow text wrapping
 
-  // Style the legend container
   if (!STACKED_LAYOUT_PREFERRED) {
     TITLE_HEIGHT  += 20 // extra padding for horizontal layout
     LEGEND_MARGIN += 20
@@ -212,7 +203,7 @@ function createLegendGlobe() {
         .attr('height', LEGEND_LENGTH + TITLE_HEIGHT)
         .style('overflow', 'not visible');
       
-      // Add title at top with text wrapping for vertical layout
+
       const titleGroup = legendSvg.append('text')
         .attr('class', 'legend-title')
         .attr('x', VERTICAL_LEGEND_WIDTH / 2)
@@ -222,10 +213,9 @@ function createLegendGlobe() {
         .style('font-weight', 'bold')
         .style('fill', '#333');
       
-      // Split title into multiple lines for vertical layout
       const words = LEGEND_TITLE.split(' ');
-      const line1 = words.slice(0, 2).join(' ');  // "Cumulative #"
-      const line2 = words.slice(2).join(' ');      // "of attacks"
+      const line1 = words.slice(0, 2).join(' '); 
+      const line2 = words.slice(2).join(' ');  
       
       titleGroup.append('tspan')
         .attr('x', VERTICAL_LEGEND_WIDTH / 2)
@@ -242,7 +232,6 @@ function createLegendGlobe() {
         .attr('height', LEGEND_THICKNESS + TITLE_HEIGHT + 20)
         .style('overflow', 'not visible');
       
-      // Add title at top (single line for horizontal)
       legendSvg.append('text')
         .attr('class', 'legend-title')
         .attr('x', LEGEND_LENGTH / 2)
@@ -254,7 +243,6 @@ function createLegendGlobe() {
         .text(LEGEND_TITLE);
     }
 
-    // Create gradient definition
     const defs = legendSvg.append('defs');
     const gradient = defs.append('linearGradient')
       .attr('id', 'colormap-gradient-html');

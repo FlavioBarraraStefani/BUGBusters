@@ -26,10 +26,7 @@ function toggleButtons(isDisabled) {
     });
 }
 
-/**
- * Toggle category selection
- * @param {string} category - 'group', 'attack', 'target', or null
- */
+
 function selectCategory(category) {
   const buttons = document.querySelectorAll('.category-btn');
 
@@ -66,9 +63,7 @@ function selectCategory(category) {
   updateMainCanvases();
 }
 
-/**
- * Update both main canvases with current/previous category info
- */
+
 main_plots_data = null;
 function updateMainCanvases(data) {
   const leftCol = document.getElementById('canvas-left');

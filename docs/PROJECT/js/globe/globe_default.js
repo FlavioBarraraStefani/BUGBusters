@@ -21,14 +21,11 @@ function globe_default() {
   }
 
   // --- HELPER: UPDATE TOOLTIP CONTENT ---
-  // We extract this to a function so we can call it from MouseOver AND the Animation Loop
   function updateTooltipContent(d, year) {
     const count = yearLookup[year][d.id] || 0;
     
-    // 1. Get Countries
     const countryNames = getIntersectingCountries(d);
 
-    // 2. Update HTML
     tooltip.html(`
       <strong>Attacks: ${count}</strong><br/>
       <span style="color:#ccc; font-size: 0.9em;">${countryNames}</span>
@@ -46,7 +43,6 @@ function globe_default() {
     features.forEach(country => {
        if (d3.geoContains(country, tasselGeometry.properties.center)) {
          const name = country.properties.name || "Unknown";
-         // --- FIX: Filter out "Ocean" ---
          if (name !== "Ocean") {
             intersecting.push(name);
          }
@@ -81,36 +77,26 @@ function globe_default() {
         if (year == sliderRange[0]) return;
         const count = yearLookup[year][d.id] ;
         
-        // Safety check
         if (!count || !isFront(d.properties.center[0], d.properties.center[1])) return;
 
-        // 1. Set Global State
         hoveredTasselData = d;
 
-        // 2. Initial Render
         tooltip.style("display", "block")
                .style("left", (event.pageX + 15) + "px")
                .style("top", (event.pageY - 15) + "px");
         
         updateTooltipContent(d, year);
 
-        // 3. Visual Highlight
         d3.select(this).attr('stroke-width', 3).attr('stroke', 'white');
       })
 
       // --- MOUSEOUT ---
       .on('mouseout', function() {
-        // 1. Clear State
         hoveredTasselData = null;
-
-        // 2. Hide Tooltip
         tooltip.style("display", "none");
-
-        // 3. Reset Visuals
         d3.select(this).attr('stroke-width', 1).attr('stroke', 'black');
       })
       
-      // Update position if mouse moves within the tile
       .on('mousemove', function(event) {
         tooltip.style("left", (event.pageX + 15) + "px")
                .style("top", (event.pageY - 15) + "px");
@@ -120,8 +106,6 @@ function globe_default() {
   function updateTassels(year, { transition = false, duration = 0 } = {}) {
     if (!tasselSelection) return;
 
-    // --- FIX: LIVE TOOLTIP UPDATE ---
-    // If we are currently hovering over a tile, force the tooltip to update its number
     if (hoveredTasselData) {
        updateTooltipContent(hoveredTasselData, year);
     }
@@ -182,7 +166,6 @@ function globe_default() {
 
   const currentYear = +slider.property('value');
   
-  // Start up animation
   updateTassels(currentYear, { transition: true, duration: 1000 }); 
   
   updateLegendVisibility(currentYear, true);
@@ -204,7 +187,6 @@ function globe_default() {
     hoveredTasselData = null;
 
     if (tasselSelection) {
-      // Reset any visual highlight on tassels
       tasselSelection
         .attr('d', path)
         .attr('stroke-width', 1)

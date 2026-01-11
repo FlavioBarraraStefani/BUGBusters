@@ -1,21 +1,15 @@
 function right_chart_attack(svg) {
-  // Use precomputed data
   const pre = window._precomputed_attack;
   const data = pre.data;
   const attackTypes = CATEGORIES.attack;
   const attackColors = COLORS.attackColors;
   const minYear = sliderRange[0];
 
-  // --- 0. STATE: Track Mouse Position ---
-  let lastMouseX = null; // <--- ADDED
-
-  // --- 1. Layout Calculations ---
-  // Set padding differently when legend is shown
+  let lastMouseX = null;
 
   const preferredSize = labelFontSize * (isSmallScreen() ? 1 : 1.2);
   const showLegend = isSmallScreen() || (!STACKED_LAYOUT_PREFERRED && !isXLScreen());
 
-  // Precompute legend rows so MARGIN_TOP can depend on actual legend height
   const legendFontSize = labelFontSize * (isSmallScreen() ? 1 : 1.5);
   let legend_rows = 0;
   if (showLegend) {
@@ -26,7 +20,7 @@ function right_chart_attack(svg) {
     attackTypes.forEach(type => {
       const label = type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       const approxLabelWidth = label.length * (legendFontSize * 0.6);
-      const approxItemWidth = 12 /* swatch */ + 6 /* gap */ + approxLabelWidth + 8 /* padding */;
+      const approxItemWidth = 12 + 6  + approxLabelWidth + 8;
       if (currentRowWidth > 0 && (currentRowWidth + approxItemWidth) > availableWidth) {
         legend_rows++;
         currentRowWidth = approxItemWidth + itemSpacingEstimate;
@@ -46,20 +40,18 @@ function right_chart_attack(svg) {
     rightPadAxis = RIGHT_CHART_WIDTH - RIGHT_CHART_MARGIN - 160;
   }
 
-  // Ensure container exists
   let container = svg.select('.attacks-container');
   if (container.empty()) {
     container = svg.append('g').attr('class', 'attacks-container');
 
-    // 1. Create Overlay
+    // Create Overlay
     container.append('rect')
       .attr('class', 'interaction-overlay')
       .attr('fill', 'transparent')
       .style('pointer-events', 'all');
 
-    // Note: Y axis removed — thresholds (dotted lines) are used instead
 
-    // 3. Hover Line
+    // Hover Line
     container.append('line')
       .attr('class', 'hover-line')
       .attr('stroke', COLORS.RIGHT_CHART.axisLine)
@@ -111,8 +103,6 @@ function right_chart_attack(svg) {
   }
   }
 
-
-  // --- 2. Update Function ---
   container._updateLines = (duration = 0) => {
     const maxYearNow = +slider.property('value');
     const minYear = sliderRange[0];
@@ -122,7 +112,6 @@ function right_chart_attack(svg) {
 
     if (visibleData.length === 0 && !isStart) return;
 
-    // Calculate Dynamic Max Y
     let currentMax = 0;
     visibleData.forEach(d => {
       if (d.rowMax > currentMax) currentMax = d.rowMax;
@@ -149,11 +138,9 @@ function right_chart_attack(svg) {
     const minPxPerTick = labelFontSize + 2;
     const numTicks = Math.max(2, Math.min(5, Math.floor(availableHeight / minPxPerTick)));
 
-    // Y axis removed: ensure any existing axis group is removed
     container.selectAll('.y-axis-attack').remove();
 
     // --- HORIZONTAL THRESHOLD LINES ---
-    // Draw up to 3 largest thresholds that fit within yMax
     const thresholds = [100, 500, 1000, 5000, 10000, 20000, 50000];
     const availableThresholds = thresholds.filter(t => t <= yMax).sort((a, b) => a - b);
     const thresholdsToShow = availableThresholds.slice(-3);
@@ -217,7 +204,7 @@ function right_chart_attack(svg) {
 
     // --- TOOLTIP LOGIC (UPDATED) ---
     const hideTooltip = () => {
-      lastMouseX = null; // <--- Clear state
+      lastMouseX = null;
       container.select('.hover-line').style('opacity', 0);
       d3.select('#attack-tooltip').style('opacity', 0);
     };
@@ -225,17 +212,15 @@ function right_chart_attack(svg) {
     const updateTooltip = (event) => {
       let mx;
 
-      // 1. Determine X coordinate (from Event or State)
       if (event) {
         [mx] = d3.pointer(event, container.node());
-        lastMouseX = mx; // Save state
+        lastMouseX = mx; 
       } else if (lastMouseX !== null) {
-        mx = lastMouseX; // Use saved state
+        mx = lastMouseX;
       } else {
         return;
       }
 
-      // 2. Invert using *current* scale
       const yearRaw = x.invert(mx);
       let year = Math.round(yearRaw);
 
@@ -273,7 +258,6 @@ function right_chart_attack(svg) {
       const tooltip = d3.select('#attack-tooltip');
       tooltip.html(html).style('opacity', 1);
 
-      // 3. Update Position (Only if real event occurred)
       if (event) {
         const tNode = tooltip.node();
         const tRect = tNode.getBoundingClientRect();
@@ -290,7 +274,6 @@ function right_chart_attack(svg) {
       }
     };
 
-    // Attach Listeners to Overlay
     container.select('.interaction-overlay')
       .on('mousemove', updateTooltip)
       .on('touchmove', (e) => {
@@ -352,7 +335,6 @@ function right_chart_attack(svg) {
     const nameLabelData = (!showLegend && !isStart) ? series : [];
     const valueLabelData = (showLegend && !isStart) ? series : [];
 
-    // Join Name Labels (right-side textual names when legend is hidden)
     const labels = container.selectAll('.line-label')
       .data(nameLabelData, d => d.type)
       .join(
@@ -395,19 +377,6 @@ function right_chart_attack(svg) {
       return s.padStart(3, ' ');
     };
 
-    // Helper: parse displayed value back to numeric
-    const parseDisplayedValue = (txt) => {
-      if (!txt) return 0;
-      const t = txt.trim();
-      if (t.endsWith('K')) {
-        const k = parseInt(t.slice(0, -1)) || 0;
-        return k * 1000;
-      }
-      return parseInt(t.replace(/,/g, '')) || 0;
-    };
-
-    // Join Value Labels (numeric right-side values when legend is shown)
-    // Move them further right and remove animated counting — simple rewrite
     const valueLabels = container.selectAll('.line-value-label')
       .data(valueLabelData, d => d.type)
       .join(
@@ -441,7 +410,6 @@ function right_chart_attack(svg) {
         exit => exit.transition().duration(duration).style('opacity', 0).remove()
       );
 
-    // Label Collision Logic (compute ideal positions from series end values)
     const nodes = [];
     series.forEach(d => {
       const lastVal = d.values[d.values.length - 1];
@@ -516,7 +484,6 @@ function right_chart_attack(svg) {
       }
     });
 
-    // --- LEGEND LOGIC (Table-like centered layout, matching target chart) ---
     if (showLegend) {
       const legendFontSize = labelFontSize * (isSmallScreen() ? 0.75 : 1);
       let legendGroup = container.select('.top-legend');
@@ -541,7 +508,7 @@ function right_chart_attack(svg) {
                 showModal("attack", d.type);
                 event.stopPropagation();
               })
-              .on('mouseover', (e, d) => {/* noop: ribbons handle hover */})
+              .on('mouseover', (e, d) => {})
               .on('mouseout', () => {});
 
             g.append('rect')
@@ -651,7 +618,6 @@ function right_chart_attack(svg) {
       container.select('.top-legend').remove();
     }
 
-    // --- AUTO UPDATE TOOLTIP ON ANIMATION ---
     if (lastMouseX !== null) {
       updateTooltip();
     }
@@ -681,7 +647,7 @@ function precompute_attack(rawData) {
     // Pre-calculate max value for this specific year row (optimization for Y-scale)
     let rowMax = 0;
     attackTypes.forEach(type => {
-      const val = +d[type] || 0; // Handle missing/NaN
+      const val = +d[type] || 0; 
       obj[type] = val;
       if (val > rowMax) rowMax = val;
     });

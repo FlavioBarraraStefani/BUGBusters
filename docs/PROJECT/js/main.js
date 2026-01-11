@@ -2,7 +2,6 @@ const API_URL = "https://api.github.com/repos/supernino02/BugBuster-project/cont
 const authStatusEl = document.getElementById("auth-status");
 const tokenInputEl = document.getElementById("github-token");
 const authSectionEl = document.getElementById("api-auth");
-// Define as an array of tuples (key, value), allowing for key duplicates
 
 // Category definitions
 const CATEGORIES = {
@@ -15,7 +14,6 @@ const COLORS = {
   // Structured color definitions
   GLOBE: {
     ocean: "rgba(200, 209, 211, 0.84)",
-    //ocean: '#b4dbe7ff',
     country: {
       stroke: "#171717ff",
       fill: "#f4f3f3ff"
@@ -250,7 +248,6 @@ async function initChartsAfterAuth() {
   // Explicitly define ALL charts to load (main page + all modal charts)
   const chartsToLoad = [
     // ===== GROUP CATEGORY =====
-    // Note: We use the SAME file for all 3 because the JSON contains keys for each choice
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'ISIL', container: 'plot_group_ISIL_1' },
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'taliban', container: 'plot_group_taliban_1' },
     { file: 'PROJECT/GROUPS/groups_temporal_cumulative.json', func: draw_group_1, choice: 'SL', container: 'plot_group_SL_1' },
@@ -274,7 +271,6 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/GROUPS/groups_casualty_bins.json', func: draw_group_5, choice: 'SL', container: 'plot_group_SL_5' },
 
     // ===== ATTACK CATEGORY =====
-    // For each choice in ['explosion', 'armed_assault', 'assassination', 'hostage_taking', 'infrastructure_attack']
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'explosion', container: 'plot_attack_explosion_1' },
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'armed_assault', container: 'plot_attack_armed_assault_1' },
     { file: 'PROJECT/ATTACKS/radar_chart.json', func: draw_attack_1, choice: 'assassination', container: 'plot_attack_assassination_1' },
@@ -305,6 +301,7 @@ async function initChartsAfterAuth() {
     { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'government', container: 'plot_target_government_2' },
     { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'business', container: 'plot_target_business_2' },
     { file: 'PROJECT/TARGETS/target_radial_tree.json', func: draw_target_2, choice: 'transportations', container: 'plot_target_transportations_2' },
+    
     // ===== MAIN PAGE CHARTS =====
     { file: "PROJECT/CATEGORIES/globe.json", func: (data) => { window.globe_data = data }, choice: null, container: "body" },
     {

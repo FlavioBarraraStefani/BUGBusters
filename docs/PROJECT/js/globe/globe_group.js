@@ -1,13 +1,11 @@
 function globe_group() {
   const groupData = window.group_cumulate_country;
 
-  // 1. Define Constants for "Old" and "New" values
-  const ORIGINAL_STROKE = COLORS.GLOBE.country.stroke; // Likely '#999' or similar
+  const ORIGINAL_STROKE = COLORS.GLOBE.country.stroke; 
   const ORIGINAL_WIDTH = 0.75;
   const HOVER_STROKE = "black";
   const HOVER_WIDTH = 3;
 
-  // Compute max cumulative per group (not universal)
   const maxCumulativeByGroup = {};
   Object.values(groupData).forEach(countryEntry => {
     Object.entries(countryEntry).forEach(([group, yearMap]) => {
@@ -18,7 +16,6 @@ function globe_group() {
     });
   });
 
-  // Create a color interpolator per group
   const colorInterpByGroup = {};
   Object.entries(maxCumulativeByGroup).forEach(([group, maxVal]) => {
     colorInterpByGroup[group] = d3.scaleSqrt()
@@ -27,12 +24,10 @@ function globe_group() {
       .clamp(true);
   });
 
-  // 2. State Tracking
   let hoveredCountry = null; // Stores the ID (name) of the currently hovered country
   let lastMouseX = 0;
   let lastMouseY = 0;
 
-  // 3. Tooltip Setup
   let tooltip = d3.select('#globe-tooltip');
   if (tooltip.empty()) {
     tooltip = d3.select('body').append('div')
@@ -49,7 +44,6 @@ function globe_group() {
       .style('font-size', `${labelFontSize}px`);
   }
 
-  // Helper: Logic to render the HTML content
   const renderTooltip = (countryName, dominantGroup, dominantCount, year) => {
     if (!dominantGroup) {
       tooltip.style('opacity', 0);
@@ -70,23 +64,16 @@ function globe_group() {
       .style('top', (lastMouseY - 15) + 'px');
   };
 
-  // 4. Central Logic for Updating a Country
-  // This handles both Animation updates AND Hover updates
   const updateCountryShape = (sel, d, year, animate = false) => {
     const countryName = d.properties.name;
     const entry = groupData[countryName];
     
     // Check if this specific country is the one being hovered
     const isHovered = (hoveredCountry === countryName);
-
-    // --- APPLY STYLES (Declarative) ---
-    // If hovered, use Highlight values; otherwise, use Original values
     sel.attr("stroke", isHovered ? HOVER_STROKE : ORIGINAL_STROKE)
        .attr("stroke-width", isHovered ? HOVER_WIDTH : ORIGINAL_WIDTH);
 
     if (isHovered) sel.raise(); // Ensure thick border isn't covered by neighbors
-
-    // --- CALCULATE DATA ---
     let dominantGroup = null;
     let dominantCount = 0;
 
@@ -105,8 +92,6 @@ function globe_group() {
     }
 
     // --- LIVE TOOLTIP UPDATE ---
-    // If the data changed because the year changed (animation), 
-    // we must re-render the tooltip immediately if this is the hovered country.
     if (isHovered) {
        if (dominantGroup) {
           renderTooltip(countryName, dominantGroup, dominantCount, year);
@@ -116,14 +101,12 @@ function globe_group() {
     }
 
     // --- COLORING & EVENTS ---
-    // Helper to check if a named transition is active on this element
     const hasActiveTransition = (node, name) => {
       const t = node.__transition;
       return t && Object.values(t).some(tr => tr.name === name);
     };
 
     if (!dominantGroup) {
-      // Grey out if no data
       if (animate) {
         sel.transition("fill-color").duration(playIntervalMs)
            .attr('fill', COLORS.GLOBE.country.fill);
@@ -133,7 +116,6 @@ function globe_group() {
       }
       sel.attr('data-group', null);
       
-      // Clean up events but KEEP mouseout to ensure state resets if we leave
       sel.on('click', null)
          .on('mousemove', null)
          .on('mouseout', function() {
@@ -163,26 +145,21 @@ function globe_group() {
     // Attach Interactions
     sel.on('click', () => { stopAnimation(); showModal("group", dominantGroup); })
        .on('mousemove', function(event) {
-          // 1. Update Global State
           lastMouseX = event.pageX;
           lastMouseY = event.pageY;
           hoveredCountry = countryName; // "Lock" this country as the active one
 
-          // 2. Immediate Visual Feedback (Waiting for next frame is too slow)
           d3.select(this)
             .attr("stroke", HOVER_STROKE)
             .attr("stroke-width", HOVER_WIDTH)
             .raise();
 
-          // 3. Render Tooltip
           renderTooltip(countryName, dominantGroup, dominantCount, year);
        })
        .on('mouseout', function() {
-          // 1. Clear Global State
           hoveredCountry = null;
           tooltip.style('opacity', 0);
 
-          // 2. Restore "Old" Values immediately
           d3.select(this)
             .attr("stroke", ORIGINAL_STROKE)
             .attr("stroke-width", ORIGINAL_WIDTH);
@@ -191,10 +168,9 @@ function globe_group() {
   };
 
   // =============================
-  // 5. OVERWRITE GLOBAL FUNCTIONS
+  // OVERWRITE GLOBAL FUNCTIONS
   // =============================
 
-  // This function is called by your main loopAnimation
   stepAnimation = (transition = true) => {
     const year = +slider.property('value');
     g.selectAll('path.country')
@@ -203,16 +179,13 @@ function globe_group() {
       });
   };
 
-  // This function is called when dragging/rotating (high performance)
   updateGlobe = () => {
     if (!needsUpdate) return;
     needsUpdate = false;
 
-    // Hide tooltip and clear hovered state to remove any lingering UI
     if (tooltip) tooltip.style('opacity', 0);
     hoveredCountry = null;
 
-    // Redraw country paths and reset any hover/highlight visuals
     g.selectAll('path.country')
       .attr('d', path)
       .attr('stroke', ORIGINAL_STROKE)

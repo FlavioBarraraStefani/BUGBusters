@@ -1,17 +1,13 @@
 function globe_attack() {
-
-  // 1. Define Constants (Same as globe_group)
   const ORIGINAL_STROKE = COLORS.GLOBE.country.stroke; 
   const ORIGINAL_WIDTH = 0.75;
   const HOVER_STROKE = "black";
   const HOVER_WIDTH = 3;
 
-  // 2. State Tracking
   let hoveredCountry = null;
   let lastMouseX = 0;
   let lastMouseY = 0;
 
-  // 3. Tooltip Setup
   let tooltip = d3.select('#globe-tooltip');
   if (tooltip.empty()) {
     tooltip = d3.select('body').append('div')
@@ -28,7 +24,6 @@ function globe_attack() {
       .style('font-size', `${labelFontSize}px`);
   }
 
-  // --- Helper: Map attack string to Color ---
   const getAttackColor = (type) => {
     if (type === 'others') return COLORS.defaultComparison;
     const idx = CATEGORIES.attack.indexOf(type);
@@ -38,7 +33,6 @@ function globe_attack() {
     return COLORS.defaultComparison; 
   };
 
-  // --- Helper: Render Tooltip ---
   const renderTooltip = (countryName, type, count, year) => {
     if (!type) {
       tooltip.style('opacity', 0);
@@ -46,7 +40,6 @@ function globe_attack() {
     }
     const color = getAttackColor(type);
     
-    // Handle missing count (if JSON only has strings)
     const countText = (count !== null && count !== undefined) ? `: ${count} Attacks` : '';
 
     const html = `<strong>${countryName} (${year})</strong><br/>
@@ -61,7 +54,6 @@ function globe_attack() {
       .style('top', (lastMouseY - 15) + 'px');
   };
 
-  // 4. Central Logic for Updating a Country
   const updateCountryShape = (sel, d, year, animate = false) => {
     const countryName = d.properties.name;
     const intYear = Math.round(year);
@@ -70,19 +62,16 @@ function globe_attack() {
     // Check hover state
     const isHovered = (hoveredCountry === countryName);
 
-    // --- APPLY STYLES (Stroke Highlight) ---
     sel.attr("stroke", isHovered ? HOVER_STROKE : ORIGINAL_STROKE)
        .attr("stroke-width", isHovered ? HOVER_WIDTH : ORIGINAL_WIDTH);
 
     if (isHovered) sel.raise();
 
-    // --- RETRIEVE DATA ---
     let dominantType = null;
     let dominantCount = null;
 
     if (yearData && yearData[countryName]) {
         const raw = yearData[countryName];
-        // Support both simple String (current) or Object {type, count} (future)
         if (typeof raw === 'object') {
             dominantType = raw.type;
             dominantCount = raw.count;
@@ -91,7 +80,6 @@ function globe_attack() {
         }
     }
 
-    // --- LIVE TOOLTIP UPDATE ---
     if (isHovered) {
        if (dominantType) {
          renderTooltip(countryName, dominantType, dominantCount, intYear);
@@ -100,8 +88,6 @@ function globe_attack() {
        }
     }
 
-    // --- COLORING & EVENTS ---
-    // Helper to check if a named transition is active on this element
     const hasActiveTransition = (node, name) => {
       const t = node.__transition;
       return t && Object.values(t).some(tr => tr.name === name);
@@ -115,7 +101,7 @@ function globe_attack() {
         sel.attr('fill', COLORS.GLOBE.country.fill);
       }
       
-      // Clear events but KEEP mouseout
+
       sel.on('click', null)
          .on('mousemove', null)
          .on('mouseout', function() {
@@ -126,10 +112,10 @@ function globe_attack() {
       return;
     }
 
-    // Case: Data Exists
+
     const targetColor = getAttackColor(dominantType);
 
-    // Apply Fill
+
     if (animate) {
        sel.transition("fill-color").duration(playIntervalMs)
           .ease(d3.easeLinear)
@@ -138,21 +124,18 @@ function globe_attack() {
        sel.attr('fill', targetColor);
     }
 
-    // Attach Interactions
+
     sel.on('click', () => { stopAnimation(); showModal("attack", dominantType); })
        .on('mousemove', function(event) {
-          // 1. Update State
           lastMouseX = event.pageX;
           lastMouseY = event.pageY;
           hoveredCountry = countryName;
 
-          // 2. Immediate Visual Feedback
           d3.select(this)
             .attr("stroke", HOVER_STROKE)
             .attr("stroke-width", HOVER_WIDTH)
             .raise();
 
-          // 3. Render Tooltip
           renderTooltip(countryName, dominantType, dominantCount, intYear);
        })
        .on('mouseout', function() {
@@ -167,7 +150,7 @@ function globe_attack() {
   };
 
   // =============================
-  // 5. OVERWRITE GLOBAL FUNCTIONS
+  // OVERWRITE GLOBAL FUNCTIONS
   // =============================
   stepAnimation = (transition = true) => {
     const year = +slider.property('value');
@@ -181,18 +164,15 @@ function globe_attack() {
     if (!needsUpdate) return;
     needsUpdate = false;
 
-    // Hide tooltip and clear hovered state to remove any lingering UI
     if (tooltip) tooltip.style('opacity', 0);
     hoveredCountry = null;
 
-    // Redraw country paths and reset any hover/highlight visuals
     g.selectAll('path.country')
       .attr('d', path)
       .attr('stroke', ORIGINAL_STROKE)
       .attr('stroke-width', ORIGINAL_WIDTH);
   };
 
-  // Initial Render
   rotateOnStart = true;
   playIntervalMs = 400; 
 }
