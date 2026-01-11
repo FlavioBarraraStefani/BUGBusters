@@ -11,7 +11,7 @@ function draw_target_2(data, choice, containerId) {
 
   svg.selectAll('*').remove();
 
-  // 1. SETUP DIMENSIONI
+  // 1. SETUP 
   const width = CHART_WIDTH;
   const height = CHART_HEIGHT;
   
@@ -20,7 +20,6 @@ function draw_target_2(data, choice, containerId) {
     .attr('height', '100%')
     .attr('viewBox', `0 0 ${width} ${height}`);
   
-  // Non trasliamo più al centro, lavoriamo con coordinate assolute 0,0
   const g = svg.append('g');
 
   const FONT_SIZE = (typeof chartLabelFontSize !== 'undefined') ? chartLabelFontSize - 1 : 9;
@@ -42,90 +41,58 @@ function draw_target_2(data, choice, containerId) {
   const sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([4, 15]); 
 
   // 4. MANUAL LAYOUT CALCULATION (Left-to-Right Fixed Positions)
-  
-  // A. Root Node (Fixed Left Center)
   root.x = height * 0.1;
   root.y = width * 0.333; // 15% from left
 
-  // B. Categories (Level 1)
-  // Vogliamo 5 categorie allineate verticalmente al centro (50% width)
-  // La categoria SCELTA deve essere al centro (indice 2 su 0-4)
   if (root.children) {
       const cats = root.children;
-      const totalCats = cats.length; // Dovrebbe essere 5
+      const totalCats = cats.length; 
       
-      // Troviamo l'indice della scelta attuale
       const choiceIndex = cats.findIndex(d => d.data.name === choice);
       
-      // Riordiniamo l'array 'cats' affinché 'choice' sia al centro visivo?
-      // Oppure calcoliamo le posizioni in modo che choice finisca a y = height/2.
-      // Facciamo un sort personalizzato: mettiamo choice al centro dell'array.
-      // Esempio target ordine: [0, 1, CHOICE, 3, 4]
-      
-      // Creiamo un nuovo array ordinato per la visualizzazione
       let orderedCats = [];
       const others = cats.filter(d => d.data.name !== choice);
       
-      // Logica semplice: prendi metà degli altri, poi choice, poi il resto
       const half = Math.floor(others.length / 2);
       orderedCats = [...others.slice(0, half), cats[choiceIndex], ...others.slice(half)];
       
-      // Assegniamo coordinate
-      const availableH = height * 0.8; // Usiamo 80% dell'altezza
+      const availableH = height * 0.8; 
       const startY = (height - availableH) / 2;
       const stepY = availableH / (totalCats - 1 || 1);
 
       orderedCats.forEach((node, i) => {
-          node.x = startY + i * stepY; // x è verticale in d3 tree logic, ma qui usiamo x come verticale per coerenza mentale?
-          // ATTENZIONE: In SVG standard x=orizzontale, y=verticale.
-          // Nel codice precedente usavamo tree radiale. Qui usiamo cartesiano.
-          // Usiamo x per orizzontale e y per verticale.
+          node.x = startY + i * stepY;
           
-          node.y = startY + i * stepY; // Coordinata Y verticale
-          node.x = width * 0.25;        // Coordinata X orizzontale (centro)
+          node.y = startY + i * stepY; 
+          node.x = width * 0.25;       
           
-          // Importante: sovrascriviamo l'oggetto originale in 'root.children' con le nuove coordinate?
-          // orderedCats contiene riferimenti agli oggetti in root.children, quindi sì.
       });
 
-      // C. Subcategories (Level 2) - Solo per la scelta
-      // Devono essere espansi a destra della scelta
       const choiceNode = cats[choiceIndex];
       if (choiceNode.children) {
           const subs = choiceNode.children;
           const totalSubs = subs.length;
           
-          // Ventaglio a destra (85% width)
-          // Centrato verticalmente sulla posizione della categoria scelta (che è height/2 se tutto va bene)
-          const subStartY = choiceNode.y - (availableH * 0.25); // Un po' più compatti
+          const subStartY = choiceNode.y - (availableH * 0.25); 
           const subStepY = (availableH * 0.5) / (totalSubs - 1 || 1);
 
           subs.forEach((sub, i) => {
-              sub.x = width * 0.4; // A destra
+              sub.x = width * 0.4; 
               sub.y = subStartY + i * subStepY;
           });
       }
   }
 
-  // Flatten nodes for drawing
   const nodes = root.descendants();
   const links = root.links();
 
-  // Filtriamo i link: mostriamo solo quelli verso le categorie, e dalla scelta ai sottotipi.
-  // Gli altri sottotipi (se esistono nei dati ma non posizionati) avranno coordinate undefined o vecchie.
-  // Il nostro layout manuale ha toccato solo i nodi visibili.
-  // Filtriamo nodes che hanno x e y definiti.
   const visibleNodes = nodes.filter(d => d.x !== undefined && d.y !== undefined);
   const visibleLinks = links.filter(l => l.source.x !== undefined && l.target.x !== undefined);
 
   update(visibleNodes, visibleLinks);
 
-  // ---------------------------------------------------------
-  // RENDER FUNCTION
-  // ---------------------------------------------------------
   function update(nodes, links) {
       
-      // A. LINKS (Bezier orizzontale)
       const linkGen = d3.linkHorizontal()
           .x(d => d.x)
           .y(d => d.y);
@@ -139,16 +106,15 @@ function draw_target_2(data, choice, containerId) {
           .attr("stroke-width", 1.5)
           .attr("d", linkGen)
           .transition().duration(duration)
-          .attr("d", linkGen); // Animazione se ci fosse cambio stato, qui è statico ma fluido al resize
+          .attr("d", linkGen); 
 
-      // B. NODES
       const nodeGroups = g.selectAll('g.node')
           .data(nodes, d => d.data.name)
           .join(
               enter => {
                   const grp = enter.append('g').attr('class', 'node');
                   grp.attr("transform", d => `translate(${d.x},${d.y})`);
-                  grp.append('circle').attr('r', 0); // Animazione raggio
+                  grp.append('circle').attr('r', 0); 
                   grp.append('text').attr('class', 'outline').style('opacity', 0);
                   grp.append('text').attr('class', 'main').style('opacity', 0);
                   return grp;
@@ -157,11 +123,9 @@ function draw_target_2(data, choice, containerId) {
               exit => exit.remove()
           );
 
-      // Transizione posizione
       nodeGroups.transition().duration(duration)
           .attr("transform", d => `translate(${d.x},${d.y})`);
 
-      // Cerchi
       nodeGroups.select('circle')
           .transition().duration(duration)
           .attr('r', d => sizeScale(d.data.value))
@@ -170,18 +134,11 @@ function draw_target_2(data, choice, containerId) {
           .style("stroke-width", 2)
           .style("cursor", "default");
 
-      // Eventi Mouse (riattaccati per sicurezza su merge)
       nodeGroups.select('circle')
           .on("mouseover", (event, d) => showTooltip(event, d))
           .on("mousemove", moveTooltip)
           .on("mouseout", hideTooltip);
 
-      // --- LABELS ---
-      // Posizionamento testo: 
-      // Root -> Sopra/Sotto? O nascosto.
-      // Categorie -> Sopra/Sotto il nodo per non coprire il link?
-      // Sottotipi -> A destra del nodo.
-      
       nodeGroups.each(function(d) {
           const grp = d3.select(this);
           const r = sizeScale(d.data.value);
@@ -192,20 +149,15 @@ function draw_target_2(data, choice, containerId) {
           let anchor = "middle";
 
           if (d.depth === 0) {
-              // Root: Label non richiesta ("nascosta" o sotto)
-              // Richiesta precedente: "rimuovi quella di root" -> return empty string in helper
           } else if (d.depth === 1) {
-              // Categorie: Testo sotto il cerchio per pulizia
               dy = r + 10;
               anchor = "middle";
           } else if (d.depth === 2) {
-              // Sottotipi: Testo a destra
               dx = r + 8;
-              dy = 4; // Centrato verticalmente approx
+              dy = 4; 
               anchor = "start";
           }
 
-          // Update Outline
           grp.select('.outline')
               .text(label)
               .attr("dx", dx)
@@ -216,9 +168,8 @@ function draw_target_2(data, choice, containerId) {
               .style("stroke", "white")
               .style("stroke-width", 3)
               .transition().duration(duration)
-              .style("opacity", 1); // Sempre visibili ora che sono ben spaziati
+              .style("opacity", 1); 
 
-          // Update Main Text
           grp.select('.main')
               .text(label)
               .attr("dx", dx)
@@ -232,13 +183,11 @@ function draw_target_2(data, choice, containerId) {
       });
   }
 
-  // --- HELPERS ---
 
   function getLabelText(d) {
       if (d.depth === 0) return ""; 
       const name = d.data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       
-      // Accorcia se troppo lungo, ma ora abbiamo spazio orizzontale per i sottotipi
       const maxLen = d.depth === 2 ? 37 : 45; 
       if (name.length > maxLen) return name.substring(0, maxLen-2) + "..";
       return name;
@@ -248,17 +197,15 @@ function draw_target_2(data, choice, containerId) {
       if (d.depth === 0) return "#555";
       if (d.depth === 1) {
           const c = colorMap[d.data.name] || "#999";
-          // Sbiadisci le non-scelte
           return (d.data.name === choice) ? c : "#ddd"; 
       }
       if (d.depth === 2) {
-          // I sottotipi ereditano dal genitore (che è la scelta)
           return colorMap[d.parent.data.name] || "#999";
       }
       return "#ccc";
   }
 
-  // --- TOOLTIP LOGIC ---
+  // --- TOOLTIP ---
   const tooltipGroup = svg.append("g").style("display", "none").style("pointer-events", "none");
   const tooltipRect = tooltipGroup.append("rect").attr("fill", "rgba(255, 255, 255, 0.95)").attr("stroke", "#ccc").attr("stroke-width", 1).attr("rx", 4).style("filter", "drop-shadow(2px 2px 3px rgba(0,0,0,0.2))");
   const tooltipText = tooltipGroup.append("text").attr("x", 0).attr("y", 0).style("font-size", `${Math.max(8, FONT_SIZE - 1)}px`).style("fill", "#333");
