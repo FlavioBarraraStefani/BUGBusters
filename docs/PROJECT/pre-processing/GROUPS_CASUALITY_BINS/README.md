@@ -2,7 +2,7 @@
 
 ## Description
 
-This Python script processes Global Terrorism Database (GTD) data to analyze the distribution of victim counts (killed and wounded) for three terrorist organizations (ISIL, Taliban, Shining Path). Data is divided into casualty bins (0, 1, 2-10, 11-100, 100+) to show how each organization's attacks distribute by severity in terms of victim counts.
+This Python script processes Global Terrorism Database (GTD) data to analyze the distribution of victim counts (killed and wounded) for three terrorist organizations (ISIL, Taliban, Shining Path). Data is divided into casualty bins (none, single, few, many, massive) to show how each organization's attacks distribute by severity in terms of victim counts.
 
 ## Main Functionality
 
@@ -14,7 +14,7 @@ The script performs the following operations:
 4. **Group Filtering**: Processes the 3 target organizations (ISIL, Taliban, SL)
 5. **Killed Binning**: Assigns each attack to a casualty bin based on nkill
 6. **Wounded Binning**: Assigns each attack to a casualty bin based on nwound
-7. **Categorization**: Categorizes data with 5 bins: 0, 1, 2-10, 11-100, 100+ (0 = 0 killed, 1 = one killed, ...)
+7. **Categorization**: Categorizes data with 5 bins: none, single, few, many, massive (none = 0 killed, single = one killed, ...)
 8. **Count per Killed Bin**: Counts how many attacks fall into each killed bin
 9. **Count per Wounded Bin**: Counts how many attacks fall into each wounded bin
 10. **Ordering**: Maintains bins in increasing order of severity
@@ -73,19 +73,19 @@ The script uses 5 predefined bins to categorize attack severity:
 
 | Bin | Description | Interpretation |
 |-----|-------------|-----------------|
-| 0 | Zero victims | Attacks with no killed/wounded in that category |
-| 1 | One victim | Attacks with single victim in that category |
-| 2-10 | Few victims | Attacks with 2-10 victims in that category |
-| 11-100 | Many victims | Attacks with 11-100 victims in that category |
-| 100+ | Many victims | Attacks with more than 100 victims in that category |
+| none| Zero victims | Attacks with no killed/wounded in that category |
+| single | One victim | Attacks with single victim in that category |
+| few | Few victims | Attacks with 2-10 victims in that category |
+| many | Many victims | Attacks with 11-100 victims in that category |
+| massive | Many victims | Attacks with more than 100 victims in that category |
 
 ### Interpretation of Counts
 
 Each bin contains the number of attacks that fall into that category:
 
 **Practical Example:**
-- **Bin "0" (killed_count: 2406)**: Means there were **2,406 attacks with no deaths** (nkill = 0)
-- **Bin "0" (wounded_count: 3992)**: Means there were **3,992 attacks with no injuries** (nwound = 0)
+- **Bin "none" (killed_count: 2496)**: Means there were **2,406 attacks with no deaths** (nkill = 0)
+- **Bin "none" (wounded_count: 3992)**: Means there were **3,992 attacks with no injuries** (nwound = 0)
 
 
 
