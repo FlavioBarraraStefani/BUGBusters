@@ -2,9 +2,6 @@
 
 This folder contains the Data Visualization course project: a single-page visualization demo. The single entry point is `index.html`, which loads the CSS, data and JavaScript modules in `css/`, `assets/` and `js/` to render the interactive visualizations.
 
-Note: the `pre-processing/` directory documents how the files containing the data for each plot are generated (notebooks and export scripts). The generated data files themselves are published in a separate (private) repository; a listing of those produced files is available via the GitHub API endpoint: https://api.github.com/repos/supernino02/BugBuster-project/contents
-
-
 Overview
 - **index.html**: The single page that ties everything together. It loads the stylesheet and the scripts in `js/`, and is the file to open in a browser to run the demo.
 - **assets/**: Static data and other assets consumed by the visualizations (geojson, CSV/JSON datasets, images, etc.). Required at runtime by the JS modules.
