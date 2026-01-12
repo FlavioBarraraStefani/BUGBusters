@@ -176,6 +176,14 @@ function draw_group_5(data, choice, containerId) {
   const legendGroup = g.append("g")
     .attr("transform", `translate(${innerWidth / 2}, -30)`);
 
+  legendGroup.append("text")
+    .attr("x", 0)
+    .attr("y", -8)
+    .attr("text-anchor", "middle")
+    .style("font-size", `${chartLabelFontSize}px`)
+    .style("fill", "#000000")
+    .text("Distribution of attacks based on casualty count");
+
   const createLegendItem = (key, label, colorHex, xOffset) => {
     const item = legendGroup.append("g")
       .datum(key)
